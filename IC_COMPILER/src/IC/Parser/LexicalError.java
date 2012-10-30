@@ -2,7 +2,12 @@ package IC.Parser;
 
 public class LexicalError extends Exception
 {
-    public LexicalError(String message) {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public LexicalError(String message) {
      // do something
     }
 }
