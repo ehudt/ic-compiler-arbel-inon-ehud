@@ -1,8 +1,32 @@
 package IC;
 
+import java.io.FileReader;
+
+import com.sun.java_cup.internal.runtime.Symbol;
+import com.sun.org.apache.xalan.internal.xsltc.compiler.sym;
+import IC.Parser.Lexer;
+import IC.Parser.LexicalError;
+
 public class Compiler
 {
-    public static void main(String[] args)
+    public static void main(String[] args) throws LexicalError
     {
+    	IC.Parser.Token currToken;
+    	try {
+    		FileReader txtFile = new FileReader(args[0]);
+    		Lexer scanner = new Lexer(txtFile);
+    	
+    		do{
+    			currToken = scanner.next_token();
+    			System.out.println(currToken.getLine()+": "+ currToken.getId() + currToken.getValue());
+    		}
+    		while (currToken.getId() != sym.EOF);
+    		System.out.println(currToken.getLine()+": "+ currToken.getId() + currToken.getValue());
+    	}
+    	
+    	catch (Exception e) {
+			throw new LexicalError("Lexical Error" + e.toString());
+		}
+    	
     }
 }
