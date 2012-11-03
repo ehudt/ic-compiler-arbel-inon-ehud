@@ -3,8 +3,8 @@ package IC.Parser;
 import java_cup.runtime.Symbol;
 
 public class Token extends Symbol {
-	public int line;
-	public String value;
+	private int line;
+	private String value;
 	
 	public Token(int id, int line){
 		this(id, line, "");
