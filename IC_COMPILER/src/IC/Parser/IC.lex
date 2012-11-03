@@ -16,6 +16,9 @@ UPPER=[A-Z]
 LOWER=[a-z]
 DIGIT=[0-9]
 NONZERO=[1-9]
+ALPHA_NUMERIC={ALPHA}|{DIGIT}
+ID={LOWER}{ALPHA_NUMERIC}*
+CLASS_ID={UPPER}{ALPHA_NUMERIC}*
 STRING_TEXT=([\x20-\x21\x23-\x5b\x5d-\x7e]|\\[\\nt\"])*
 COMMENT_TEXT=([^\*]|\*[^/])*\*?
 
@@ -40,8 +43,8 @@ length	{ return new Token(sym.LENGTH,yyline); }
 true	{ return new Token(sym.TRUE,yyline); }
 false	{ return new Token(sym.FALSE,yyline); }
 null	{ return new Token(sym.NULL,yyline); }
-{UPPER}{ALPHA|DIGIT}*	{ return new Token(sym.CLASS_ID,yyline,yytext()); }
-{LOWER}{ALPHA|DIGIT}*	{ return new Token(sym.ID,yyline,yytext()); }
+{CLASS_ID}*	{ return new Token(sym.CLASS_ID,yyline,yytext()); }
+{ID}*	{ return new Token(sym.ID,yyline,yytext()); }
 0|(-?{NONZERO}{DIGIT}*)	{ return new Token(sym.INTEGER,yyline,yytext()); }
 {WHITESPACE}	{ }
 "("	{ return new Token(sym.LP,yyline); }
@@ -54,8 +57,8 @@ null	{ return new Token(sym.NULL,yyline); }
 "."	{ return new Token(sym.DOT,yyline); }
 ";"	{ return new Token(sym.SEMI,yyline); }
 \"{STRING_TEXT}\"	{ return new Token(sym.QUOTE,yyline); }
-//.*	{ }
-/\*{COMMENT_TEXT}\*/	{ }
+"//".*	{ }
+"/*"{COMMENT_TEXT}"*/"	{ }
 "="	{ return new Token(sym.ASSIGN,yyline); }
 "=="	{ return new Token(sym.EQUAL,yyline); }
 ">"	{ return new Token(sym.GT,yyline); }
@@ -71,4 +74,4 @@ null	{ return new Token(sym.NULL,yyline); }
 "*"	{ return new Token(sym.MULTIPLY,yyline); }
 "/"	{ return new Token(sym.DIVIDE,yyline); }
 "%"	{ return new Token(sym.MOD,yyline); }
-.	{ }
+.	{ throw new LexicalError("Error: Illegal token: " + yytext() + " in line " + yyline + "."); }
