@@ -1,6 +1,7 @@
 package IC.Parser;
 
 public class sym {
+    public static final int EOF = 0;
 	public static final int ASSIGN = 1;
 	public static final int BOOLEAN = 2;
 	public static final int BREAK = 3;

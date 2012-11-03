@@ -2,12 +2,17 @@ package IC.Parser;
 
 %%
 
+%cup
 %class Lexer
 %public
 %function next_token
 %type Token
 %line
 %scanerror LexicalError
+
+%eofval{
+    return new Token(sym.EOF, yyline);
+%eofval}
 
 WHITESPACE=[" "\n\t\r]
 NONNEWLINE_WHITESPACE=[" "\t]
