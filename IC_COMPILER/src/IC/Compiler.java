@@ -9,7 +9,7 @@ import IC.Parser.LexicalError;
 
 public class Compiler
 {
-    public static void main(String[] args) throws LexicalError
+    public static void main(String[] args) throws Exception
     {
     	IC.Parser.Token currToken;
     	try {
@@ -24,12 +24,16 @@ public class Compiler
     			else 
     				System.out.println("");
     		}
-    		while (currToken.getId() != sym.EOF);
+    		while (currToken.getId() != IC.Parser.sym.EOF);
     		System.out.println(currToken.getLine() +": "+ currToken.getName());
     	}
     	
-    	catch (Exception e) {
+    	catch (LexicalError e) {
 			System.out.println("ERROR" + e.toString());
+		}
+    	
+    	catch (Exception e) {
+			throw e;
 		}
     	
     }
