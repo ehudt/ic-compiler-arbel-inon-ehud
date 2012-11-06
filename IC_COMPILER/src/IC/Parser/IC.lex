@@ -15,7 +15,6 @@ package IC.Parser;
 %eofval}
 
 WHITESPACE=[" "\n\t\r]
-NONNEWLINE_WHITESPACE=[" "\t]
 ALPHA=[a-zA-Z_]
 UPPER=[A-Z]
 LOWER=[a-z]
