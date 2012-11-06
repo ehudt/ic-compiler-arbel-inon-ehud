@@ -49,7 +49,7 @@ false	{ return new Token(sym.FALSE,yyline); }
 null	{ return new Token(sym.NULL,yyline); }
 {CLASS_ID}*	{ return new Token(sym.CLASS_ID,yyline,yytext()); }
 {ID}*	{ return new Token(sym.ID,yyline,yytext()); }
-0|(-?{NONZERO}{DIGIT}*)	{ return new Token(sym.INTEGER,yyline,yytext()); }
+0|({NONZERO}{DIGIT}*)	{ return new Token(sym.INTEGER,yyline,yytext()); }
 {WHITESPACE}	{ }
 "("	{ return new Token(sym.LP,yyline); }
 ")"	{ return new Token(sym.RP,yyline); }
@@ -60,7 +60,7 @@ null	{ return new Token(sym.NULL,yyline); }
 ","	{ return new Token(sym.COMMA,yyline); }
 "."	{ return new Token(sym.DOT,yyline); }
 ";"	{ return new Token(sym.SEMI,yyline); }
-\"{STRING_TEXT}\"	{ return new Token(sym.QUOTE,yyline); }
+\"{STRING_TEXT}\"	{ return new Token(sym.QUOTE,yyline,yytext()); }
 "//".*	{ }
 "/*"{COMMENT_TEXT}"*/"	{ }
 "="	{ return new Token(sym.ASSIGN,yyline); }
