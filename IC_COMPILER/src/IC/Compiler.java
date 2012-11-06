@@ -27,7 +27,7 @@ public class Compiler
     	}
     	
     	catch (LexicalError e) {
-			System.out.println("ERROR" + e.toString());
+			System.out.println(e.getLine() + ": Lexical error: illegal character '" + e.getValue().charAt(0) + "'");
 		}
     	
     	catch (Exception e) {
