@@ -24,7 +24,6 @@ public class Compiler
     				System.out.println("");
     		}
     		while (currToken.getId() != IC.Parser.sym.EOF);
-    		System.out.println(currToken.getLine() +": "+ currToken.getName());
     	}
     	
     	catch (LexicalError e) {
