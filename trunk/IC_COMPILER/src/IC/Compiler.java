@@ -18,6 +18,7 @@ public class Compiler
     	
     		do{
     			currToken = scanner.next_token();
+    			System.out.println(currToken.getId());
     			System.out.print(currToken.getLine()+": "+ currToken.getName());
     			if (currToken.getValue() != "")
     				System.out.println("(" + currToken.getValue() + ")");
@@ -25,11 +26,11 @@ public class Compiler
     				System.out.println("");
     		}
     		while (currToken.getId() != sym.EOF);
-    		System.out.println(currToken.getLine()+": "+ currToken.getName());
+    		System.out.println(currToken.getLine() +": "+ currToken.getName());
     	}
     	
     	catch (Exception e) {
-			throw new LexicalError("Lexical Error" + e.toString());
+			System.out.println("ERROR" + e.toString());
 		}
     	
     }
