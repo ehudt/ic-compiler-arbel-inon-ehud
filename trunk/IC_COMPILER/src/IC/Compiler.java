@@ -2,8 +2,7 @@ package IC;
 
 import java.io.FileReader;
 
-import com.sun.java_cup.internal.runtime.Symbol;
-import com.sun.org.apache.xalan.internal.xsltc.compiler.sym;
+//import com.sun.java_cup.internal.runtime.Symbol;
 import IC.Parser.Lexer;
 import IC.Parser.LexicalError;
 
