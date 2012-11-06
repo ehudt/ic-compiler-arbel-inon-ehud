@@ -13,7 +13,7 @@ public class Token extends Symbol {
 	
     public Token(int id, int line, String value) {
         super(id, null);
-        this.line = line;
+        this.line = line + 1;
     	this.value = value;
 		this.name = getNameById(id);
     }
