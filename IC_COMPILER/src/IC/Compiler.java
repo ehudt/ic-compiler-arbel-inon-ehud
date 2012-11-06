@@ -18,7 +18,6 @@ public class Compiler
     	
     		do{
     			currToken = scanner.next_token();
-    			System.out.println(currToken.getId());
     			System.out.print(currToken.getLine()+": "+ currToken.getName());
     			if (currToken.getValue() != "")
     				System.out.println("(" + currToken.getValue() + ")");
