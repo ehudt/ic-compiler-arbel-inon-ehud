@@ -23,10 +23,9 @@ public class Compiler
     				System.out.println("(" + currToken.getValue() + ")");
     			else 
     				System.out.println("");
-    			
     		}
     		while (currToken.getId() != sym.EOF);
-    		System.out.println(currToken.getLine()+": "+ currToken.getId() + currToken.getValue());
+    		System.out.println(currToken.getLine()+": "+ currToken.getName());
     	}
     	
     	catch (Exception e) {
