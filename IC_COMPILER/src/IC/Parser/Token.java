@@ -5,6 +5,7 @@ import java_cup.runtime.Symbol;
 public class Token extends Symbol {
 	private int line;
 	private String value;
+	private String name;
 	
 	public Token(int id, int line){
 		this(id, line, "");
@@ -14,6 +15,9 @@ public class Token extends Symbol {
         super(id, null);
         this.line = line;
     	this.value = value;
+    	switch(id){
+    	
+    	}
     }
     
     public int getId() {
@@ -24,6 +28,10 @@ public class Token extends Symbol {
     }
     public int getLine() {
     	return this.line;
+    }
+    
+    public String getName(){
+    	return this.name;
     }
 }
 
