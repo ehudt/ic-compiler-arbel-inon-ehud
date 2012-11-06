@@ -78,4 +78,4 @@ null	{ return new Token(sym.NULL,yyline); }
 "*"	{ return new Token(sym.MULTIPLY,yyline); }
 "/"	{ return new Token(sym.DIVIDE,yyline); }
 "%"	{ return new Token(sym.MOD,yyline); }
-.	{ throw new LexicalError("Error: Illegal token: " + yytext() + " in line " + yyline + "."); }
+.	{ throw new LexicalError(yytext(), yyline, "Error: Illegal token: " + yytext() + " in line " + yyline + "."); }

@@ -5,10 +5,27 @@ public class LexicalError extends Exception
     /**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
-
+	private int line;
+	private String value;
+	
 	public LexicalError(String message) {
-     // do something
+		this("",-1,message);
+	}
+
+	public LexicalError(String value, int line, String message) {
+		super(message);
+		this.line = line;
+		this.value = value;		
     }
+	
+	public int getLine(){
+		return line;
+	}
+	
+	public String getValue(){
+		return value;
+	}
+	
+	private static final long serialVersionUID = 1L;
 }
 
