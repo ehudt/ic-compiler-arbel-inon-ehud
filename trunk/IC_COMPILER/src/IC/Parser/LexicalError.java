@@ -14,7 +14,7 @@ public class LexicalError extends Exception
 
 	public LexicalError(String value, int line, String message) {
 		super(message);
-		this.line = line;
+		this.line = line + 1;
 		this.value = value;		
     }
 	
