@@ -90,7 +90,8 @@
            source="1.5"
            debug="${debug}"
            deprecation="${deprecation}"
-           optimize="${optimize}"/>
+		   optimize="${optimize}"
+		   includeantruntime="false"/>
     </target>
 
     <!--

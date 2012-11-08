@@ -28,6 +28,10 @@ COMMENT_TEXT=([^\*]|\*[^/])*\*?
 
 %%
 
+// rule to ignore spaces
+{WHITESPACE}	{ }
+
+// rules for language keywords
 class	{ return new Token(sym.CLASS,yyline); }
 extends	{ return new Token(sym.EXTENDS,yyline); }
 static	{ return new Token(sym.STATIC,yyline); }
@@ -47,10 +51,16 @@ length	{ return new Token(sym.LENGTH,yyline); }
 true	{ return new Token(sym.TRUE,yyline); }
 false	{ return new Token(sym.FALSE,yyline); }
 null	{ return new Token(sym.NULL,yyline); }
+
+// rules for identifier IDs
 {CLASS_ID}*	{ return new Token(sym.CLASS_ID,yyline,yytext()); }
 {ID}*	{ return new Token(sym.ID,yyline,yytext()); }
+
+// rules for numbers: illegal numbers and afterwards legal numbers
+0+{DIGIT}+				{ throw new LexicalError(yytext(), yyline, "Error: Illegal token: " + yytext() + " in line " + yyline + "."); }
 0|({NONZERO}{DIGIT}*)	{ return new Token(sym.INTEGER,yyline,yytext()); }
-{WHITESPACE}	{ }
+
+// rules for parentheses and punctuation
 "("	{ return new Token(sym.LP,yyline); }
 ")"	{ return new Token(sym.RP,yyline); }
 "{"	{ return new Token(sym.LCBR,yyline); }
@@ -60,9 +70,14 @@ null	{ return new Token(sym.NULL,yyline); }
 ","	{ return new Token(sym.COMMA,yyline); }
 "."	{ return new Token(sym.DOT,yyline); }
 ";"	{ return new Token(sym.SEMI,yyline); }
+
+// rule for strings
 \"{STRING_TEXT}\"	{ return new Token(sym.QUOTE,yyline,yytext()); }
+// rules for comments: single-line comment followed by multi-line comment
 "//".*	{ }
 "/*"{COMMENT_TEXT}"*/"	{ }
+
+// rules for operators (boolean and arithmetic)
 "="	{ return new Token(sym.ASSIGN,yyline); }
 "=="	{ return new Token(sym.EQUAL,yyline); }
 ">"	{ return new Token(sym.GT,yyline); }
@@ -78,4 +93,6 @@ null	{ return new Token(sym.NULL,yyline); }
 "*"	{ return new Token(sym.MULTIPLY,yyline); }
 "/"	{ return new Token(sym.DIVIDE,yyline); }
 "%"	{ return new Token(sym.MOD,yyline); }
+
+// cleanup rule: reject all other tokens
 .	{ throw new LexicalError(yytext(), yyline, "Error: Illegal token: " + yytext() + " in line " + yyline + "."); }
