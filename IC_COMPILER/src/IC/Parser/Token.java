@@ -49,10 +49,10 @@ public class Token extends Symbol {
     public String getName(){
     	return name;
     }
-  /** 
-   * Get a string representation of a token's name by its id 
-   * @param id    The token's id (from IC.Parser.sym)
-   */
+	/** 
+	 * Get a string representation of a token's name by its id 
+	 * @param id    The token's id (from IC.Parser.sym)
+	 */
 	private String getNameById(int id){
     	switch(id){
 			case IC.Parser.sym.EOF:
