@@ -77,7 +77,7 @@ null	{ return new Token(sym.NULL,yyline); }
 "//".*	{ }
 "/*"{COMMENT_TEXT}"*/"	{ }
 
-// rules for operators (boolean and arithmetic)
+// rules for operators: boolean and arithmetic
 "="	{ return new Token(sym.ASSIGN,yyline); }
 "=="	{ return new Token(sym.EQUAL,yyline); }
 ">"	{ return new Token(sym.GT,yyline); }
