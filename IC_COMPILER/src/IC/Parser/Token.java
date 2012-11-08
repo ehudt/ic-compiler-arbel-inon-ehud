@@ -1,16 +1,25 @@
 package IC.Parser;
 
 import java_cup.runtime.Symbol;
-
+/**
+ * class Token represents a token of the IC programming language.
+ * Each token object contains its id, line number, name and value
+ * if applicable.
+ */
 public class Token extends Symbol {
 	private int line;
+  /** Value field for specific tokens (e.g. ID) */
 	private String value;
+  /** 
+   * The token's name. This is derived by the constructor
+   * from the token ID.
+   */
 	private String name;
-	
+	/** Constructor for tokens without a value */
 	public Token(int id, int line){
 		this(id, line, "");
 	}
-	
+	/** Constructor for tokens with value */
     public Token(int id, int line, String value) {
         super(id, null);
         this.line = line + 1;
@@ -31,7 +40,7 @@ public class Token extends Symbol {
     public String getName(){
     	return name;
     }
-
+  /** Get a string representation of a token's name by its id */
 	private String getNameById(int id){
     	switch(id){
 			case IC.Parser.sym.EOF:
