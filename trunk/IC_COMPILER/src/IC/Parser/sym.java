@@ -1,5 +1,8 @@
 package IC.Parser;
-
+/**
+ * class sym contains and integer ID for every token in 
+ * IC programming language. 
+ */
 public class sym {
     public static final int EOF = 0;
 	public static final int ASSIGN = 1;
