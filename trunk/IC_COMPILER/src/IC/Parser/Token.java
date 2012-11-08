@@ -22,9 +22,15 @@ public class Token extends Symbol {
 	/** Constructor for tokens with value */
     public Token(int id, int line, String value) {
         super(id, null);
+      if(line < 0){
+        throw new IllegalArgumentException("Line number can't be negative");
+      }
         this.line = line + 1;
     	this.value = value;
 		this.name = getNameById(id);
+      if(this.name.isEmpty()){
+        throw new IllegalArgumentException("Token id is invalid");
+      }
     }
     
     public int getId() {
@@ -40,7 +46,10 @@ public class Token extends Symbol {
     public String getName(){
     	return name;
     }
-  /** Get a string representation of a token's name by its id */
+  /** 
+   * Get a string representation of a token's name by its id 
+   * @param id    The token's id (from IC.Parser.sym)
+   */
 	private String getNameById(int id){
     	switch(id){
 			case IC.Parser.sym.EOF:
