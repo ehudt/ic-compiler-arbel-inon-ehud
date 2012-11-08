@@ -8,12 +8,12 @@ import java_cup.runtime.Symbol;
  */
 public class Token extends Symbol {
 	private int line;
-  /** Value field for specific tokens (e.g. ID) */
+	/** Value field for specific tokens (e.g. ID) */
 	private String value;
-  /** 
-   * The token's name. This is derived by the constructor
-   * from the token ID.
-   */
+	/** 
+	 * The token's name. This is derived by the constructor
+	 * from the token ID.
+	 */
 	private String name;
 	/** Constructor for tokens without a value */
 	public Token(int id, int line){
@@ -22,15 +22,18 @@ public class Token extends Symbol {
 	/** Constructor for tokens with value */
     public Token(int id, int line, String value) {
         super(id, null);
-      if(line < 0){
-        throw new IllegalArgumentException("Line number can't be negative");
-      }
+
+		if(line < 0){
+			throw new IllegalArgumentException("Line number can't be negative");
+		}
         this.line = line + 1;
+
     	this.value = value;
+
 		this.name = getNameById(id);
-      if(this.name.isEmpty()){
-        throw new IllegalArgumentException("Token id is invalid");
-      }
+		if(this.name.isEmpty()){
+			throw new IllegalArgumentException("Token id is invalid");
+		}
     }
     
     public int getId() {
@@ -152,6 +155,5 @@ public class Token extends Symbol {
 				return "";	
     	}
 	}
-
 }
 
