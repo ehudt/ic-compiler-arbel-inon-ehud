@@ -48,14 +48,7 @@ public class Compiler
     				System.out.println("(" + currToken.getValue() + ")");
     			
     			else{ 
-    				System.out.print("");
-    				
-    				/** 
-    				 * only print a new line if it's not the last Token
-    				 */
-    				if (currToken.getId() != IC.Parser.sym.EOF){
-    					System.out.println("");
-    				}
+    				System.out.println("");
     			}
     		}
     		while (currToken.getId() != IC.Parser.sym.EOF);
