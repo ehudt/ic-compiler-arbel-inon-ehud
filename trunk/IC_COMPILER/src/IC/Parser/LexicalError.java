@@ -8,7 +8,9 @@ package IC.Parser;
  */
 public class LexicalError extends Exception
 {
+	/** line number where the error occured, or 0 if not applicable */
 	private int line;
+	/** the token that caused the error. Can have length of 1 or more. */
 	private String value;
 	
 	/**
