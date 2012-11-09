@@ -29,7 +29,7 @@ public class LexicalError extends Exception
 	 */
 	public LexicalError(String value, int line, String message) {
 		super(message);
-		this.line = line + 1;
+		this.line = line;
 		this.value = value;		
     }
 	/** 

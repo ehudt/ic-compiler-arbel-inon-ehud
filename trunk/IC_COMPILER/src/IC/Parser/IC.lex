@@ -11,7 +11,7 @@ package IC.Parser;
 %scanerror LexicalError
 
 %eofval{
-    return new Token(sym.EOF, yyline);
+    return new Token(sym.EOF, (yyline + 1));
 %eofval}
 
 WHITESPACE=[" "\n\t\r]
@@ -32,67 +32,67 @@ COMMENT_TEXT=([^\*]|\*[^/])*\*?
 {WHITESPACE}	{ }
 
 // rules for language keywords
-class	{ return new Token(sym.CLASS,yyline); }
-extends	{ return new Token(sym.EXTENDS,yyline); }
-static	{ return new Token(sym.STATIC,yyline); }
-void	{ return new Token(sym.VOID,yyline); }
-int	{ return new Token(sym.INT,yyline); }
-boolean	{ return new Token(sym.BOOLEAN,yyline); }
-string	{ return new Token(sym.STRING,yyline); }
-return	{ return new Token(sym.RETURN,yyline); }
-if	{ return new Token(sym.IF,yyline); }
-else	{ return new Token(sym.ELSE,yyline); }
-while	{ return new Token(sym.WHILE,yyline); }
-break	{ return new Token(sym.BREAK,yyline); }
-continue	{ return new Token(sym.CONTINUE,yyline); }
-this	{ return new Token(sym.THIS,yyline); }
-new	{ return new Token(sym.NEW,yyline); }
-length	{ return new Token(sym.LENGTH,yyline); }
-true	{ return new Token(sym.TRUE,yyline); }
-false	{ return new Token(sym.FALSE,yyline); }
-null	{ return new Token(sym.NULL,yyline); }
+class	{ return new Token(sym.CLASS,(yyline + 1)); }
+extends	{ return new Token(sym.EXTENDS,(yyline + 1)); }
+static	{ return new Token(sym.STATIC,(yyline + 1)); }
+void	{ return new Token(sym.VOID,(yyline + 1)); }
+int	{ return new Token(sym.INT,(yyline + 1)); }
+boolean	{ return new Token(sym.BOOLEAN,(yyline + 1)); }
+string	{ return new Token(sym.STRING,(yyline + 1)); }
+return	{ return new Token(sym.RETURN,(yyline + 1)); }
+if	{ return new Token(sym.IF,(yyline + 1)); }
+else	{ return new Token(sym.ELSE,(yyline + 1)); }
+while	{ return new Token(sym.WHILE,(yyline + 1)); }
+break	{ return new Token(sym.BREAK,(yyline + 1)); }
+continue	{ return new Token(sym.CONTINUE,(yyline + 1)); }
+this	{ return new Token(sym.THIS,(yyline + 1)); }
+new	{ return new Token(sym.NEW,(yyline + 1)); }
+length	{ return new Token(sym.LENGTH,(yyline + 1)); }
+true	{ return new Token(sym.TRUE,(yyline + 1)); }
+false	{ return new Token(sym.FALSE,(yyline + 1)); }
+null	{ return new Token(sym.NULL,(yyline + 1)); }
 
 // rules for identifier IDs
-{CLASS_ID}*	{ return new Token(sym.CLASS_ID,yyline,yytext()); }
-{ID}*	{ return new Token(sym.ID,yyline,yytext()); }
+{CLASS_ID}*	{ return new Token(sym.CLASS_ID,(yyline + 1),yytext()); }
+{ID}*	{ return new Token(sym.ID,(yyline + 1),yytext()); }
 
 // rules for numbers: illegal numbers and afterwards legal numbers
-0+{DIGIT}+				{ throw new LexicalError(yytext(), yyline, "Error: Illegal token: " + yytext() + " in line " + yyline + "."); }
-0|({NONZERO}{DIGIT}*)	{ return new Token(sym.INTEGER,yyline,yytext()); }
+0+{DIGIT}+				{ throw new LexicalError(yytext(), (yyline + 1), "Error: Illegal number format: " + yytext() + " in line " + (yyline + 1) + "."); }
+0|({NONZERO}{DIGIT}*)	{ return new Token(sym.INTEGER,(yyline + 1),yytext()); }
 
 // rules for parentheses and punctuation
-"("	{ return new Token(sym.LP,yyline); }
-")"	{ return new Token(sym.RP,yyline); }
-"{"	{ return new Token(sym.LCBR,yyline); }
-"}"	{ return new Token(sym.RCBR,yyline); }
-"["	{ return new Token(sym.LB,yyline); }
-"]"	{ return new Token(sym.RB,yyline); }
-","	{ return new Token(sym.COMMA,yyline); }
-"."	{ return new Token(sym.DOT,yyline); }
-";"	{ return new Token(sym.SEMI,yyline); }
+"("	{ return new Token(sym.LP,(yyline + 1)); }
+")"	{ return new Token(sym.RP,(yyline + 1)); }
+"{"	{ return new Token(sym.LCBR,(yyline + 1)); }
+"}"	{ return new Token(sym.RCBR,(yyline + 1)); }
+"["	{ return new Token(sym.LB,(yyline + 1)); }
+"]"	{ return new Token(sym.RB,(yyline + 1)); }
+","	{ return new Token(sym.COMMA,(yyline + 1)); }
+"."	{ return new Token(sym.DOT,(yyline + 1)); }
+";"	{ return new Token(sym.SEMI,(yyline + 1)); }
 
 // rule for strings
-\"{STRING_TEXT}\"	{ return new Token(sym.QUOTE,yyline,yytext()); }
+\"{STRING_TEXT}\"	{ return new Token(sym.QUOTE,(yyline + 1),yytext()); }
 // rules for comments: single-line comment followed by multi-line comment
 "//".*	{ }
 "/*"{COMMENT_TEXT}"*/"	{ }
 
 // rules for operators: boolean and arithmetic
-"="	{ return new Token(sym.ASSIGN,yyline); }
-"=="	{ return new Token(sym.EQUAL,yyline); }
-">"	{ return new Token(sym.GT,yyline); }
-"<"	{ return new Token(sym.LT,yyline); }
-">="	{ return new Token(sym.GTE,yyline); }
-"<="	{ return new Token(sym.LTE,yyline); }
-"!="	{ return new Token(sym.NEQUAL,yyline); }
-"&&"	{ return new Token(sym.LAND,yyline); }
-"||"	{ return new Token(sym.LOR,yyline); }
-"!"	{ return new Token(sym.LNEG,yyline); }
-"+"	{ return new Token(sym.PLUS,yyline); }
-"-"	{ return new Token(sym.MINUS,yyline); }
-"*"	{ return new Token(sym.MULTIPLY,yyline); }
-"/"	{ return new Token(sym.DIVIDE,yyline); }
-"%"	{ return new Token(sym.MOD,yyline); }
+"="	{ return new Token(sym.ASSIGN,(yyline + 1)); }
+"=="	{ return new Token(sym.EQUAL,(yyline + 1)); }
+">"	{ return new Token(sym.GT,(yyline + 1)); }
+"<"	{ return new Token(sym.LT,(yyline + 1)); }
+">="	{ return new Token(sym.GTE,(yyline + 1)); }
+"<="	{ return new Token(sym.LTE,(yyline + 1)); }
+"!="	{ return new Token(sym.NEQUAL,(yyline + 1)); }
+"&&"	{ return new Token(sym.LAND,(yyline + 1)); }
+"||"	{ return new Token(sym.LOR,(yyline + 1)); }
+"!"	{ return new Token(sym.LNEG,(yyline + 1)); }
+"+"	{ return new Token(sym.PLUS,(yyline + 1)); }
+"-"	{ return new Token(sym.MINUS,(yyline + 1)); }
+"*"	{ return new Token(sym.MULTIPLY,(yyline + 1)); }
+"/"	{ return new Token(sym.DIVIDE,(yyline + 1)); }
+"%"	{ return new Token(sym.MOD,(yyline + 1)); }
 
 // cleanup rule: reject all other tokens
-.	{ throw new LexicalError(yytext(), yyline, "Error: Illegal token: " + yytext() + " in line " + yyline + "."); }
+.	{ throw new LexicalError(yytext(), (yyline + 1), (yyline + 1) + ": Lexical error: illegal token '" + yytext() + "'"); }

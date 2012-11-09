@@ -26,7 +26,7 @@ public class Token extends Symbol {
 		if(line < 0){
 			throw new IllegalArgumentException("Line number can't be negative");
 		}
-        this.line = line + 1;
+        this.line = line;
 
     	this.value = value;
 
