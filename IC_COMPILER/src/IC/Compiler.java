@@ -20,8 +20,12 @@ public class Compiler
     			System.out.print(currToken.getLine()+": "+ currToken.getName());
     			if (currToken.getValue() != "")
     				System.out.println("(" + currToken.getValue() + ")");
-    			else 
-    				System.out.println("");
+    			else{ 
+    				System.out.print("");
+    				if (currToken.getId() != IC.Parser.sym.EOF){
+    					System.out.println("");
+    				}
+    			}
     		}
     		while (currToken.getId() != IC.Parser.sym.EOF);
     	}
