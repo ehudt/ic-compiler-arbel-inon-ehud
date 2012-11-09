@@ -52,8 +52,11 @@ public class Compiler
 			System.out.println(e.getMessage());
 		}
     	catch (FileNotFoundException e) {
-			System.err.println(e."Error: file not found " + args[0] + ". Check file path.");
+			System.err.println("Error: file not found " + args[0] + ". Check file path.");
 		}
+    	catch (IOException e) {
+    		System.err.println("Error: I/O error during lexical analysis: " + e.getMessage());
+    	}
     	
     }
 }

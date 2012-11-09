@@ -57,7 +57,7 @@ null	{ return new Token(sym.NULL,(yyline + 1)); }
 {ID}*	{ return new Token(sym.ID,(yyline + 1),yytext()); }
 
 // rules for numbers: illegal numbers and afterwards legal numbers
-0+{DIGIT}+				{ throw new LexicalError(yytext(), (yyline + 1), "Error: Illegal number format: " + yytext() + " in line " + (yyline + 1) + "."); }
+0+{DIGIT}+				{ throw new LexicalError(yytext(), (yyline + 1), (yyline + 1) + ": Lexical error: illegal integer format in token '" + yytext() + "'"); }
 0|({NONZERO}{DIGIT}*)	{ return new Token(sym.INTEGER,(yyline + 1),yytext()); }
 
 // rules for parentheses and punctuation
@@ -95,4 +95,4 @@ null	{ return new Token(sym.NULL,(yyline + 1)); }
 "%"	{ return new Token(sym.MOD,(yyline + 1)); }
 
 // cleanup rule: reject all other tokens
-.	{ throw new LexicalError(yytext(), (yyline + 1), (yyline + 1) + ": Lexical error: illegal token '" + yytext() + "'"); }
+.	{ throw new LexicalError(yytext(), (yyline + 1), (yyline + 1) + ": Lexical error: illegal character '" + yytext() + "'"); }
