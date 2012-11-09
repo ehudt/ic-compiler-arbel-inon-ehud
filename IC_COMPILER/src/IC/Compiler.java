@@ -8,12 +8,17 @@ import IC.Parser.LexicalError;
 
 /**
  * Class Compiler is the class that goes over the text file, and run the lexer on it.
- * It gets one argumant: The text file path.
+ * 
  */
 
 public class Compiler
 {
-    public static void main(String[] args) throws Exception
+   /**
+    * 
+    * @param args is the path to the text file
+    * @throws Exception Lexical or other
+    */
+	public static void main(String[] args) throws Exception
     {
     	/** 
     	 * Define a variable that will hold the current token 
