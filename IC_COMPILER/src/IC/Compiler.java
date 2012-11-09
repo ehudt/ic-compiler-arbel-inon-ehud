@@ -49,7 +49,7 @@ public class Compiler
     	}
     	//Catch lexical Errors and print the line and the value of the token
     	catch (LexicalError e) {
-			System.out.println(e.getLine() + ": Lexical error: illegal token '" + e.getValue() + "'");
+			System.out.println(e.message);
 		}
     	catch (FileNotFoundException e) {
 			System.err.println("Error: file not found " + args[0] + ". Check file path.");
