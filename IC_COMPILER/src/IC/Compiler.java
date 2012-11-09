@@ -31,7 +31,9 @@ public class Compiler
     		 */
     		FileReader txtFile = new FileReader(args[0]);
     		
-    		/** Create the Scanner */
+    		/** 
+    		 * Create the Scanner 
+    		 */
     		Lexer scanner = new Lexer(txtFile);
     	
     		/** Run the NextToken function on the text file untill reaching the EOF Token. 
