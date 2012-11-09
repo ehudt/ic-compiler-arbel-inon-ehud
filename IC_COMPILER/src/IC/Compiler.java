@@ -1,13 +1,14 @@
 package IC;
 
+import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 
-//import com.sun.java_cup.internal.runtime.Symbol;
 import IC.Parser.Lexer;
 import IC.Parser.LexicalError;
 
 /**
- * Class Compiler is the class that goes over the text file, 
+ * The class that goes over the text file, 
  * and runs the lexer on it.
  */
 
@@ -16,9 +17,12 @@ public class Compiler
    /**
     * @param args should contain the path to the text file
     */
-	public static void main(String[] args) throws Exception
+	public static void main(String[] args)
     {
-	
+		if(args.length != 1)
+		{
+			System.err.println("Usage: java IC.Compiler <input-filename>\n")
+		}
     	// cuurToken will hold the current token from the scanner 
     	IC.Parser.Token currToken;
     	try {
@@ -47,9 +51,8 @@ public class Compiler
     	catch (LexicalError e) {
 			System.out.println(e.getLine() + ": Lexical error: illegal token '" + e.getValue() + "'");
 		}
-    	//TODO define what to do here
-    	catch (IOException e) {
-			throw e;
+    	catch (FileNotFoundException e) {
+			System.err.println("Error: file not found " + args[0] + ". Check file path.");
 		}
     	
     }
