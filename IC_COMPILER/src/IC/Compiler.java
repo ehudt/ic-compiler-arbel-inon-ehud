@@ -49,10 +49,10 @@ public class Compiler
     	}
     	//Catch lexical Errors and print the line and the value of the token
     	catch (LexicalError e) {
-			System.out.println(e.message);
+			System.out.println(e.getMessage());
 		}
     	catch (FileNotFoundException e) {
-			System.err.println("Error: file not found " + args[0] + ". Check file path.");
+			System.err.println(e."Error: file not found " + args[0] + ". Check file path.");
 		}
     	
     }
