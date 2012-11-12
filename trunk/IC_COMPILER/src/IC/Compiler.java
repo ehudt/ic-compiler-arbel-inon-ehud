@@ -25,6 +25,7 @@ public class Compiler
 		if(args.length != 1)
 		{
 			System.out.println("Usage: java IC.Compiler <input-filename>\n");
+			return;
 		}
 		
     	// currToken holds the current token from the scanner 
