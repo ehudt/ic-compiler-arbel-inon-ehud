@@ -71,10 +71,8 @@ null	{ return new Token(sym.NULL,(yyline + 1)); }
 "."	{ return new Token(sym.DOT,(yyline + 1)); }
 ";"	{ return new Token(sym.SEMI,(yyline + 1)); }
 
-// rule for strings
+// rules for strings and comments
 \"{STRING_TEXT}\"	{ return new Token(sym.QUOTE,(yyline + 1),yytext()); }
-\"					{ throw new LexicalError(yytext(), (yyline + 1), (yyline + 1) + ": Lexical error: \" is opened in column " + (yycolumn + 1) + " but is never closed."); }
-// rules for comments: single-line comment followed by multi-line comment
 "//".*	{ }
 "/*"{COMMENT_TEXT}"*/"	{ }
 
