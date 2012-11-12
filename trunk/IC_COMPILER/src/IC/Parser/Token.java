@@ -24,7 +24,7 @@ public class Token extends Symbol {
 		this(id, line, "");
 	}
 	/** 
-	 * Constructor for tokens with a value. This contructor is used when a token's value
+	 * Constructor for tokens with a value. This constructor is used when a token's value
 	 * is variable. For example, a token ID can have a lot of different values, such as 'foo'. 
 	 * @param id	The token's ID, according to IC.Parser.sym
 	 * @param line	The line in which the token appears
