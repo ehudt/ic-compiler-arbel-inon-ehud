@@ -3,14 +3,14 @@ package IC.Parser;
 
 /** 
  * Report a lexical error during lexical analysis of a source file.
- * The exception can inlude the value of the erroneous token, the
- * line in which it appeared and a custom error message.
+ * The exception includes the value of the erroneous token (if applicable), 
+ * the line in which the token appeared and a specific error message.
  */
 public class LexicalError extends Exception
 {
-	/** line number where the error occured, or 0 if not applicable */
+	/* line number where the error occurred, or 0 if not applicable */
 	private int line;
-	/** the token that caused the error. Can have length of 1 or more. */
+	/* the string that caused the lexical error. Can have length of 1 or more. */
 	private String value;
 	
 	/**
@@ -23,8 +23,8 @@ public class LexicalError extends Exception
 	/**
 	 * Initialize a LexicalError object with a token value, a line number
 	 * and a custom message.
-	 * @param value     Value of token that caused an error
-	 * @param line      Line # where the error occured
+	 * @param value     the string that that caused an error
+	 * @param line      Line # where the error occurred
 	 * @param message   Error message string
 	 */
 	public LexicalError(String value, int line, String message) {
@@ -32,15 +32,18 @@ public class LexicalError extends Exception
 		this.line = line;
 		this.value = value;		
     }
+	
 	/** 
-	 * Get the line number where the lexical analyzer encountered an error 
+	 * Get the line number where the lexical analyzer encountered an error.
+	 * @return	line in the input where the error occurred 
 	 */
 	public int getLine(){
 		return line;
 	}
-
+	
 	/** 
-	 * Get the token that caused the lexical error 
+	 * Get the string that caused the lexical error
+	 * @return	string of erroneous token 
 	 */
 	public String getValue(){
 		return value;

@@ -8,32 +8,38 @@ import IC.Parser.Lexer;
 import IC.Parser.LexicalError;
 
 /**
- * The class that goes over the text file, 
- * and runs the lexer on it.
+ * class Compiler opens a source file of IC language, scans the file
+ * using the lexical analyzer and outputs the tokens in the file ordered by 
+ * their appearance.
+ * If the file contains invalid tokens, an error will be printed upon the 
+ * first error and the processing will stop. 
  */
-
 public class Compiler
 {
    /**
-    * @param args should contain the path to the text file
+    * @param args	path of the IC source file
     */
 	public static void main(String[] args)
     {
+		// check that there is only one argument, the path to an input file.
 		if(args.length != 1)
 		{
-			System.err.println("Usage: java IC.Compiler <input-filename>\n");
+			System.out.println("Usage: java IC.Compiler <input-filename>\n");
 		}
-    	// cuurToken will hold the current token from the scanner 
+		
+    	// currToken holds the current token from the scanner 
     	IC.Parser.Token currToken;
     	try {
+    		// open file for scanning
     		FileReader txtFile = new FileReader(args[0]);
-    		
+    		// initialize the scanner on the file
     		Lexer scanner = new Lexer(txtFile);
     	
-    		/* Run the NextToken function on the text file untill 
-    		 * reaching the EOF Token. Print for each token the 
-    		 * line it's written at, the Token name and its value
-    		 * if there is one.
+    		/* Run the lexical analyzer on the input file and output
+    		 * the tokens in the file sequentially. If EOF is reached,
+    		 * the EOF token is printed and the program finishes.
+    		 * If an error occurs, and error message is printed and the program
+    		 * exits.
        		 */
     		
     		do{
@@ -47,15 +53,16 @@ public class Compiler
     		}
     		while (currToken.getId() != IC.Parser.sym.EOF);
     	}
-    	//Catch lexical Errors and print the line and the value of the token
+    	// Catch lexical Errors and print the line and the value of the token
     	catch (LexicalError e) {
 			System.out.println(e.getMessage());
 		}
+    	// If the input file is not found, print an error to the user
     	catch (FileNotFoundException e) {
-			System.err.println("Error: file not found " + args[0] + ". Check file path.");
+			System.out.println("Error: file not found " + args[0] + ". Check file path.");
 		}
     	catch (IOException e) {
-    		System.err.println("Error: I/O error during lexical analysis: " + e.getMessage());
+    		System.out.println("Error: I/O error during lexical analysis: " + e.getMessage());
     	}
     	
     }
