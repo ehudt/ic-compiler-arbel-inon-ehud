@@ -38,7 +38,7 @@ public class Compiler
     		/* Run the lexical analyzer on the input file and output
     		 * the tokens in the file sequentially. If EOF is reached,
     		 * the EOF token is printed and the program finishes.
-    		 * If an error occurs, and error message is printed and the program
+    		 * If an error occurs, an error message is printed and the program
     		 * exits.
        		 */
     		
