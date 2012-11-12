@@ -1,0 +1,60 @@
+public class Queries {
+
+	public static void main(String[] args){
+		
+		Onthology ont = new Onthology();
+		
+		
+		System.out.println("Enter attribute: ");
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		String query = null;
+		
+		try {			
+			query = br.readLine();
+		} catch (IOException e) {
+			System.out.println("ERROR!");
+			System.exit(1);
+		}
+		
+		System.out.println("Enter name: ");
+		BufferedReader br1 = new BufferedReader(new InputStreamReader(System.in));
+		String name = null;
+		
+		try {			
+			name = br.readLine();
+		} catch (IOException e) {
+			System.out.println("ERROR!");
+			System.exit(1);
+		
+		}
+		
+		String answer = null;
+		System.out.println(query + name);
+		answer = ont.getEntityByName(name).getAttributeValue(query);
+		if (answer.equals(null))
+			System.exit(1);
+		
+		System.out.println(answer);
+		
+		
+		/*String[] query1 = query.split("[ ]+");
+		
+		if(query1[0].equals("What") && query1[1].equals("is") && query1[2].equals("the") && query1[4].equals("of")){
+			System.out.println(query1[3]);
+			ont.getEntityByName(query1[5]).getAttributeValue(query1[3]);
+		}
+		
+		if(query1[0].equals("Where") && query1[1].equals("does") && query1[3].equals("lives?")){
+			ont.getEntityByName(query1[2]).getAttributeValue("lives at");
+		}
+			
+		if(query1[0].equals("Return")){
+			
+			System.out.println("How many: "+query1[1]);
+			System.out.println("What: "+query1[2]);
+			System.out.println("What "+query1[3]);
+			System.out.println("From: "+query1[4]);
+		}*/
+	}
+}
+
