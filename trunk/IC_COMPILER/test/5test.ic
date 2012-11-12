@@ -1,0 +1,413 @@
+/* Web Data Management - Exercise 2 - Source Code */
+/* Ehud Tamir, ID 036934644, ehudtami */
+/* Arbel Zinger, ID 034666610, arbelzin */
+
+/* Graph.java */
+package HITS;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+public class Graph implements Iterable<Node>{
+	private Map<Node, List<Node>> adj;
+
+	public Graph(){
+		adj = new HashMap<Node, List<Node>>();
+	}	
+	public void addNode(Node x){
+		adj.put(x, new ArrayList<Node>());
+	}
+	public void addAdj(Node x, Node y){ // add an adjacency in the graph
+		(adj.get(x)).add(y);		
+	}
+	public Iterator<Node> iterator(){
+		return adj.keySet().iterator();
+	}
+	public List<Node> getAdj(Node x){ // get the adjacency list of a node x
+		return adj.get(x);
+	}
+	
+	public Boolean isAdj(Node x, Node y){ // check if x is adjacent to y
+		return (adj.get(x)).contains(y);
+	}
+	
+	public Node getName(String name){ // get a graph node by its name
+		for(Node x : this){
+			if(x.name.equals(name)){
+				return x
+			}
+		}
+		return new Node("ERROR!",null);
+	}
+}
+/* Node.java */
+package HITS;
+import java.io.File;
+// a graph node
+public class Node {
+	public String name; // Node name
+	public File file;	// the file object for this node
+	public double hubness; // Node hubness score
+	public double authority; // Node authority score
+	public double lastHubness, lastAuthority; // hubness and authority scores 
+										 	  // from the previous iteration
+	public Node (String name, File file){
+		this.name = name;
+		this.file = file;
+		// scores are initialized to 1
+		hubness = authority = lastAuthority = lastHubness = 1;
+	}
+}
+
+/* Hits.java */
+package HITS;
+import java.lang.Math;
+//HITS algorithm class
+public class Hits {
+	static double epsilon = 1e-10;
+	
+	public static int runHits(Graph g){
+		double maxDist=Double.MAX_VALUE; 
+		int i;
+		
+		for (i = 0; maxDist >= epsilon; i++){
+			maxDist=Double.NaN;
+			// first update the authority of all the nodes
+			double norm=0;
+			for (Node x : g){
+				x.lastAuthority = x.authority;
+				x.authority = 0;
+			}
+			for (Node x : g){
+				for(Node y : g){
+					if(g.getAdj(y).contains(x)){
+						x.authority+=y.hubness;
+					}
+				}
+			}
+			// calculate the normalization factor
+			for (Node x : g){
+				norm+=Math.pow(x.authority,2.0);
+			}
+			norm=Math.sqrt(norm);
+			// normalize the authority scores and calculate the maximum distance
+			// to the previous score for the halting condition 
+			for(Node x : g){
+				x.authority=x.authority/norm;
+				double thisDist=Math.abs(x.authority-x.lastAuthority);
+				maxDist=(Double.isNaN(maxDist) ? thisDist : Math.max(maxDist, thisDist));
+			}
+			
+			// now update the hubness of all the nodes
+			norm=0;
+			for (Node x : g){
+				x.lastHubness = x.hubness;
+				x.hubness = 0;
+			}
+			for (Node x : g){	
+				for (Node y: g.getAdj(x)){
+					x.hubness += y.authority;
+				}
+			}
+			// calculate the normalization factor
+			for (Node x : g){
+				norm+=Math.pow(x.hubness,2.0);
+			}
+			norm=Math.sqrt(norm);
+			// normalize the hubness scores and ... 
+			for(Node x : g){
+				x.hubness=x.hubness/norm;
+				double thisDist=Math.abs(x.hubness-x.lastHubness);
+				maxDist=(Double.isNaN(maxDist) ? thisDist : Math.max(maxDist, thisDist));
+			}
+		}
+		return i; // return the number of iterations till convergence
+	}
+}
+
+/* TF.java */
+package tfPackage;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+
+public class TF {
+	public static double tfScore(String searchWord, String docFilename) throws IOException{
+		BufferedReader file=new BufferedReader(new FileReader(docFilename));
+		double totalWordCount=0, searchWordCount=0;
+		searchWord=searchWord.toLowerCase(); //make the search case insensitive
+		// start reading from the file
+		String line;
+		while((line=file.readLine())!=null){
+			// parse each line, ignoring HTML tags and punctuation marks
+			String[] words=line.split("<a href=\"[^\"]*\">|</a>|[^\'\\w]");
+			for(String word : words){
+				// count total # of words in the document
+				if(!word.equals("")){
+					totalWordCount++;
+				}
+				// count total number of occurences of the searchWord
+				if(searchWord.equals(word.toLowerCase())){
+					searchWordCount++;
+				}
+			}
+		}
+		file.close();
+		// return the TF score: (occurences of searchWord)/(total word count)
+		return (totalWordCount>0 ? searchWordCount/totalWordCount : 0);
+	}
+}
+
+/* TA.java */
+package taPackage;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import tfPackage.TF;
+import HITS.Graph;
+import HITS.Hits;
+import HITS.Node;
+
+public class TA {
+	// the main top-k function
+	public static TaColumn topK(int k, 
+								List<File> docs, 
+								List<String> keywords, 
+								Aggregation aggType) 
+										throws IOException{
+		//build the web graph
+		Graph docGraph = new Graph();
+		//regex for matching links
+		Pattern p = Pattern.compile("<a href=\"([^\"]*?)\">"/*[^<]*</a>"*/);
+		Matcher m;
+		// these next 2 loops pupolate the graph
+		for(File doc : docs){
+			docGraph.addNode(new Node(doc.getName(),doc));
+		}
+		for(Node x : docGraph){
+			BufferedReader file=new BufferedReader(new FileReader(x.file.getPath()));
+			String line;
+			while((line=file.readLine())!=null){
+				m = p.matcher(line);
+				while(m.find()){
+					String linkDst = m.group(1);
+					Node y = docGraph.getName(linkDst);
+					if(!docGraph.isAdj(x, y)){
+						docGraph.addAdj(x, y);
+					}
+				}
+			}
+			file.close();
+		}
+		
+		//calculate authority scores
+		Hits.runHits(docGraph);
+		TaColMap authority = new TaColMap();
+		for(Node x : docGraph){
+			authority.put(x.name, new Record(x.name, x.authority));
+		}
+		
+		// calculate TF for the given keywords
+		// and weigh the TF score with the authority score
+		List<TaColumn> keywordsTf = new ArrayList<TaColumn>(keywords.size());
+		for(String keyword : keywords){
+			TaColumn col = new TaColumn();
+			for(File doc : docs){
+				// calculate the document's score according to its 
+				// TF score and its authority score
+				double score = Math.sqrt(TF.tfScore(keyword, doc.getPath()) 
+								* (authority.get(doc.getName()).score));
+				col.add(new Record(doc.getName(),score));
+			}
+			keywordsTf.add(col);
+		}
+		//run the Threshold algorithm and return the result
+		return runTA(k,keywordsTf,aggType);
+	}
+
+	private static TaColumn runTA(int k, 
+								  List<TaColumn> lists, 
+								  Aggregation aggType){
+		if(k<=0) return new TaColumn();
+		
+		TaColMap agg = new TaColMap(); // the top-k aggregation map
+		
+		// create a map duplicate for each list for random access
+		List<TaColMap> maps = new ArrayList<TaColMap>();
+		for(TaColumn list : lists){
+			TaColMap tmp = new TaColMap();
+			for(Record item : list){
+				tmp.put(item.name, item);
+			}
+			maps.add(tmp);
+		}
+		// sort the all lists in descending order
+		for(TaColumn list : lists){
+			Collections.sort(list);
+			Collections.reverse(list);
+		}
+		
+		int maxListSize=lists.get(0).size();
+		// a boolean flag for quitting the loops
+		boolean getOut=false;
+		double threshold=Double.MAX_VALUE;
+		// the minimum value so far in each list
+		Double minInList[]=new Double[lists.size()];
+		for(int i=0; i<minInList.length; i++){
+			minInList[i]=Double.MAX_VALUE;
+		}
+		// the minimum aggregated score so far
+		Record aggMin= new Record("aggMin", Double.MIN_VALUE);
+		// go over the lists left-to-right, top-down:
+		for(int i=0; i<maxListSize && !getOut; i++){
+			for(int j=0; j<lists.size() && !getOut; j++){
+				Record item = lists.get(j).get(i);
+				// insert a new value to the aggregation table
+				if(!agg.containsKey(item.name)){
+					List<Double> aggArgs = new ArrayList<Double>();
+					for(TaColMap map : maps){
+						aggArgs.add(map.get(item.name).score);
+					}
+					//the aggregation function call
+					double score = aggregate(aggArgs, aggType); 
+					agg.put(item.name, new Record(item.name, score));
+				}
+				// update the list minimum so far, if necessary
+				if(item.score<minInList[j]){
+					minInList[j]=item.score;
+					// update the threshold accordingly
+					threshold=aggregate(Arrays.asList(minInList),aggType);
+				}
+				// keep the minimum score of the top sites so far
+				aggMin=Collections.min(agg.values());
+				// halting condition for the algorithm
+				if(agg.size() >=k && threshold<=aggMin.score) getOut=true;
+			}
+		}
+		// prepare the list of sites to be returned
+		TaColumn ret = new TaColumn();
+		for(Record item : agg.values()){
+			ret.add(item);
+		}
+		Collections.sort(ret);
+		Collections.reverse(ret);
+		// remove excess pages from the list (removing those with least scores)
+		for(int i=k; i<ret.size(); ){
+			ret.remove(i);
+		}
+		return ret;
+	}
+	
+	// aggregation function
+	public static double aggregate(List<Double> args, Aggregation aggType){
+		if(aggType==Aggregation.AGG_AND) return aggregateAvg(args);
+		else if(aggType==Aggregation.AGG_OR) return aggregateOr(args);
+		else return aggregateAvg(args); // default
+	}
+	// aggregation using max
+	public static double aggregateOr(List<Double> args){
+		double max=Double.MIN_VALUE;
+		for(double val : args){
+			if(val > max) max=val;
+		}
+		return max;
+	}
+	// aggregation using average
+	public static double aggregateAvg(List<Double> args){
+		double avg=0;
+		for(double val : args){
+			avg+=(val/args.size());
+		}
+		return avg;
+	}
+	// an enum for selecting the aggregation method
+	public enum Aggregation{
+		AGG_OR ("OR"),
+		AGG_AND ("AND");
+		private Aggregation(String name){
+			this.name = name;
+		}
+		private final String name;
+		public String toString(){
+			return name;
+		}
+	}
+}
+
+/* TaMain.java */
+package taPackage;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import taPackage.TA.Aggregation;
+
+public class TaMain {
+	public static void main(String[] args){
+		// set the parameters for top-k: k, the file list, keywords and aggregation type.
+		int k = 3;
+		File srcDir=new File("web");
+		List<File> docs = Arrays.asList(srcDir.listFiles());
+		List<String> keywords = 
+				new ArrayList<String>(Arrays.asList("spain","germany"));
+		Aggregation aggType=Aggregation.AGG_OR;
+		// call topK and print the results
+		try {
+			TaColumn taResults;
+			taResults = TA.topK(k,docs,keywords,aggType);
+			System.out.print("The top-"+k+" for the keywords: ");
+			for(String word : keywords){
+				System.out.print(word+" ");
+			}
+			System.out.println();
+			System.out.println("Aggregating with "+aggType);
+			for(Record item : taResults){
+				System.out.println("Site: "+item.name+"\tScore: "+item.score);
+			}
+		} catch (IOException e) {
+			System.out.println(e.getMessage());
+		}
+	}
+}
+
+/* Record.java */
+package taPackage;
+// a class for keeping a <string,double> tuple for site name and score
+public class Record implements Comparable<Record> {
+	final String name;
+	final Double score;
+	public Record(String x, Double y){
+		this.name=x;
+		this.score=y;
+	}
+	@Override
+	public int compareTo(Record arg0) {
+		return this.score.compareTo(arg0.score);
+	}
+}
+
+/* TaColMap.java */
+package taPackage;
+import java.util.HashMap;
+// a hashmap for records (site names and scores)
+public class TaColMap extends HashMap<String,Record> {
+	private static final long serialVersionUID = 1L;
+}
+
+/* TaColumn.java */
+package taPackage;
+import java.util.ArrayList;
+// an array for records (site names and scores)
+public class TaColumn extends ArrayList<Record>{
+	private static final long serialVersionUID = 1L;
+}
