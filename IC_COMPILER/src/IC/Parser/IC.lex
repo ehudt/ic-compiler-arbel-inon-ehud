@@ -53,8 +53,8 @@ false	{ return new Token(sym.FALSE,(yyline + 1)); }
 null	{ return new Token(sym.NULL,(yyline + 1)); }
 
 // rules for identifier IDs
-{CLASS_ID}*	{ return new Token(sym.CLASS_ID,(yyline + 1),yytext()); }
-{ID}*	{ return new Token(sym.ID,(yyline + 1),yytext()); }
+{CLASS_ID}	{ return new Token(sym.CLASS_ID,(yyline + 1),yytext()); }
+{ID}	{ return new Token(sym.ID,(yyline + 1),yytext()); }
 
 // rules for numbers: illegal numbers and afterwards legal numbers
 0+{DIGIT}+				{ throw new LexicalError(yytext(), (yyline + 1), (yyline + 1) + ": Lexical error: illegal integer format in token '" + yytext() + "'"); }
