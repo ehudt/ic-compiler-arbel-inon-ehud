@@ -73,7 +73,7 @@ null	{ return new Token(sym.NULL,(yyline + 1)); }
 
 // rule for strings
 \"{STRING_TEXT}\"	{ return new Token(sym.QUOTE,(yyline + 1),yytext()); }
-\"					{ throw new LexicalError(yytext(), (yyline + 1), (yyline + 1) + ": Lexical error: \" is opened in " + (yycolumn + 1) + " but is never closed."); }
+\"					{ throw new LexicalError(yytext(), (yyline + 1), (yyline + 1) + ": Lexical error: \" is opened in column " + (yycolumn + 1) + " but is never closed."); }
 // rules for comments: single-line comment followed by multi-line comment
 "//".*	{ }
 "/*"{COMMENT_TEXT}"*/"	{ }
