@@ -57,8 +57,8 @@ null	{ return new Token(sym.NULL,(yyline + 1)); }
 {ID}	{ return new Token(sym.ID,(yyline + 1),yytext()); }
 
 // rules for numbers: illegal numbers and afterwards legal numbers
-0+{DIGIT}+				{ throw new LexicalError(yytext(), (yyline + 1), (yyline + 1) + ": Lexical error: illegal integer format in token '" + yytext() + "'"); }
-0|({NONZERO}{DIGIT}*)	{ return new Token(sym.INTEGER,(yyline + 1),yytext()); }
+0+{NONZERO}{DIGIT}*				{ throw new LexicalError(yytext(), (yyline + 1), (yyline + 1) + ": Lexical error: illegal integer format in token '" + yytext() + "'"); }
+0+|({NONZERO}{DIGIT}*)	{ return new Token(sym.INTEGER,(yyline + 1),yytext()); }
 
 // rules for parentheses and punctuation
 "("	{ return new Token(sym.LP,(yyline + 1)); }
