@@ -1,6 +1,7 @@
   
  
  class Test1 extends Object
+ 	0
  	static void int x = 1;
  	boolean y = true;
  	string z = "This is a string";
