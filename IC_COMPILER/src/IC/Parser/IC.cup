@@ -1,14 +1,24 @@
 package IC.Parser;
 
 import IC.AST.*;
+import java_cup.runtime.*;
 
 ////////////////////////////////////////////
 // Symbol list (terminals and non-terminals)
 
-nonterminal Program Program;
+terminal		ASSIGN, BOOLEAN, BREAK, CLASS, COMMA;
+terminal 		CONTINUE, DIVIDE, DOT, ELSE, EQUAL;
+terminal 		EXTENDS, FALSE, GT, GTE, IF, INT;
+terminal 		LAND, LB, LCBR, LENGTH, LNEG, LOR;
+terminal 		LP, LT, LTE, MINUS, MOD, MULTIPLY;
+terminal 		NEQUAL, NEW, NULL, PLUS, RB, RCBR;
+terminal 		RETURN, RP, SEMI, STATIC, STRING;
+terminal 		THIS, TRUE, VOID, WHILE;
 
-terminal         ASSIGN;
 terminal Integer INTEGER;
+terminal String CLASS_ID, ID, QUOTE;
+
+nonterminal Program Program;
 
 //////////////////////////
 // Precedence declarations
