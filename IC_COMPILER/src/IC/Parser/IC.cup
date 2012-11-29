@@ -34,7 +34,57 @@ nonterminal Literal		literal;
 //////////////
 // The grammar
 
+program ::= classDecl*
+			{: RESULT :} 
+;
 
+classDecl ::= class CLASS [extends CLASS] '{' (field | method)* '}'
+			  {: RESULT = new :}
+;
+			  
+field ::= type ID (',' ID)* ';'
+		{:RESULT:}
+;
+method ::= [static] (type | void) ID '(' [formals] ')' '{' stmt* '}'
+		{:RESULT:}
+;
+
+formals ::= type ID (',' type ID)*
+			{:RESULT:}
+;
+
+type ::= int | boolean | string | CLASS | type '[' ']'
+			{:RESULT:}
+;
+
+stmt ::= location '=' expr ';'
+	     {:RESULT:}
+		 |
+		 call ';'
+		 {:RESULT:}
+		 |
+		 return [expr] ';'
+		 {:RESULT:}
+		 |
+		 if '(' expr ')' stmt [else stmt]
+		 {:RESULT:}
+		 |
+		 while '(' expr ')' stmt
+		 {:RESULT:}
+		 |
+		 break ';'
+		 {:RESULT:}
+		 |
+		 continue ';'
+		 {:RESULT:}
+		 |
+		 '{' stmt* '}'
+		 {:RESULT:}
+		 |
+		 type ID ['=' expr] ';'
+		 {:RESULT:}
+;		 		 		 		 
+		
 binop ::=	
 
 unop ::=	MINUS:x
