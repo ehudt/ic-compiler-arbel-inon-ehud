@@ -19,6 +19,14 @@ terminal Integer INTEGER;
 terminal String CLASS_ID, ID, QUOTE;
 
 nonterminal Program 	program;
+nonterminal ICClass 	classdecl;
+nonterminal List<ICClass> classList;
+nonterminal List<ASTNode> fmList;
+nonterminal Field		field;
+nonterminal Method		method;
+nonterminal Formal		formal
+nonterminal Type		type;
+nonterminal Statement	stmt;
 nonterminal Expression 	expr;
 nonterminal Location	location;
 nonterminal Call		call;
@@ -34,12 +42,48 @@ nonterminal Literal		literal;
 //////////////
 // The grammar
 
-program ::= classDecl*
-			{: RESULT :} 
+program ::= classList:c_list
+			{: RESULT new Program(getLine(),c_list):} 
 ;
 
-classDecl ::= class CLASS [extends CLASS] '{' (field | method)* '}'
-			  {: RESULT = new :}
+classList ::== classDecl:c
+			   {: 
+			   		RESULT = new LinkedList<ICClass>();
+			   		RESULT.add(c);
+			   :}
+			   |
+			   classList:c_list classDecl:c
+			   {: 
+			   		c_list.add(c);
+			   		RESULT = c_list;
+			   :} 
+
+classDecl ::= CLASS CLASS_ID:c_name EXTENDS CLASS_ID:super_name LCBR fmList:l RCBR
+			  {:
+			  					   
+			  :}
+			  |
+			  CLASS CLASS_ID:c_name LCBR fmList:l RCBR
+			  {:
+			 		List <Field> fie= new LinkedList<>();
+			  		List <Method> met= new LinkedList<>();
+			  		for(ASTNode n:l)
+			  		{
+						if(n instanceof Field)
+						{
+							fie.add((Field)n)
+						}
+						else 
+							if(n instanceof Method)
+							{
+								met.add((Method)n);
+							}
+							else
+							{
+								throw new SyntaxError("Class can contain only fields or methods"/*TODO*/);		  
+							}
+			  		}
+			  :}
 ;
 			  
 field ::= type ID (',' ID)* ';'
