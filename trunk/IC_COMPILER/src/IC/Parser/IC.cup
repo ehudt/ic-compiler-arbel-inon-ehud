@@ -18,7 +18,15 @@ terminal 		THIS, TRUE, VOID, WHILE;
 terminal Integer INTEGER;
 terminal String CLASS_ID, ID, QUOTE;
 
-nonterminal Program Program;
+nonterminal Program 	program;
+nonterminal Expression 	expr;
+nonterminal Location	location;
+nonterminal Call		call;
+nonterminal StaticCall	staticCall;
+nonterminal VirtualCall	virtualCall;
+nonterminal BinaryOp	binop;
+nonterminal UnaryOp		unop;
+nonterminal Literal		literal;		
 
 //////////////////////////
 // Precedence declarations
@@ -26,4 +34,29 @@ nonterminal Program Program;
 //////////////
 // The grammar
 
-Literal ::= INTEGER | NULL;
+
+binop ::=	
+
+unop ::=	MINUS:x
+			{: RESULT = UnaryOps.UMINUS; :}
+			|
+			LNEG:x
+			{: RESULT = UnaryOps.LNEG; :}
+;
+
+literal ::= INTEGER:n 
+			{:  long num_val = Long.parseLong(n);
+				if (num_val > (long)2147483648){
+					throw new SyntaxError("Integer literal out of range"/*TODO*/);
+				}
+				RESULT = new Literal(/*TODO line # */, LiteralTypes.INTEGER, n); 
+			:} 
+			| QUOTE:s 
+			{:	RESULT = new Literal(/*TODO line # */, LiteralTypes.STRING, s); :}  
+			| TRUE:b
+			{: 	RESULT = new Literal(/*TODO line # */, LiteralTypes.TRUE); :}
+			| FALSE:b 
+			{: 	RESULT = new Literal(/*TODO line # */, LiteralTypes.FALSE); :}
+			| NULL:r
+			{: 	RESULT = new Literal(/*TODO line # */, LiteralTypes.NULL); :}
+;
