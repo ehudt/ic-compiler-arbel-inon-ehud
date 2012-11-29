@@ -19,7 +19,7 @@ terminal Integer INTEGER;
 terminal String CLASS_ID, ID, QUOTE;
 
 nonterminal Program 	program;
-nonterminal ICClass 	classdecl;
+nonterminal ICClass 	classDecl;
 nonterminal List<ICClass> classList;
 nonterminal List<ASTNode> fmList;
 nonterminal List<Field>	fieldList;
@@ -114,19 +114,19 @@ classDecl ::= CLASS CLASS_ID:c_name EXTENDS CLASS_ID:super_name LCBR fmList:l RC
 
 fmList ::= fmList:fm fieldList:fl
 		   {:
-		   //Left recursion fieldList
-	       RETURN =
-		   :}
-		   |
-		   fmList:fm Method:m
-		   {:
-		   //Left recursion Method
-		   RETURN =
-		   :}
-		   |
-		   {:
-		   //Epsilon case
-		   RETURN = 
+			   //Left recursion fieldList
+		       RETURN =
+			   :}
+			   |
+			   fmList:fm Method:m
+			   {:
+			   //Left recursion Method
+			   RETURN =
+			   :}
+			   |
+			   {:
+			   //Epsilon case
+			   RETURN = 
 		   :}
 		   
 		
@@ -134,26 +134,38 @@ fmList ::= fmList:fm fieldList:fl
 			  
 fieldList ::= type:t idList:id_list SEMI
 		{:
-		List<Field> fields=new LinkedList<>();
-		for(string id: id_list)
-		{
-			Field f=new Field(t,id);
-			fields.add(f);
-		}
-		RESULT = fields;
+			List<Field> fields=new LinkedList<>();
+			for(string id: id_list)
+			{
+				Field f=new Field(t,id);
+				fields.add(f);
+			}
+			RESULT = fields;
 		:}
 ;
 
-method ::= [static] (type | void) ID '(' [formals] ')' '{' stmt* '}'
-		{:RESULT:}
+idList ::= 
+		{:
+			RESULT=		
+		:}
 ;
 
-formals ::= type ID (',' type ID)*
-			{:RESULT:}
+method ::= [STATIC] (type | VOID) ID LP [formals] RP LCBR stmt* RCBR
+		{:
+			RESULT=
+		:}
 ;
 
-type ::= int | boolean | string | CLASS | type '[' ']'
-			{:RESULT:}
+formals ::= type ID (COMMA type ID)*
+			{:
+				RESULT=
+			:}
+;
+
+type ::= INT | BOOLEAN | STRING | CLASS | type LB LR
+			{:
+				RESULT=
+			:}
 ;
 
 stmt ::= location '=' expr ';'
