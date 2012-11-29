@@ -22,7 +22,8 @@ nonterminal Program 	program;
 nonterminal ICClass 	classdecl;
 nonterminal List<ICClass> classList;
 nonterminal List<ASTNode> fmList;
-nonterminal Field		field;
+nonterminal List<Field>	fieldList;
+nonterminal List<String> idList;
 nonterminal Method		method;
 nonterminal Formal		formal
 nonterminal Type		type;
@@ -110,10 +111,39 @@ classDecl ::= CLASS CLASS_ID:c_name EXTENDS CLASS_ID:super_name LCBR fmList:l RC
 			  		RESULT = new ICClass(getLine(), c_name, fie, met);
 			  :}
 ;
-			  
-field ::= type ID (',' ID)* ';'
-		{:RESULT:}
+
+fmList ::= fmList:fm fieldList:fl
+		   {:
+		   //Left recursion fieldList
+	       RETURN =
+		   :}
+		   |
+		   fmList:fm Method:m
+		   {:
+		   //Left recursion Method
+		   RETURN =
+		   :}
+		   |
+		   {:
+		   //Epsilon case
+		   RETURN = 
+		   :}
+		   
+		
 ;
+			  
+fieldList ::= type:t idList:id_list SEMI
+		{:
+		List<Field> fields=new LinkedList<>();
+		for(string id: id_list)
+		{
+			Field f=new Field(t,id);
+			fields.add(f);
+		}
+		RESULT = fields;
+		:}
+;
+
 method ::= [static] (type | void) ID '(' [formals] ')' '{' stmt* '}'
 		{:RESULT:}
 ;
