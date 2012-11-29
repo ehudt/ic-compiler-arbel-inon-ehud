@@ -43,7 +43,9 @@ nonterminal Literal		literal;
 // The grammar
 
 program ::= classList:c_list
-			{: RESULT new Program(getLine(),c_list):} 
+			{: 
+					RESULT = new Program(c_list);
+			:} 
 ;
 
 classList ::== classDecl:c
@@ -60,11 +62,33 @@ classList ::== classDecl:c
 
 classDecl ::= CLASS CLASS_ID:c_name EXTENDS CLASS_ID:super_name LCBR fmList:l RCBR
 			  {:
-			  					   
+			  		/* TODO: Check how to join the 2 functions*/
+			  		
+			  		// This case handles Class declaration with Extends
+			  		List <Field> fie= new LinkedList<>();
+			  		List <Method> met= new LinkedList<>();
+			  		for(ASTNode n:l)
+			  		{
+						if(n instanceof Field)
+						{
+							fie.add((Field)n)
+						}
+						else 
+							if(n instanceof Method)
+							{
+								met.add((Method)n);
+							}
+							else
+							{
+								throw new SyntaxError("Class can contain only fields or methods"/*TODO*/);		  
+							}
+			  		}
+			  		RESULT = new ICClass(getLine(), c_name,super_name, fie, met); 			   
 			  :}
 			  |
 			  CLASS CLASS_ID:c_name LCBR fmList:l RCBR
 			  {:
+			  		// This case handless Class declaration
 			 		List <Field> fie= new LinkedList<>();
 			  		List <Method> met= new LinkedList<>();
 			  		for(ASTNode n:l)
@@ -83,6 +107,7 @@ classDecl ::= CLASS CLASS_ID:c_name EXTENDS CLASS_ID:super_name LCBR fmList:l RC
 								throw new SyntaxError("Class can contain only fields or methods"/*TODO*/);		  
 							}
 			  		}
+			  		RESULT = new ICClass(getLine(), c_name, fie, met);
 			  :}
 ;
 			  
