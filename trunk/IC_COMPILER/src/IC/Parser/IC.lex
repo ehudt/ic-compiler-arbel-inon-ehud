@@ -73,8 +73,10 @@ null	{ return new Token(sym.NULL,(yyline + 1)); }
 
 // rules for strings and comments
 \"{STRING_TEXT}\"	{ return new Token(sym.QUOTE,(yyline + 1),yytext()); }
+\"					{ throw new LexicalError(yytext(), (yyline + 1), (yyline + 1) + ": Lexical error: illegal string literal"); }
 "//".*	{ }
 "/*"{COMMENT_TEXT}"*/"	{ }
+"/*" 				{ throw new LexicalError(yytext(), (yyline + 1), (yyline + 1) + ": Lexical error: Unclosed multi-line comment"); }
 
 // rules for operators: boolean and arithmetic
 "="	{ return new Token(sym.ASSIGN,(yyline + 1)); }
