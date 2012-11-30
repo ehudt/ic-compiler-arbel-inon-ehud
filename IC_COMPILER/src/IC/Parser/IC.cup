@@ -33,7 +33,7 @@ terminal 		NEQUAL, NEW, NULL, PLUS, RB, RCBR;
 terminal 		RETURN, RP, SEMI, STATIC, STRING;
 terminal 		THIS, TRUE, UMINUS, VOID, WHILE;
 
-terminal Integer INTEGER;
+terminal String INTEGER;
 terminal String CLASS_ID, ID, QUOTE;
 
 nonterminal Program 	program;
@@ -165,10 +165,9 @@ method ::= STATIC type:t ID:met_name LP formalList:fl RP LCBR stmtList:sl RCBR
 				RESULT= new StaticMethod(t, met_name, fl, sl);
 		   :}
 		   |
-		   STATIC VOID ID:met_name LP formalList:fl RP LCBR stmtList:sl RCBR
+		   STATIC:st VOID ID:met_name LP formalList:fl RP LCBR stmtList:sl RCBR
 		   {:
-		   		/*TODO checkout about PrimitiveType*/
-				RESULT= new StaticMethod(new PrimitiveType(parser.getCurrentLine(), DataTypes.VOID) ,met_name, fl, sl);
+				RESULT= new StaticMethod(new PrimitiveType(stleft, DataTypes.VOID) ,met_name, fl, sl);
 		   :}
 		   |
 		   type:t ID:met_name LP formalList:fl RP LCBR stmtList:sl RCBR
@@ -178,7 +177,6 @@ method ::= STATIC type:t ID:met_name LP formalList:fl RP LCBR stmtList:sl RCBR
 		   |
 		   VOID:v ID:met_name LP formalList:fl RP LCBR stmtList:sl RCBR
 		   {:
-		   		/*TODO checkout about PrimitiveType*/
 				RESULT=new VirtualMethod(new PrimitiveType(vleft, DataTypes.VOID), met_name, fl, sl);
 		   :}
 ;
@@ -409,11 +407,11 @@ logicalUnOp ::= LNEG:x
 			{: RESULT = UnaryOps.LNEG; :};
 
 literal ::= INTEGER:n 
-			{:  /*long num_val = Long.parseLong(n);
-				if (num_val > (long)2147483648){
+			{:  long num_val = Long.parseLong(n);
+				if (num_val > 2147483648L){
 					throw new SyntaxError(nleft, "Integer literal out of range: " + n);
-				}*/
-				RESULT = new Literal(nleft, LiteralTypes.INTEGER, n); 
+				}
+				RESULT = new Literal(nleft, LiteralTypes.INTEGER, (int)num_val); 
 			:} 
 			| QUOTE:s 
 			{:	RESULT = new Literal(sleft, LiteralTypes.STRING, s); :}  

@@ -41,10 +41,11 @@ public class Compiler
     		Lexer scanner = new Lexer(txtFile);
     		
     		parser parser = new parser(scanner);
-    		
-    		Program program = (Program)parser.parse().value;
+    		Symbol parseSymbol = new Symbol(1);
+    		parseSymbol = parser.parse();
+    		Program programRoot = (Program)parseSymbol.value;
     		PrettyPrinter printer = new PrettyPrinter(args[0]);
-    		System.out.println(program.accept(printer));
+    		System.out.println(programRoot.accept(printer));
     	
     		/* Run the lexical analyzer on the input file and output
     		 * the tokens in the file sequentially. If EOF is reached,
@@ -86,6 +87,7 @@ public class Compiler
     	}
     	catch (Exception e) {
     		System.out.println("Error: " + e.getMessage());
+    		e.printStackTrace();
     		System.exit(-1);
     	}
     	

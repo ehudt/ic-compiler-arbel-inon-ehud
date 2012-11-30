@@ -9,9 +9,9 @@ import java_cup.runtime.Symbol;
  */
 public class Token extends Symbol {
 	/* The line in which the token appears */
-	private int line;
+	//private int line;
 	/* A token's value, if applicable */
-	private String value;
+	//private String value;
 	/* The token's name. This is derived by the constructor from the token ID. */
 	//private String name;
 	
@@ -31,21 +31,21 @@ public class Token extends Symbol {
 	 * @param line	The line in which the token appears
 	 * @param value	The token's string value.
 	 */
-    public Token(int id, int line, String value) {
+    public Token(int id, int line, Object value) {
         // Use the constructor of the superclass to hold the token ID.
-    	super(id, null);
+    	super(id, line, 0, value);
         
         // A line's number must be positive
-		if(line <= 0){
-			throw new IllegalArgumentException("Line number can't be negative");
-		}
-        this.line = line;
+		//if(line <= 0){
+		//	throw new IllegalArgumentException("Line number can't be negative");
+		//}
+        //this.line = line;
         
         // A token's value cannot be null. If there is no value, it is represented as "".
-        if(value == null) {
-        	throw new IllegalArgumentException("Token value cannot be NULL.");
-        }
-    	this.value = value;
+        //if(value == null) {
+        //	throw new IllegalArgumentException("Token value cannot be NULL.");
+        //}
+    	//this.value = value;
     	
     	/*// Resolves the token's name, to be printed later on.
 		this.name = IC.Parser.sym.getNameById(id);
@@ -66,16 +66,16 @@ public class Token extends Symbol {
      * If the token has no value then the empty string, "", is returned.
      * @return	the specific value for a token
      */
-    public String getValue() {
-    	return this.value;
-    }
+    //public String getValue() {
+    //	return (String)this.value;
+    //}
     
     /**
      * Get the line in which this token appears.
      * @return	the line in which this token appears
      */
     public int getLine() {
-    	return this.line;
+    	return this.left;
     }
     /*
     /**
