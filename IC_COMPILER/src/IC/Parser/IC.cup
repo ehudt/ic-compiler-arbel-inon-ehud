@@ -25,7 +25,7 @@ nonterminal List<ASTNode> fmList;
 nonterminal List<Field>	fieldList;
 nonterminal List<String> idList;
 nonterminal Method		method;
-nonterminal StatementsBlock stmtList;
+nonterminal List<Statement> stmtList;
 nonterminal Formal		formal
 nonterminal List<Formal> formalList;
 nonterminal Type		type;
@@ -185,24 +185,24 @@ idList ::= ID:id_name
 
 method ::= STATIC type:t ID:met_name LP formalList:fl RP LCBR stmtList:sl RCBR
 		   {:
-				RESULT= new StaticMethod(t, met_name, fl, sl.getStatements())
+				RESULT= new StaticMethod(t, met_name, fl, sl)
 		   :}
 		   |
 		   STATIC VOID ID:met_name LP formalList:fl RP LCBR stmtList:sl RCBR
 		   {:
 		   		/*TODO checkout about PrimitiveType*/
-				RESULT= new StaticMethod(new PrimitiveType(getLine(), DataTypes.VOID) ,met_name, fl, sl.getStatements())
+				RESULT= new StaticMethod(new PrimitiveType(getLine(), DataTypes.VOID) ,met_name, fl, sl)
 		   :}
 		   |
 		   type:t ID:met_name LP formalList:fl RP LCBR stmtList:sl RCBR
 		   {:
-				RESULT=new VirtualMethod(t, met_name, fl, sl.getStatements())
+				RESULT=new VirtualMethod(t, met_name, fl, sl)
 		   :}
 		   |
 		   VOID ID:met_name LP formalList:fl RP LCBR stmtList:sl RCBR
 		   {:
 		   		/*TODO checkout about PrimitiveType*/
-				RESULT=new VirtualMethod(new PrimitiveType(getLine(), DataTypes.VOID), met_name, fl, sl.getStatements())
+				RESULT=new VirtualMethod(new PrimitiveType(getLine(), DataTypes.VOID), met_name, fl, sl)
 		   :}
 ;
 
@@ -224,7 +224,7 @@ formalList ::= formalList:fl COMMA formal:f
 			   :}
 ;				
 
-formals ::= type:t ID:formal_name
+formal ::= type:t ID:formal_name
 			{:
 				RESULT=new Formal(t,formal_name);
 			:}
@@ -256,33 +256,76 @@ type ::= INT:int
 				RESULT=t;
 		 :}
 ;
+stmtList ::= stmtList:sl stmt:s
+		      {:
+		     	 	sl.add(s);
+					RESULT=sl;
+		      :}
+		      |
+		      {:
+		      		RESULT = new LinkedList<>();
+		      :}
+;
 
-stmt ::= location '=' expr ';'
-	     {:RESULT:}
+stmt ::= location:l ASSIGN expr:e SEMI
+	     {:
+	     	RESULT = new Assignment(l,e);
+	     :}
 		 |
-		 call ';'
-		 {:RESULT:}
+		 call:c SEMI
+		 {:
+		 	RESULT = new CallStatement(c);
+		 :}
 		 |
-		 return [expr] ';'
-		 {:RESULT:}
+		 RETURN:r expr:e SEMI
+		 {:
+		 	RESULT= new Return(rleft,e);
+		 :}
 		 |
-		 if '(' expr ')' stmt [else stmt]
-		 {:RESULT:}
+		 RETURN:r SEMI
+		 {:
+		 	RESULT= new Return(rleft);
+		 :}
 		 |
-		 while '(' expr ')' stmt
-		 {:RESULT:}
+		 IF LP expr:e RP stmt:st ELSE stmt:s_else
+		 {:
+		 	RESULT = new If(e, st, s_else);
+		 :}
 		 |
-		 break ';'
-		 {:RESULT:}
+		 IF LP expr:e RP stmt:st
+		 {:
+		 	RESULT = new If(e, st);
+		 :}
 		 |
-		 continue ';'
-		 {:RESULT:}
+		 while LP expr:e RP stmt:st
+		 {:
+		 	RESULT = new While(e,st);
+		 :}
 		 |
-		 '{' stmt* '}'
-		 {:RESULT:}
+		 BREAK:b SEMI
+		 {:
+		 	RESULT = new Break(bleft);
+		 :}
 		 |
-		 type ID ['=' expr] ';'
-		 {:RESULT:}
+		 CONTINUE:c SEMI
+		 {:
+		 	RESULT = new Continue(cleft);
+		 :}
+		 |
+		 LCBR:lb stmtList:sl RCBR
+		 {:
+		 	RESULT = new StatementsBlock(lbleft,sl);
+		 :}
+		 |
+		 type:t ID:id ASSIGN expr:e SEMI
+		 {:
+		 	RESULT = new LocalVariable(t, id, e); 
+		 :}
+		 |
+		 type:t ID:id SEMI
+		 {:
+			RESULT = new LocalVariable(t, id);
+		 :}
 ;		 		 		 		 
 
 exprList ::=	/* empty list */
