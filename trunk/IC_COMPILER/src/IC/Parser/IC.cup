@@ -25,7 +25,9 @@ nonterminal List<ASTNode> fmList;
 nonterminal List<Field>	fieldList;
 nonterminal List<String> idList;
 nonterminal Method		method;
+nonterminal StatementsBlock stmtList;
 nonterminal Formal		formal
+nonterminal List<Formal> formalList;
 nonterminal Type		type;
 nonterminal Statement	stmt;
 nonterminal Expression 	expr;
@@ -181,22 +183,78 @@ idList ::= ID:id_name
 		
 ;
 
-method ::= [STATIC] (type | VOID) ID LP [formals] RP LCBR stmt* RCBR
-		{:
-			RESULT=
-		:}
+method ::= STATIC type:t ID:met_name LP formalList:fl RP LCBR stmtList:sl RCBR
+		   {:
+				RESULT= new StaticMethod(t, met_name, fl, sl.getStatements())
+		   :}
+		   |
+		   STATIC VOID ID:met_name LP formalList:fl RP LCBR stmtList:sl RCBR
+		   {:
+		   		/*TODO checkout about PrimitiveType*/
+				RESULT= new StaticMethod(new PrimitiveType(getLine(), DataTypes.VOID) ,met_name, fl, sl.getStatements())
+		   :}
+		   |
+		   type:t ID:met_name LP formalList:fl RP LCBR stmtList:sl RCBR
+		   {:
+				RESULT=new VirtualMethod(t, met_name, fl, sl.getStatements())
+		   :}
+		   |
+		   VOID ID:met_name LP formalList:fl RP LCBR stmtList:sl RCBR
+		   {:
+		   		/*TODO checkout about PrimitiveType*/
+				RESULT=new VirtualMethod(new PrimitiveType(getLine(), DataTypes.VOID), met_name, fl, sl.getStatements())
+		   :}
 ;
 
-formals ::= type ID (COMMA type ID)*
+formalList ::= formalList:fl COMMA formal:f
+			   {:
+			   fl.add(f);
+			   RESULT = fl;
+			   :}
+			   |
+			   formal:f
+			   {:
+			   List<Formal> fl=new LinkedList<>();
+			   fl.add(f);
+			   RESULT =fl;
+			   :}
+			   |
+			   {:
+			   RESULT = new LinkedList<Formal>();
+			   :}
+;				
+
+formals ::= type:t ID:formal_name
 			{:
-				RESULT=
+				RESULT=new Formal(t,formal_name);
 			:}
 ;
 
-type ::= INT | BOOLEAN | STRING | CLASS | type LB LR
-			{:
-				RESULT=
-			:}
+type ::= INT:int
+		 {:
+				RESULT=new PrimitiveType(intleft,DataTypes.INT);
+		 :} 
+		 | 
+		 BOOLEAN:bool
+		 {:
+				RESULT=new PrimitiveType(boolleft,DataTypes.BOOLEAN);
+		 :}  
+		 | 
+		 STRING:str 
+		 {:
+				RESULT=new PrimitiveType(strleft,DataTypes.STRING); 
+		 :} 
+		 | 
+		 CLASS_ID:c_name
+		 {:
+				RESULT=new UserType(c_nameleft, c_name);
+		 :}  
+		 | 
+		 type:t LB RB
+		 {:
+		 		t.incrementDimension();
+				RESULT=t;
+		 :}
 ;
 
 stmt ::= location '=' expr ';'
