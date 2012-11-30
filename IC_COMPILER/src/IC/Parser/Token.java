@@ -13,7 +13,7 @@ public class Token extends Symbol {
 	/* A token's value, if applicable */
 	private String value;
 	/* The token's name. This is derived by the constructor from the token ID. */
-	private String name;
+	//private String name;
 	
 	/** 
 	 * Constructor for tokens without a value. This is used for any token whose value 
@@ -47,11 +47,11 @@ public class Token extends Symbol {
         }
     	this.value = value;
     	
-    	// Resolves the token's name, to be printed later on.
+    	/*// Resolves the token's name, to be printed later on.
 		this.name = IC.Parser.sym.getNameById(id);
 		if(this.name.isEmpty()){
 			throw new IllegalArgumentException("Token id is invalid");
-		}
+		}*/
     }
     /**
      * Get the current token's ID
@@ -77,13 +77,13 @@ public class Token extends Symbol {
     public int getLine() {
     	return this.line;
     }
-    
+    /*
     /**
      * Get the token's string name. "
      * @return	this token's name in string representation
      */
-    public String getName(){
+    /*public String getName(){
     	return name;
-    }
+    }*/
 }
 
