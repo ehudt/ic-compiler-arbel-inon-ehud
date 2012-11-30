@@ -1,16 +1,21 @@
 package IC.Parser;
 
 import IC.AST.*;
+import IC.*;
+import java.util.List;
+import java.util.LinkedList;
 import java_cup.runtime.*;
 import IC.Parser.Lexer;
 
 parser code  {:	
 	private Lexer lexer;
 
-	public Parser(Lexer lexer) {
+	public parser(Lexer lexer) {
 		super(lexer);
 		this.lexer = lexer;
-	} :};
+	} 
+
+:};
 	
 ////////////////////////////////////////////
 // Symbol list (terminals and non-terminals)
@@ -22,7 +27,7 @@ terminal 		LAND, LB, LCBR, LENGTH, LNEG, LOR;
 terminal 		LP, LT, LTE, MINUS, MOD, MULTIPLY;
 terminal 		NEQUAL, NEW, NULL, PLUS, RB, RCBR;
 terminal 		RETURN, RP, SEMI, STATIC, STRING;
-terminal 		THIS, TRUE, VOID, WHILE;
+terminal 		THIS, TRUE, UMINUS, VOID, WHILE;
 
 terminal Integer INTEGER;
 terminal String CLASS_ID, ID, QUOTE;
@@ -35,7 +40,7 @@ nonterminal List<Field>	fieldList;
 nonterminal List<String> idList;
 nonterminal Method		method;
 nonterminal List<Statement> stmtList;
-nonterminal Formal		formal
+nonterminal Formal		formal;
 nonterminal List<Formal> formalList;
 nonterminal Type		type;
 nonterminal Statement	stmt;
@@ -77,7 +82,7 @@ program ::= classList:c_list
 			:} 
 ;
 
-classList ::== classDecl:c
+classList ::= classDecl:c
 			   {: 
 			   		RESULT = new LinkedList<ICClass>();
 			   		RESULT.add(c);
@@ -88,6 +93,7 @@ classList ::== classDecl:c
 			   		c_list.add(c);
 			   		RESULT = c_list;
 			   :} 
+;
 
 classDecl ::= CLASS:cl CLASS_ID:c_name EXTENDS CLASS_ID:super_name LCBR fmList:l RCBR
 			  {:
@@ -110,7 +116,7 @@ fmList ::= fmList:fm fieldList:fl
 		       RESULT = fm;
 		   :}
 			|
-				fmList:fm Method:m
+				fmList:fm method:m
 				{:
 				//Left recursion Method
 				fm.add(m);
@@ -265,7 +271,7 @@ stmt ::= location:l ASSIGN expr:e SEMI
 		 	RESULT = new If(e, st);
 		 :}
 		 |
-		 while LP expr:e RP stmt:st
+		 WHILE LP expr:e RP stmt:st
 		 {:
 		 	RESULT = new While(e,st);
 		 :}
@@ -327,15 +333,15 @@ expr ::=		location:l
 				{: RESULT = e; :}
 ;
 
-binExpr ::=		expr:e1 mathbinop:op expr:e2
+binExpr ::=		expr:e1 mathBinOp:op expr:e2
 				{: RESULT = new MathBinaryOp(e1, op, e2); :}
-				| expr:e1 logicalbinop:op expr:e2
+				| expr:e1 logicalBinOp:op expr:e2
 				{: RESULT = new LogicalBinaryOp(e1, op, e2); :}
 ;
 
-unaryExpr ::=	mathunop:op expr:e
+unExpr ::=		mathUnOp:op expr:e
 				{: RESULT = new MathUnaryOp(op, e); :}
-				| logicalunop:op expr:e
+				| logicalUnOp:op expr:e
 				{: RESULT = new LogicalUnaryOp(op, e); :}
 ; 
 
@@ -394,7 +400,7 @@ logicalBinOp ::= LAND:x
 			{: RESULT = BinaryOps.NEQUAL; :}
 ;
 
-mathUnOp ::=	MINUS:x
+mathUnOp ::=	UMINUS:x
 			{: RESULT = UnaryOps.UMINUS; :};
 logicalUnOp ::= LNEG:x
 			{: RESULT = UnaryOps.LNEG; :};
