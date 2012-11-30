@@ -39,6 +39,12 @@ nonterminal Literal		literal;
 
 //////////////////////////
 // Precedence declarations
+precedence left PLUS, MINUS;
+precedence left TIMES, DIVIDE;
+precedence nonassoc EQUALS;
+precedence left  ELSE;
+
+
 
 //////////////
 // The grammar
