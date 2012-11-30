@@ -50,10 +50,10 @@ nonterminal Location	location;
 nonterminal Call		call;
 nonterminal StaticCall	staticCall;
 nonterminal VirtualCall	virtualCall;
-nonterminal BinaryOp	mathBinOp;
-nonterminal BinaryOp	logicalBinOp;
-nonterminal UnaryOp		mathUnOp;
-nonterminal UnaryOp		logicalUnOp;
+nonterminal BinaryOps	mathBinOp;
+nonterminal BinaryOps	logicalBinOp;
+nonterminal UnaryOps	mathUnOp;
+nonterminal UnaryOps	logicalUnOp;
 nonterminal BinaryOp	binExpr;
 nonterminal UnaryOp		unExpr;
 nonterminal Literal		literal;	
@@ -132,7 +132,7 @@ fmList ::= fmList:fm fieldList:fl
 			  
 fieldList ::= type:t idList:id_list SEMI
 		{:
-			List<Field> fields=new LinkedList<>();
+			List<Field> fields=new LinkedList<Field>();
 			for(string id: id_list)
 			{
 				Field f=new Field(t,id);
@@ -144,7 +144,7 @@ fieldList ::= type:t idList:id_list SEMI
 
 idList ::= ID:id_name
 		   {:
-				List<String> ids=new LinkedList<>();
+				List<String> ids=new LinkedList<String>();
 				ids.add(id_name);
 				RESULT= ids;		
 		   :}
@@ -188,9 +188,9 @@ formalList ::= formalList:fl COMMA formal:f
 			   |
 			   formal:f
 			   {:
-			   List<Formal> fl=new LinkedList<>();
+			   List<Formal> fl=new LinkedList<Formal>();
 			   fl.add(f);
-			   RESULT =fl;
+			   RESULT = fl;
 			   :}
 			   |
 			   {:
@@ -237,7 +237,7 @@ stmtList ::= stmtList:sl stmt:s
 		      :}
 		      |
 		      {:
-		      		RESULT = new LinkedList<>();
+		      		RESULT = new LinkedList<Statement>();
 		      :}
 ;
 
