@@ -39,11 +39,16 @@ nonterminal Literal		literal;
 
 //////////////////////////
 // Precedence declarations
-precedence left PLUS, MINUS;
-precedence left TIMES, DIVIDE;
-precedence nonassoc EQUALS;
-precedence left  ELSE;
-
+precedence right ASSIGN;
+precedence left  LOR;
+precedence left  LAND;
+precedence left  EQUAL, NEQUAL;
+precedence left  LT, LTE, GT, GTE;
+precedence left  PLUS, MINUS;
+precedence left  MULTIPLY, DIVIDE, MOD;
+precedence right UMINUS, LNEG;
+precedence left  LB, RB, LP, RP, DOT;
+precedence left  ELSE; //Maybe if
 
 
 //////////////
