@@ -159,24 +159,24 @@ idList ::= ID:id_name
 
 method ::= STATIC type:t ID:met_name LP formalList:fl RP LCBR stmtList:sl RCBR
 		   {:
-				RESULT= new StaticMethod(t, met_name, fl, sl)
+				RESULT= new StaticMethod(t, met_name, fl, sl);
 		   :}
 		   |
 		   STATIC VOID ID:met_name LP formalList:fl RP LCBR stmtList:sl RCBR
 		   {:
 		   		/*TODO checkout about PrimitiveType*/
-				RESULT= new StaticMethod(new PrimitiveType(getLine(), DataTypes.VOID) ,met_name, fl, sl)
+				RESULT= new StaticMethod(new PrimitiveType(getLine(), DataTypes.VOID) ,met_name, fl, sl);
 		   :}
 		   |
 		   type:t ID:met_name LP formalList:fl RP LCBR stmtList:sl RCBR
 		   {:
-				RESULT=new VirtualMethod(t, met_name, fl, sl)
+				RESULT=new VirtualMethod(t, met_name, fl, sl);
 		   :}
 		   |
-		   VOID ID:met_name LP formalList:fl RP LCBR stmtList:sl RCBR
+		   VOID:v ID:met_name LP formalList:fl RP LCBR stmtList:sl RCBR
 		   {:
 		   		/*TODO checkout about PrimitiveType*/
-				RESULT=new VirtualMethod(new PrimitiveType(getLine(), DataTypes.VOID), met_name, fl, sl)
+				RESULT=new VirtualMethod(new PrimitiveType(vleft, DataTypes.VOID), met_name, fl, sl);
 		   :}
 ;
 
@@ -305,7 +305,7 @@ stmt ::= location:l ASSIGN expr:e SEMI
 exprList ::=	/* empty list */
 				{: RESULT = new LinkedList<Expression>(); :}
 				| exprList:el COMMA expr:e
-				{: el.add(e); RESULT = el :}
+				{: el.add(e); RESULT = el; :}
 				| expr:e
 				{: List<Expression> el = new LinkedList<Expression>();
 				   el.add(e); RESULT = el; :}
