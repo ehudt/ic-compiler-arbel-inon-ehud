@@ -2,7 +2,18 @@ package IC.Parser;
 
 import IC.AST.*;
 import java_cup.runtime.*;
+import IC.Parser.Lexer;
 
+parser code  {:
+	public boolean printAST;
+	
+	private Lexer lexer;
+
+	public Parser(Lexer lexer) {
+		super(lexer);
+		this.lexer = lexer;
+	} :};
+	
 ////////////////////////////////////////////
 // Symbol list (terminals and non-terminals)
 
