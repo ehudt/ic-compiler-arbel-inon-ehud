@@ -425,4 +425,19 @@ public class PrettyPrinter implements Visitor {
 		--depth;
 		return output.toString();
 	}
+
+	@Override
+	public Object visit(FieldMethodList fieldMethodList) {
+		StringBuffer output = new StringBuffer();
+		
+		indent(output, fieldMethodList);
+		output.append("Field method list");
+		depth += 2;
+		for (Field field : fieldMethodList.getFieldList())
+			output.append(field.accept(this));
+		for (Method method : fieldMethodList.getMethodList())
+			output.append(method.accept(this));
+		depth -= 2;
+		return output.toString();
+	}
 }
