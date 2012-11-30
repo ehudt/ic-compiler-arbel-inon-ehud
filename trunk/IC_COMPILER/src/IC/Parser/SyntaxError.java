@@ -2,16 +2,16 @@ package IC.Parser;
 
 public class SyntaxError extends Exception {
 	private int line;
-	private String token;
+	private String error;
 	
-	public SyntaxError(int line, String token){
+	public SyntaxError(int line, String error){
 		super();
 		this.line = line;
-		this.token = token;
+		this.error = error;
 	}
 	
 	public String toString(){
-		return "SyntexError in line: " + line + "in Token: " + token;
+		return "Syntax Error in line: " + line + ": " + error;
 	}
 	
 }
