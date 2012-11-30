@@ -6,6 +6,19 @@ import java.util.List;
 import java.util.ArrayList;
 import IC.DataTypes;
 
+//Terminals
+terminal		ASSIGN, BOOLEAN, BREAK, CLASS, COMMA;
+terminal 		CONTINUE, DIVIDE, DOT, ELSE, EQUAL;
+terminal 		EXTENDS, FALSE, GT, GTE, IF, INT;
+terminal 		LAND, LB, LCBR, LENGTH, LNEG, LOR;
+terminal 		LP, LT, LTE, MINUS, MOD, MULTIPLY;
+terminal 		NEQUAL, NEW, NULL, PLUS, RB, RCBR;
+terminal 		RETURN, RP, SEMI, STATIC, STRING;
+terminal 		THIS, TRUE, VOID, WHILE;
+terminal Integer INTEGER;
+terminal String CLASS_ID, ID, QUOTE;
+
+
 //NONterminals
 non terminal ICClass libic;
 non terminal LibraryMethod libmethod;
@@ -14,3 +27,44 @@ non terminal Formal formal;
 non terminal List<Formal> formal_list;
 non terminal Type type;
 
+//Precedences
+
+//The Grammer
+
+libic ::= CLASS CLASS_ID:libary LCBR libmethod_list:libmetlist RCBR
+		{: if (! libary.equals("Libary"))
+				throw new SyntexError(//TODO);
+				RESULT = new ICClass(libaryleft, libary, new ArrayList<Field>(), libmetlist);
+		:};
+		
+libmethod_list ::= libmethod:lm	
+		{:	List<Method> l = new ArraysList<Method>();
+			l.add(lm);
+			RESULT = l;
+		| libmethod_list:lmlst libmethod:lm
+		{:	lmlst.add(lm)
+			RESULT = lmlst;
+		:};
+		
+libmethod ::= STATIC VOID ID:id LP RP SEMI
+		{: RESULT = new LibaryMethod(new PremitiveType(idleft,DataTypes.VOID), id, new ArrayList<Formal>()); :}
+		| STATIC type:t ID:id LP RP SEMI
+		{: RESULT = new LibaryMethod(t, id, new ArrayList<Formal>()); :}
+		| STATIC type:t ID:id LP formal_list:fl RP SEMI
+		{: RESULT = new LibaryMethod(t, id, fl); :}
+		| STATIC VOID ID:id LP formal_list:fl RP SEMI
+		{: RESULT = new LibaryMethod(new PremitiveType(idleft,DataTypes.VOID), id, fl); :} 
+;
+
+formal_list ::= formal:f
+		{:  List<Formal> l = new ArrayList<Formal>();
+			l.add(f);
+			RESULT = l; :}
+		| formal_list:fl COMMA formal:f
+		{:  fl.add(f);
+			RESULT = fl; :} 
+;					 
+
+formal ::= type:t ID:id
+		{: RESULT = new Formal(t, id); :}
+;		
