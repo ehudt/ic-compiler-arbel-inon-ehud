@@ -21,7 +21,7 @@ terminal String CLASS_ID, ID, QUOTE;
 nonterminal Program 	program;
 nonterminal ICClass 	classDecl;
 nonterminal List<ICClass> classList;
-nonterminal List<ASTNode> fmList;
+nonterminal FieldMethodList fmList;
 nonterminal List<Field>	fieldList;
 nonterminal List<String> idList;
 nonterminal Method		method;
@@ -82,52 +82,12 @@ classList ::== classDecl:c
 
 classDecl ::= CLASS:cl CLASS_ID:c_name EXTENDS CLASS_ID:super_name LCBR fmList:l RCBR
 			  {:
-			  		/* TODO: Check how to join the 2 functions*/
-			  		
-			  		// This case handles Class declaration with Extends
-			  		List <Field> fie= new LinkedList<>();
-			  		List <Method> met= new LinkedList<>();
-			  		for(ASTNode n:l)
-			  		{
-						if(n instanceof Field)
-						{
-							fie.add((Field)n)
-						}
-						else 
-							if(n instanceof Method)
-							{
-								met.add((Method)n);
-							}
-							else
-							{
-								throw new SyntaxError("Class can contain only fields or methods"/*TODO*/);		  
-							}
-			  		}
-			  		RESULT = new ICClass(clleft, c_name,super_name, fie, met); 			   
+			  		RESULT = new ICClass(clleft, c_name,super_name, l.getFieldList(), l.getMethodList()); 			   
 			  :}
 			  |
 			  CLASS:cl CLASS_ID:c_name LCBR fmList:l RCBR
 			  {:
-			  		// This case handless Class declaration
-			 		List <Field> fie= new LinkedList<>();
-			  		List <Method> met= new LinkedList<>();
-			  		for(ASTNode n:l)
-			  		{
-						if(n instanceof Field)
-						{
-							fie.add((Field)n)
-						}
-						else 
-							if(n instanceof Method)
-							{
-								met.add((Method)n);
-							}
-							else
-							{
-								throw new SyntaxError("Class can contain only fields or methods"/*TODO*/);		  
-							}
-			  		}
-			  		RESULT = new ICClass(clleft, c_name, fie, met);
+			  		RESULT = new ICClass(clleft, c_name, l.getFieldList(), l.getMethodList());
 			  :}
 ;
 
@@ -151,8 +111,7 @@ fmList ::= fmList:fm fieldList:fl
 		   {:
 			   //Epsilon case
 			   RESULT = new LinkedList<ASTNode>(); 
-		   :}
-		   
+		   :}   
 		
 ;
 			  
