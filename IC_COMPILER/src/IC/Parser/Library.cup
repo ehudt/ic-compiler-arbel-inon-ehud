@@ -68,3 +68,10 @@ formal_list ::= formal:f
 formal ::= type:t ID:id
 		{: RESULT = new Formal(t, id); :}
 ;		
+
+type ::= INT:int {: RESULT = new PrimitiveType(intleft, DataTypes.INT); :}
+		| BOOLEAN:bool {: RESULT = new PrimitiveType(boolleft, DataTypes.BOOLEAN); :}
+		| CLASS_ID:class {: RESULT = new PrimitiveType(classleft, DataTypes.CLASS_ID); :}
+		| STRING:str {: RESULT = new PrimitiveType(strleft, DataTypes.STRING); :}
+		| typt:t LB RB {: t.incrementDimension()//TODO; RESULT = t; :}
+;
