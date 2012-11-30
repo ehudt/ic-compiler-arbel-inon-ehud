@@ -4,9 +4,7 @@ import IC.AST.*;
 import java_cup.runtime.*;
 import IC.Parser.Lexer;
 
-parser code  {:
-	public boolean printAST;
-	
+parser code  {:	
 	private Lexer lexer;
 
 	public Parser(Lexer lexer) {

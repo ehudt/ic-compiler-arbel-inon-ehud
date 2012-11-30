@@ -5,7 +5,19 @@ import java_cup.runtime.*;
 import java.util.List;
 import java.util.ArrayList;
 import IC.DataTypes;
+import IC.Parser.Lexer;
 
+
+parser code  {:
+	
+	private Lexer lexer;
+
+	public Parser(Lexer lexer) {
+		super(lexer);
+		this.lexer = lexer;
+	}
+	:};
+	
 //Terminals
 terminal		ASSIGN, BOOLEAN, BREAK, CLASS, COMMA;
 terminal 		CONTINUE, DIVIDE, DOT, ELSE, EQUAL;
