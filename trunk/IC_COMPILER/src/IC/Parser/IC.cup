@@ -78,7 +78,7 @@ classList ::== classDecl:c
 			   		RESULT = c_list;
 			   :} 
 
-classDecl ::= CLASS CLASS_ID:c_name EXTENDS CLASS_ID:super_name LCBR fmList:l RCBR
+classDecl ::= CLASS:cl CLASS_ID:c_name EXTENDS CLASS_ID:super_name LCBR fmList:l RCBR
 			  {:
 			  		/* TODO: Check how to join the 2 functions*/
 			  		
@@ -101,10 +101,10 @@ classDecl ::= CLASS CLASS_ID:c_name EXTENDS CLASS_ID:super_name LCBR fmList:l RC
 								throw new SyntaxError("Class can contain only fields or methods"/*TODO*/);		  
 							}
 			  		}
-			  		RESULT = new ICClass(getLine(), c_name,super_name, fie, met); 			   
+			  		RESULT = new ICClass(clleft, c_name,super_name, fie, met); 			   
 			  :}
 			  |
-			  CLASS CLASS_ID:c_name LCBR fmList:l RCBR
+			  CLASS:cl CLASS_ID:c_name LCBR fmList:l RCBR
 			  {:
 			  		// This case handless Class declaration
 			 		List <Field> fie= new LinkedList<>();
@@ -125,7 +125,7 @@ classDecl ::= CLASS CLASS_ID:c_name EXTENDS CLASS_ID:super_name LCBR fmList:l RC
 								throw new SyntaxError("Class can contain only fields or methods"/*TODO*/);		  
 							}
 			  		}
-			  		RESULT = new ICClass(getLine(), c_name, fie, met);
+			  		RESULT = new ICClass(clleft, c_name, fie, met);
 			  :}
 ;
 
@@ -240,10 +240,10 @@ expr ::=		location:l
 				{: RESULT = l; :}
 				| call:c
 				{: RESULT = c; :}
-				| THIS
-				{: RESULT = new This(/*TODO line #*/); :}
-				| NEW CLASS_ID:classId LP RP
-				{: RESULT = new NewClass(/*TODO line #*/, classId); :}
+				| THIS:t
+				{: RESULT = new This(tleft); :}
+				| NEW:n CLASS_ID:classId LP RP
+				{: RESULT = new NewClass(nleft, classId); :}
 				| NEW type:t LB expr:e RB
 				{: RESULT = new NewArray(t, e); :}
 				| expr:e DOT LENGTH
@@ -278,18 +278,18 @@ call ::=		staticCall:c
 ;
 
 staticCall ::=	CLASS_ID:classId DOT ID:id LP exprList:args RP
-				{: RESULT = new StaticCall(/*TODO line #*/, classId, id, args); :};
+				{: RESULT = new StaticCall(classIdleft, classId, id, args); :};
 
 virtualCall ::= expr:e DOT ID:id LP exprList:args RP
-				{: RESULT = new VirtualCall(/*TODO line #*/, e, id, args); :}
+				{: RESULT = new VirtualCall(eleft, e, id, args); :}
 				| ID:id LP exprList:args RP
-				{: RESULT = new VirtualCall(/*TODO line #*/, id, args); :}
+				{: RESULT = new VirtualCall(idleft, id, args); :}
 ;
 
 location ::= ID:id
-			{: RESULT = new VariableLocation(/*TODO line #*/, id); :}
+			{: RESULT = new VariableLocation(idleft, id); :}
 			| expr:e DOT ID:id
-			{: RESULT = new VariableLocation(/*TODO line #*/, e, id); :}
+			{: RESULT = new VariableLocation(eleft, e, id); :}
 			| expr:arr LB expr:index RB
 			{: RESULT = new ArrayLocation(arr, index); :}
 ;
@@ -335,14 +335,14 @@ literal ::= INTEGER:n
 				if (num_val > (long)2147483648){
 					throw new SyntaxError("Integer literal out of range"/*TODO*/);
 				}
-				RESULT = new Literal(/*TODO line # */, LiteralTypes.INTEGER, n); 
+				RESULT = new Literal(nleft, LiteralTypes.INTEGER, n); 
 			:} 
 			| QUOTE:s 
-			{:	RESULT = new Literal(/*TODO line # */, LiteralTypes.STRING, s); :}  
+			{:	RESULT = new Literal(sleft, LiteralTypes.STRING, s); :}  
 			| TRUE:b
-			{: 	RESULT = new Literal(/*TODO line # */, LiteralTypes.TRUE); :}
+			{: 	RESULT = new Literal(bleft, LiteralTypes.TRUE); :}
 			| FALSE:b 
-			{: 	RESULT = new Literal(/*TODO line # */, LiteralTypes.FALSE); :}
+			{: 	RESULT = new Literal(bleft, LiteralTypes.FALSE); :}
 			| NULL:r
-			{: 	RESULT = new Literal(/*TODO line # */, LiteralTypes.NULL); :}
+			{: 	RESULT = new Literal(rleft, LiteralTypes.NULL); :}
 ;
