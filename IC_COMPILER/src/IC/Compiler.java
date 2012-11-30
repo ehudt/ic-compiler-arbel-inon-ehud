@@ -4,9 +4,13 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
+import java_cup.runtime.Symbol;
+
+import IC.AST.*;
 import IC.Parser.Lexer;
 import IC.Parser.LexicalError;
-
+import IC.Parser.SyntaxError;
+import IC.Parser.parser;
 /**
  * class Compiler opens a source file of IC language, scans the file
  * using the lexical analyzer and outputs the tokens in the file ordered by 
@@ -27,7 +31,7 @@ public class Compiler
 			System.out.println("Usage: java IC.Compiler <input-filename>\n");
 			return;
 		}
-		
+		 
     	// currToken holds the current token from the scanner 
     	IC.Parser.Token currToken;
     	try {
@@ -35,6 +39,12 @@ public class Compiler
     		FileReader txtFile = new FileReader(args[0]);
     		// initialize the scanner on the file
     		Lexer scanner = new Lexer(txtFile);
+    		
+    		parser parser = new parser(scanner);
+    		
+    		Program program = (Program)parser.parse().value;
+    		PrettyPrinter printer = new PrettyPrinter(args[0]);
+    		System.out.println(program.accept(printer));
     	
     		/* Run the lexical analyzer on the input file and output
     		 * the tokens in the file sequentially. If EOF is reached,
@@ -43,31 +53,40 @@ public class Compiler
     		 * exits.
        		 */
     		
-    		do{
-    			currToken = scanner.next_token();
-    			System.out.print(currToken.getLine()+": "+ currToken.getName());
-    			if (!currToken.getValue().isEmpty())
-    				System.out.println("(" + currToken.getValue() + ")");
-    			else{ 
-    				System.out.println("");
-    			}
-    		}
-    		while (currToken.getId() != IC.Parser.sym.EOF);
+    		//do{
+    		//	currToken = scanner.next_token();
+    		//	System.out.print(currToken.getLine()+": "+ currToken.getId()/*currToken.getName()*/);
+    		//	if (!currToken.getValue().isEmpty())
+    		//		System.out.println("(" + currToken.getValue() + ")");
+    		//	else{ 
+    		//		System.out.println("");
+    		//	}
+    		//}
+    		//while (currToken.getId() != IC.Parser.sym.EOF);
     	}
     	// Catch lexical Errors and print the line and the value of the token
     	catch (LexicalError e) {
 			System.out.println(e.getMessage());
+			System.exit(-1);
+		}
+    	// Handle syntax errors
+    	catch (SyntaxError e) {
+			System.out.println(e.getMessage());
+			System.exit(-1);
 		}
     	// If the input file is not found, print an error to the user
     	catch (FileNotFoundException e) {
 			System.out.println("Error: file not found " + args[0] + ". Check file path.");
+			System.exit(-1);
 		}
     	// Catch other I/O errors
     	catch (IOException e) {
     		System.out.println("Error: I/O error during lexical analysis: " + e.getMessage());
+    		System.exit(-1);
     	}
     	catch (Exception e) {
     		System.out.println("Error: " + e.getMessage());
+    		System.exit(-1);
     	}
     	
     }

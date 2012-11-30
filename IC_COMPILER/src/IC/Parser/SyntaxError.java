@@ -13,7 +13,7 @@ public class SyntaxError extends Exception {
 		this.line = line;
 		this.token = token;
 	}
-	
+
 	public String toString(){
 		return "SyntaxError in line: " + line + "in Token: " + token;
 	}

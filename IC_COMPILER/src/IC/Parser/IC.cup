@@ -14,6 +14,10 @@ parser code  {:
 		super(lexer);
 		this.lexer = lexer;
 	} 
+	
+	public int getCurrentLine() {
+		return this.lexer.getCurrentLine();
+	}
 
 :};
 	
@@ -110,22 +114,21 @@ fmList ::= fmList:fm fieldList:fl
 		   {:
 		       for(Field f:fl)
 		       {
-		       		fm.add(fl);
+		       		fm.add(f);
 		       }
 			   //Left recursion fieldList
 		       RESULT = fm;
 		   :}
-			|
-				fmList:fm method:m
+			| fmList:fm method:m
 				{:
 				//Left recursion Method
 				fm.add(m);
 				RESULT = fm;
 		   :}
-		   | :x
+		   | 
 		   {:
 			   //Epsilon case
-			   RESULT = new FieldMethodList(xleft); 
+			   RESULT = new FieldMethodList(parser.getCurrentLine()); 
 		   :}   
 		
 ;
@@ -165,7 +168,7 @@ method ::= STATIC type:t ID:met_name LP formalList:fl RP LCBR stmtList:sl RCBR
 		   STATIC VOID ID:met_name LP formalList:fl RP LCBR stmtList:sl RCBR
 		   {:
 		   		/*TODO checkout about PrimitiveType*/
-				RESULT= new StaticMethod(new PrimitiveType(getLine(), DataTypes.VOID) ,met_name, fl, sl);
+				RESULT= new StaticMethod(new PrimitiveType(parser.getCurrentLine(), DataTypes.VOID) ,met_name, fl, sl);
 		   :}
 		   |
 		   type:t ID:met_name LP formalList:fl RP LCBR stmtList:sl RCBR
@@ -204,9 +207,9 @@ formal ::= type:t ID:formal_name
 			:}
 ;
 
-type ::= INT:int
+type ::= INT:i
 		 {:
-				RESULT=new PrimitiveType(intleft,DataTypes.INT);
+				RESULT=new PrimitiveType(ileft,DataTypes.INT);
 		 :} 
 		 | 
 		 BOOLEAN:bool
@@ -406,10 +409,10 @@ logicalUnOp ::= LNEG:x
 			{: RESULT = UnaryOps.LNEG; :};
 
 literal ::= INTEGER:n 
-			{:  long num_val = Long.parseLong(n);
+			{:  /*long num_val = Long.parseLong(n);
 				if (num_val > (long)2147483648){
-					throw new SyntaxError("Integer literal out of range"/*TODO*/);
-				}
+					throw new SyntaxError(nleft, "Integer literal out of range: " + n);
+				}*/
 				RESULT = new Literal(nleft, LiteralTypes.INTEGER, n); 
 			:} 
 			| QUOTE:s 
