@@ -125,19 +125,24 @@ classDecl ::= CLASS CLASS_ID:c_name EXTENDS CLASS_ID:super_name LCBR fmList:l RC
 
 fmList ::= fmList:fm fieldList:fl
 		   {:
+		       for(Field f:fl)
+		       {
+		       		fm.add(fl);
+		       }
 			   //Left recursion fieldList
-		       RETURN =
-			   :}
-			   |
-			   fmList:fm Method:m
-			   {:
-			   //Left recursion Method
-			   RETURN =
-			   :}
-			   |
-			   {:
+		       RESULT = fm;
+		   :}
+			|
+				fmList:fm Method:m
+				{:
+				//Left recursion Method
+				fm.add(m);
+				RESULT = fm;
+		   :}
+		   |
+		   {:
 			   //Epsilon case
-			   RETURN = 
+			   RESULT = new LinkedList<ASTNode>(); 
 		   :}
 		   
 		
@@ -155,10 +160,19 @@ fieldList ::= type:t idList:id_list SEMI
 		:}
 ;
 
-idList ::= 
-		{:
-			RESULT=		
-		:}
+idList ::= ID:id_name
+		   {:
+				List<String> ids=new LinkedList<>();
+				ids.add(id_name);
+				RESULT= ids;		
+		   :}
+		   |
+		   idList:id_list COMMA ID:id_name
+		   {:
+		   		id_list.add(id_name);
+				RESULT= id_list;
+		   :}
+		
 ;
 
 method ::= [STATIC] (type | VOID) ID LP [formals] RP LCBR stmt* RCBR
