@@ -8,7 +8,7 @@ public class FieldMethodList extends ASTNode {
 	private List<Method> methods;
 	private List<Field> fields;
 	
-	protected FieldMethodList(int line) {
+	public FieldMethodList(int line) {
 		super(line);
 		methods = new LinkedList<Method>();
 		fields = new LinkedList<Field>();
