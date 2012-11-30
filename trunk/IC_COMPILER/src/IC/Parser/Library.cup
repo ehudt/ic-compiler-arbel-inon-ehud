@@ -2,3 +2,15 @@ package IC.Parser;
 
 import IC.AST.*;	
 import java_cup.runtime.*;
+import java.util.List;
+import java.util.ArrayList;
+import IC.DataTypes;
+
+//NONterminals
+non terminal ICClass libic;
+non terminal LibraryMethod libmethod;
+non terminal List<Method> libmethod_list;
+non terminal Formal formal;
+non terminal List<Formal> formal_list;
+non terminal Type type;
+
