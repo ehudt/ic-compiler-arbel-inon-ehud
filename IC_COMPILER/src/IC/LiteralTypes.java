@@ -31,9 +31,11 @@ public enum LiteralTypes {
 			if (value == null)
 				return String.valueOf(value);
 			StringBuffer formattedString = new StringBuffer(value.toString());
-
-			replaceEscapeSequences(formattedString);
-			return "\"" + formattedString.toString() + "\"";
+			
+			//TODO decide how to handle this:
+			//replaceEscapeSequences(formattedString);
+			//return "\"" + formattedString.toString() + "\"";
+			return formattedString.toString();
 		}
 	},
 	TRUE(true, "Boolean literal"),

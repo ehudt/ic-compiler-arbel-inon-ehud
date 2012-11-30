@@ -3,7 +3,7 @@ package IC.Parser;
 import IC.AST.*;	
 import java_cup.runtime.*;
 import java.util.List;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import IC.DataTypes;
 import IC.Parser.Lexer;
 
@@ -12,26 +12,21 @@ parser code  {:
 	
 	private Lexer lexer;
 
-	public Parser(Lexer lexer) {
+	public LibraryParser(Lexer lexer) {
 		super(lexer);
 		this.lexer = lexer;
 	}
-	:};
+:};
 	
 //Terminals
-terminal		ASSIGN, BOOLEAN, BREAK, CLASS, COMMA;
-terminal 		CONTINUE, DIVIDE, DOT, ELSE, EQUAL;
-terminal 		EXTENDS, FALSE, GT, GTE, IF, INT;
-terminal 		LAND, LB, LCBR, LENGTH, LNEG, LOR;
-terminal 		LP, LT, LTE, MINUS, MOD, MULTIPLY;
-terminal 		NEQUAL, NEW, NULL, PLUS, RB, RCBR;
-terminal 		RETURN, RP, SEMI, STATIC, STRING;
-terminal 		THIS, TRUE, VOID, WHILE;
-terminal Integer INTEGER;
-terminal String CLASS_ID, ID, QUOTE;
+terminal		BOOLEAN, CLASS, COMMA, INT;
+terminal 		LB, LCBR, LP, RB, RCBR;
+terminal 		RP, SEMI, STATIC, STRING;
+terminal 		VOID;
+terminal String CLASS_ID, ID;
 
 
-//NONterminals
+//Nonterminals
 non terminal ICClass libic;
 non terminal LibraryMethod libmethod;
 non terminal List<Method> libmethod_list;
@@ -43,49 +38,70 @@ non terminal Type type;
 
 
 
-//The Grammer
+//The Grammar
 
-libic ::= CLASS CLASS_ID:libary LCBR libmethod_list:libmetlist RCBR
-		{: if (! libary.equals("Libary"))
-				throw new SyntexError(//TODO);
-				RESULT = new ICClass(libaryleft, libary, new ArrayList<Field>(), libmetlist);
+libic ::= CLASS:cl CLASS_ID:libname LCBR libmethod_list:lmList RCBR
+		{: if (! libname.equals("Library")){
+		//TODO error format
+				throw new SyntaxError(clleft, "Syntax error: library class name must be Library");
+			}
+			RESULT = new ICClass(clleft, libname, new LinkedList<Field>(), lmList);
 		:};
 		
 libmethod_list ::= libmethod:lm	
-		{:	List<Method> l = new ArraysList<Method>();
-			l.add(lm);
-			RESULT = l;
-		| libmethod_list:lmlst libmethod:lm
-		{:	lmlst.add(lm)
-			RESULT = lmlst;
-		:};
+		{:	
+			List<Method> lmList = new LinkedList<Method>();
+			lmList.add(lm);
+			RESULT = lmList;
+		:}
+		| libmethod_list:lmList libmethod:lm
+		{:	
+			lmList.add(lm);
+			RESULT = lmList;
+		:}
+;
 		
-libmethod ::= STATIC VOID ID:id LP RP SEMI
-		{: RESULT = new LibaryMethod(new PremitiveType(idleft,DataTypes.VOID), id, new ArrayList<Formal>()); :}
-		| STATIC type:t ID:id LP RP SEMI
-		{: RESULT = new LibaryMethod(t, id, new ArrayList<Formal>()); :}
-		| STATIC type:t ID:id LP formal_list:fl RP SEMI
-		{: RESULT = new LibaryMethod(t, id, fl); :}
-		| STATIC VOID ID:id LP formal_list:fl RP SEMI
-		{: RESULT = new LibaryMethod(new PremitiveType(idleft,DataTypes.VOID), id, fl); :} 
+libmethod ::= STATIC type:t ID:id LP formal_list:fl RP SEMI
+		{: RESULT = new LibraryMethod(t, id, fl); :}
+		| STATIC:st VOID ID:id LP formal_list:fl RP SEMI
+		{: RESULT = new LibraryMethod(new PrimitiveType(stleft,DataTypes.VOID), id, fl); :} 
 ;
 
-formal_list ::= formal:f
-		{:  List<Formal> l = new ArrayList<Formal>();
-			l.add(f);
-			RESULT = l; :}
-		| formal_list:fl COMMA formal:f
-		{:  fl.add(f);
-			RESULT = fl; :} 
+formal_list ::= 
+				{:  List<Formal> fl = new LinkedList<Formal>();
+					RESULT = fl; :}
+				| formal_list:fl COMMA formal:f
+				{:  fl.add(f);
+					RESULT = fl; :} 
 ;					 
 
 formal ::= type:t ID:id
 		{: RESULT = new Formal(t, id); :}
 ;		
 
-type ::= INT:int {: RESULT = new PrimitiveType(intleft, DataTypes.INT); :}
-		| BOOLEAN:bool {: RESULT = new PrimitiveType(boolleft, DataTypes.BOOLEAN); :}
-		| CLASS_ID:class {: RESULT = new PrimitiveType(classleft, DataTypes.CLASS_ID); :}
-		| STRING:str {: RESULT = new PrimitiveType(strleft, DataTypes.STRING); :}
-		| typt:t LB RB {: t.incrementDimension()//TODO; RESULT = t; :}
+type ::= INT:i
+		 {:
+				RESULT=new PrimitiveType(ileft,DataTypes.INT);
+		 :} 
+		 | 
+		 BOOLEAN:bool
+		 {:
+				RESULT=new PrimitiveType(boolleft,DataTypes.BOOLEAN);
+		 :}  
+		 | 
+		 STRING:str 
+		 {:
+				RESULT=new PrimitiveType(strleft,DataTypes.STRING); 
+		 :} 
+		 | 
+		 CLASS_ID:c_name
+		 {:
+				RESULT=new UserType(c_nameleft, c_name);
+		 :}  
+		 | 
+		 type:t LB RB
+		 {:
+		 		t.incrementDimension();
+				RESULT=t;
+		 :}
 ;

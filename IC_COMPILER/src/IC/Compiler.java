@@ -7,10 +7,8 @@ import java.io.IOException;
 import java_cup.runtime.Symbol;
 
 import IC.AST.*;
-import IC.Parser.Lexer;
-import IC.Parser.LexicalError;
-import IC.Parser.SyntaxError;
-import IC.Parser.parser;
+import IC.Parser.*;
+
 /**
  * class Compiler opens a source file of IC language, scans the file
  * using the lexical analyzer and outputs the tokens in the file ordered by 
@@ -40,7 +38,7 @@ public class Compiler
     		// initialize the scanner on the file
     		Lexer scanner = new Lexer(txtFile);
     		
-    		parser parser = new parser(scanner);
+    		Parser parser = new Parser(scanner);
     		Symbol parseSymbol = new Symbol(1);
     		parseSymbol = parser.parse();
     		Program programRoot = (Program)parseSymbol.value;

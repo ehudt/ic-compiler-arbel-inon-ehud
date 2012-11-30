@@ -10,7 +10,7 @@ import IC.Parser.Lexer;
 parser code  {:	
 	private Lexer lexer;
 
-	public parser(Lexer lexer) {
+	public Parser(Lexer lexer) {
 		super(lexer);
 		this.lexer = lexer;
 	} 
