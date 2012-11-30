@@ -122,10 +122,10 @@ fmList ::= fmList:fm fieldList:fl
 				fm.add(m);
 				RESULT = fm;
 		   :}
-		   |
+		   | :x
 		   {:
 			   //Epsilon case
-			   RESULT = new LinkedList<ASTNode>(); 
+			   RESULT = new FieldMethodList(xleft); 
 		   :}   
 		
 ;
@@ -133,7 +133,7 @@ fmList ::= fmList:fm fieldList:fl
 fieldList ::= type:t idList:id_list SEMI
 		{:
 			List<Field> fields=new LinkedList<Field>();
-			for(string id: id_list)
+			for(String id: id_list)
 			{
 				Field f=new Field(t,id);
 				fields.add(f);
