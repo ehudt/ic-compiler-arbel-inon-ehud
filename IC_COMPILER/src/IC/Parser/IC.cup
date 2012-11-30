@@ -29,13 +29,19 @@ nonterminal Formal		formal
 nonterminal Type		type;
 nonterminal Statement	stmt;
 nonterminal Expression 	expr;
+nonterminal List<Expression> exprList;
 nonterminal Location	location;
 nonterminal Call		call;
 nonterminal StaticCall	staticCall;
 nonterminal VirtualCall	virtualCall;
-nonterminal BinaryOp	binop;
-nonterminal UnaryOp		unop;
-nonterminal Literal		literal;		
+nonterminal BinaryOp	mathBinOp;
+nonterminal BinaryOp	logicalBinOp;
+nonterminal UnaryOp		mathUnOp;
+nonterminal UnaryOp		logicalUnOp;
+nonterminal BinaryOp	binExpr;
+nonterminal UnaryOp		unExpr;
+nonterminal Literal		literal;	
+	
 
 //////////////////////////
 // Precedence declarations
@@ -220,15 +226,109 @@ stmt ::= location '=' expr ';'
 		 type ID ['=' expr] ';'
 		 {:RESULT:}
 ;		 		 		 		 
-		
-binop ::=	
 
-unop ::=	MINUS:x
-			{: RESULT = UnaryOps.UMINUS; :}
-			|
-			LNEG:x
-			{: RESULT = UnaryOps.LNEG; :}
+exprList ::=	/* empty list */
+				{: RESULT = new LinkedList<Expression>(); :}
+				| exprList:el COMMA expr:e
+				{: el.add(e); RESULT = el :}
+				| expr:e
+				{: List<Expression> el = new LinkedList<Expression>();
+				   el.add(e); RESULT = el; :}
 ;
+
+expr ::=		location:l
+				{: RESULT = l; :}
+				| call:c
+				{: RESULT = c; :}
+				| THIS
+				{: RESULT = new This(/*TODO line #*/); :}
+				| NEW CLASS_ID:classId LP RP
+				{: RESULT = new NewClass(/*TODO line #*/, classId); :}
+				| NEW type:t LB expr:e RB
+				{: RESULT = new NewArray(t, e); :}
+				| expr:e DOT LENGTH
+				{: RESULT = new Length(e); :}
+				| binExpr:be
+				{: RESULT = be; :}
+				| unExpr:ue
+				{: RESULT = ue; :}
+				| literal:l
+				{: RESULT = l; :}
+				| LP expr:e RP 
+				{: RESULT = e; :}
+;
+
+binExpr ::=		expr:e1 mathbinop:op expr:e2
+				{: RESULT = new MathBinaryOp(e1, op, e2); :}
+				| expr:e1 logicalbinop:op expr:e2
+				{: RESULT = new LogicalBinaryOp(e1, op, e2); :}
+;
+
+unaryExpr ::=	mathunop:op expr:e
+				{: RESULT = new MathUnaryOp(op, e); :}
+				| logicalunop:op expr:e
+				{: RESULT = new LogicalUnaryOp(op, e); :}
+; 
+
+
+call ::=		staticCall:c
+				{: RESULT = c; :}
+				| virtualCall:c
+				{: RESULT = c; :}
+;
+
+staticCall ::=	CLASS_ID:classId DOT ID:id LP exprList:args RP
+				{: RESULT = new StaticCall(/*TODO line #*/, classId, id, args); :};
+
+virtualCall ::= expr:e DOT ID:id LP exprList:args RP
+				{: RESULT = new VirtualCall(/*TODO line #*/, e, id, args); :}
+				| ID:id LP exprList:args RP
+				{: RESULT = new VirtualCall(/*TODO line #*/, id, args); :}
+;
+
+location ::= ID:id
+			{: RESULT = new VariableLocation(/*TODO line #*/, id); :}
+			| expr:e DOT ID:id
+			{: RESULT = new VariableLocation(/*TODO line #*/, e, id); :}
+			| expr:arr LB expr:index RB
+			{: RESULT = new ArrayLocation(arr, index); :}
+;
+			 		
+
+mathBinOp ::=	PLUS:x
+			{: RESULT = BinaryOps.PLUS; :}
+			| MINUS:x
+			{: RESULT = BinaryOps.MINUS; :}
+			| MULTIPLY:x
+			{: RESULT = BinaryOps.MULTIPLY; :}
+			| DIVIDE:x
+			{: RESULT = BinaryOps.DIVIDE; :}
+			| MOD:x
+			{: RESULT = BinaryOps.MOD; :}
+;
+
+logicalBinOp ::= LAND:x
+			{: RESULT = BinaryOps.LAND; :}
+			| LOR:x
+			{: RESULT = BinaryOps.LOR; :}
+			| LT:x
+			{: RESULT = BinaryOps.LT; :}
+			| LTE:x
+			{: RESULT = BinaryOps.LTE; :}
+			| GT:x
+			{: RESULT = BinaryOps.GT; :}
+			| GTE:x
+			{: RESULT = BinaryOps.GTE; :}
+			| EQUAL:x
+			{: RESULT = BinaryOps.EQUAL; :}
+			| NEQUAL:x
+			{: RESULT = BinaryOps.NEQUAL; :}
+;
+
+mathUnOp ::=	MINUS:x
+			{: RESULT = UnaryOps.UMINUS; :};
+logicalUnOp ::= LNEG:x
+			{: RESULT = UnaryOps.LNEG; :};
 
 literal ::= INTEGER:n 
 			{:  long num_val = Long.parseLong(n);
