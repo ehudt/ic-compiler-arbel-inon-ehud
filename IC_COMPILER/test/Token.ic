@@ -11,9 +11,7 @@ class Token extends Symbol {
 	 * @param id	The token's ID, according to IC.Parser.sym
 	 * @param line	The line in which the token appears
 	 */
-	Token(int id, int line){
-		this(id, line, "");
-	}
+
 	/** 
 	 * Constructor for tokens with a value. This contructor is used when a token's value
 	 * is variable. For example, a token ID can have a lot of different values, such as 'foo'. 
@@ -22,8 +20,6 @@ class Token extends Symbol {
 	 * @param value	The token's string value.
 	 */
     Token(int id, int line, string value) {
-        // Use the constructor of the superclass to hold the token ID.
-    	super(id, null);
         
         // A line's number must be positive
 		if(line <= 0){
@@ -40,7 +36,7 @@ class Token extends Symbol {
     	// Resolves the token's name, to be printed later on.
 		this.name = getNameById(id);
 		if(this.name.isEmpty()){
-			throw new IllegalArgumentException("Token id is invalid");
+			//throw new IllegalArgumentException("Token id is invalid");
 		}
     }
     /**
