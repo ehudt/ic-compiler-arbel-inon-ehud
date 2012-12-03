@@ -2,6 +2,7 @@
 
 /* "This is a string in a comment" */
 /***** /*** /* this as well */
+
 // This is a 1 line comment
 //This is also a 1 line comment /* ******
 while(true) { break; }
@@ -10,3 +11,5 @@ print("Hello\tThis\tis\ta\ttabbed\tline");
 print("/* This is a comment in a string*/ ");
 print("What\n now? \\ \" are some more special chars\\ \"");
 "@"
+
+"bad string \ "
