@@ -19,6 +19,12 @@ parser code  {:
 		return this.lexer.getCurrentLine();
 	}
 
+	
+	//Overriding the default syntax error method	
+	public void syntax_error(Symbol cur_token) throws SyntaxError{
+		throw new SyntaxError(cur_token.left, (string)cur_token.value);
+	}
+	
 :};
 	
 ////////////////////////////////////////////
