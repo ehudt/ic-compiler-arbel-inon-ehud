@@ -23,45 +23,66 @@ public class Compiler
     */
 	public static void main(String[] args)
     {
+		boolean printAST = false, useLib = false;
+		String 	srcPath, libPath = "";
 		// check that there is only one argument, the path to an input file.
-		if(args.length != 1)
+		if(args.length < 1 || args.length > 3)
 		{
-			System.out.println("Usage: java IC.Compiler <input-filename>\n");
+			usage();
 			return;
 		}
-		 
-    	// currToken holds the current token from the scanner 
-    	IC.Parser.Token currToken;
+		
+		srcPath = args[0];
+		
+		// Read and parse the library file
+		if(args.length >= 2){
+			if(args[1].startsWith("-L") && args[1].length() > 2){
+				libPath = args[1].substring(2);
+				useLib = true;
+				if(args.length == 3){
+					if(args[2].equals("-print-ast")) 
+						printAST = true; 
+					else usage();
+				}
+			} 
+			else if(args[1].equals("-print-ast") && args.length == 2) {
+				printAST = true;
+			} 
+			else usage();
+		}
+
+		// start processing the source file(s)
     	try {
-    		// open file for scanning
-    		FileReader txtFile = new FileReader(args[0]);
-    		// initialize the scanner on the file
-    		Lexer scanner = new Lexer(txtFile);
-    		
+    		// parse IC source file
+    		FileReader txtFile = new FileReader(srcPath);
+    		Lexer scanner = new Lexer(txtFile);    		
     		Parser parser = new Parser(scanner);
     		Symbol parseSymbol = new Symbol(1);
+    		// parse and generate AST
     		parseSymbol = parser.parse();
     		Program programRoot = (Program)parseSymbol.value;
-    		PrettyPrinter printer = new PrettyPrinter(args[0]);
-    		System.out.println(programRoot.accept(printer));
-    	
-    		/* Run the lexical analyzer on the input file and output
-    		 * the tokens in the file sequentially. If EOF is reached,
-    		 * the EOF token is printed and the program finishes.
-    		 * If an error occurs, an error message is printed and the program
-    		 * exits.
-       		 */
+
+    		// print the generated AST
+    		if(printAST){
+    			PrettyPrinter printer = new PrettyPrinter(srcPath);
+    			System.out.println(programRoot.accept(printer));
+    		}
     		
-    		//do{
-    		//	currToken = scanner.next_token();
-    		//	System.out.print(currToken.getLine()+": "+ currToken.getId()/*currToken.getName()*/);
-    		//	if (!currToken.getValue().isEmpty())
-    		//		System.out.println("(" + currToken.getValue() + ")");
-    		//	else{ 
-    		//		System.out.println("");
-    		//	}
-    		//}
-    		//while (currToken.getId() != IC.Parser.sym.EOF);
+    		// parse library file
+    		if(useLib){
+    			FileReader libFile = new FileReader(libPath);
+        		Lexer libScanner = new Lexer(libFile);    		
+        		LibraryParser libParser = new LibraryParser(libScanner);
+        		Symbol libParseSymbol = new Symbol(1);
+        		// parse and generate AST
+        		libParseSymbol = libParser.parse();
+        		ICClass libraryRoot = (ICClass)parseSymbol.value;
+        		
+        		// TODO for debugging only (remove before handing in)
+        		PrettyPrinter libPrinter = new PrettyPrinter(libPath);
+    			System.out.println(libraryRoot.accept(libPrinter));
+    		}
+    		
     	}
     	// Catch lexical Errors and print the line and the value of the token
     	catch (LexicalError e) {
@@ -80,7 +101,7 @@ public class Compiler
 		}
     	// Catch other I/O errors
     	catch (IOException e) {
-    		System.out.println("Error: I/O error during lexical analysis: " + e.getMessage());
+    		System.out.println("Error: I/O error: " + e.getMessage());
     		System.exit(-1);
     	}
     	catch (Exception e) {
@@ -90,4 +111,9 @@ public class Compiler
     	}
     	
     }
+	
+	private static void usage(){
+		System.out.println("Usage: java IC.Compiler <input-filename> [ -L<library-path> ] [ -print-ast ]\n");
+		System.exit(0);
+	}
 }
