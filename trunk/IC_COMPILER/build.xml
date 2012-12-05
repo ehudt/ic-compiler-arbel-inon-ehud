@@ -53,8 +53,8 @@
        <java classname="java_cup.Main">
        <arg value="-parser"/>
        <arg value="LibraryParser"/>
-       <arg value="-symbols"/>
-       <arg value="symLibrary"/>
+	   <!-- <arg value="-symbols"/>
+	   <arg value="symLibrary"/> -->
        <arg value="-dump"/>
        <arg value="${src}/IC/Parser/Library.cup"/>
     </java>
@@ -63,7 +63,7 @@
     </replace>		
 
     <move file="LibraryParser.java" todir="${src}/IC/Parser"/>
-    <move file="symLibrary.java" todir="${src}/IC/Parser"/>
+	<!--    <move file="symLibrary.java" todir="${src}/IC/Parser"/> -->
     </target>
 
     <!--
