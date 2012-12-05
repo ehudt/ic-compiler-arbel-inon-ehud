@@ -71,12 +71,17 @@ public class Compiler
     		// parse library file
     		if(useLib){
     			FileReader libFile = new FileReader(libPath);
-        		Lexer libScanner = new Lexer(libFile);    		
+        		Lexer libScanner = new Lexer(libFile);
+        		
+        		/*Token ttt;
+        		while((ttt = libScanner.next_token()).getId() != 0){
+        			System.out.println(ttt.getLine() + ": token" + ttt.getId());
+        		}*/
         		LibraryParser libParser = new LibraryParser(libScanner);
         		Symbol libParseSymbol = new Symbol(1);
         		// parse and generate AST
-        		libParseSymbol = libParser.parse();
-        		ICClass libraryRoot = (ICClass)parseSymbol.value;
+        		libParseSymbol = libParser.debug_parse();//.parse();
+        		ICClass libraryRoot = (ICClass)libParseSymbol.value;
         		
         		// TODO for debugging only (remove before handing in)
         		PrettyPrinter libPrinter = new PrettyPrinter(libPath);
