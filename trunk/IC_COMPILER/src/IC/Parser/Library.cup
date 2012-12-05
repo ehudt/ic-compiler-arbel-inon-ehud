@@ -10,20 +10,34 @@ import IC.Parser.Lexer;
 
 parser code  {:
 	
+	public boolean printTokens;
+	
 	private Lexer lexer;
 
 	public LibraryParser(Lexer lexer) {
 		super(lexer);
 		this.lexer = lexer;
-	
-	//Overriding the default syntax error method	
-	public void syntax_error(Symbol cur_token) throws SyntaxError{
-		throw new SyntaxError(cur_token.left, (string)cur_token.value);
 	}
 	
+	public int getLine() {
+		return lexer.getCurrentLine();
+	}
 	
+	public void syntax_error(Symbol s) {
+		Token currTok = (Token) s;
+		System.out.println("Line " + currTok.getLine()+": Syntax error; unexpected " + currTok);
+	}
 :};
 	
+	
+
+scan with {:
+	Token t = lexer.next_token();
+	if (printTokens)
+		System.out.println(t.getLine() + ":" + t);
+	return t; 
+:};
+
 //Terminals
 terminal		BOOLEAN, CLASS, COMMA, INT;
 terminal 		LB, LCBR, LP, RB, RCBR;
@@ -47,12 +61,13 @@ non terminal Type type;
 //The Grammar
 
 libic ::= CLASS:cl CLASS_ID:libname LCBR libmethod_list:lmList RCBR
-		{: if (! libname.equals("Library")){
-		//TODO error format
-				throw new SyntaxError(clleft, "Syntax error: library class name must be Library");
-			}
+		{: if (libname.equals("Library")){
 			RESULT = new ICClass(clleft, libname, new LinkedList<Field>(), lmList);
-		:};
+		}else{
+			throw new SyntaxError(clleft, "Syntax error: library class name must be Library");
+			}
+			:}
+		;
 		
 libmethod_list ::= libmethod:lm	
 		{:	
