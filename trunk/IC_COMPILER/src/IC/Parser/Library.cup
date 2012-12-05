@@ -93,12 +93,22 @@ libmethod ::= STATIC type:t ID:id LP formal_list:fl RP SEMI
 		{: RESULT = new LibraryMethod(new PrimitiveType(stleft,DataTypes.VOID), id, fl); :} 
 ;
 
-formal_list ::= 
-				{:  List<Formal> fl = new LinkedList<Formal>();
-					RESULT = fl; :}
-				| formal_list:fl COMMA formal:f
-				{:  fl.add(f);
-					RESULT = fl; :} 
+formal_list ::= formal_list:fl COMMA formal:f
+			   {:
+			   	fl.add(f);
+			   	RESULT = fl;
+			   :}
+			   |
+			   formal:f
+			   {:
+			   List<Formal> fl=new LinkedList<Formal>();
+			   fl.add(f);
+			   RESULT = fl;
+			   :}
+			   |
+			   {:
+			   RESULT = new LinkedList<Formal>();
+			   :} 
 ;					 
 
 formal ::= type:t ID:id
