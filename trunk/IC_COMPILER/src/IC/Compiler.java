@@ -23,32 +23,40 @@ public class Compiler
     */
 	public static void main(String[] args)
     {
-		boolean printAST = false, useLib = false;
+		boolean printAst = false, useLib = false;
 		String 	srcPath, libPath = "";
-		// check that there is only one argument, the path to an input file.
+
+		// validate the number of arguments
 		if(args.length < 1 || args.length > 3)
-		{
 			usage();
-			return;
-		}
 		
+		// process command line arguments: paths and flags 
 		srcPath = args[0];
-		
-		// Read and parse the library file
-		if(args.length >= 2){
-			if(args[1].startsWith("-L") && args[1].length() > 2){
-				libPath = args[1].substring(2);
-				useLib = true;
-				if(args.length == 3){
-					if(args[2].equals("-print-ast")) 
-						printAST = true; 
-					else usage();
+		for( String arg : args ){
+			if(arg.startsWith("-L")){
+				if (useLib){
+					System.out.println("Error: only 1 library file supported per compiler execution.");
+					usage();
 				}
+				else if(arg.length() == 2){
+					System.out.println("Error: library flag must include path to file.");
+					usage();
+				} 
+				else { // arg.length() > 2
+					libPath = arg.substring(2);
+					useLib = true;
+				}
+			}
+			else if(arg.equals("-print-ast")){
+				if(printAst){
+					System.out.println("Error: duplicate flag: " + arg);
+					usage();
+				} else printAst = true;
 			} 
-			else if(args[1].equals("-print-ast") && args.length == 2) {
-				printAST = true;
-			} 
-			else usage();
+			else {
+				System.out.println("Error: invalid argument: " + arg);
+				usage();
+			}
 		}
 
 		// start processing the source file(s)
@@ -63,7 +71,7 @@ public class Compiler
     		Program programRoot = (Program)parseSymbol.value;
 
     		// print the generated AST
-    		if(printAST){
+    		if(printAst){
     			PrettyPrinter printer = new PrettyPrinter(srcPath);
     			System.out.println(programRoot.accept(printer));
     		}
@@ -73,19 +81,16 @@ public class Compiler
     			FileReader libFile = new FileReader(libPath);
         		Lexer libScanner = new Lexer(libFile);
         		
-        		/*Token ttt;
-        		while((ttt = libScanner.next_token()).getId() != 0){
-        			System.out.println(ttt.getLine() + ": token" + ttt.getId());
-        		}*/
         		LibraryParser libParser = new LibraryParser(libScanner);
         		Symbol libParseSymbol = new Symbol(1);
         		// parse and generate AST
         		libParseSymbol = libParser.debug_parse();//.parse();
         		ICClass libraryRoot = (ICClass)libParseSymbol.value;
         		
-        		// TODO for debugging only (remove before handing in)
-        		PrettyPrinter libPrinter = new PrettyPrinter(libPath);
-    			System.out.println(libraryRoot.accept(libPrinter));
+        		if(printAst){
+	        		PrettyPrinter libPrinter = new PrettyPrinter(libPath);
+	    			System.out.println(libraryRoot.accept(libPrinter));
+        		}
     		}
     		
     	}
