@@ -20,12 +20,25 @@ parser code  {:
 	}
 
 	
-	//Overriding the default syntax error method	
-	public void syntax_error(Symbol cur_token) throws SyntaxError{
-		throw new SyntaxError(cur_token.left, (string)cur_token.value);
+	
+	// override method: syntax_error
+	public void unrecovered_syntax_error(Symbol curr_tok) throws SyntaxError{
+		throw new SyntaxError(curr_tok.left, (String)curr_tok.value);
 	}
 	
+	// override method to avoid duplicate errors
+	public void syntax_error(Symbol curr_tok){}
+	
 :};
+
+
+scan with {:
+	Token t = lexer.next_token();
+	if (true)
+		System.out.println(t.getLine() + ":" + t + " " + t.value);
+	return t; 
+:};
+
 	
 ////////////////////////////////////////////
 // Symbol list (terminals and non-terminals)

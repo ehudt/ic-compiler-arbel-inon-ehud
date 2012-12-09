@@ -9,13 +9,10 @@ public class SyntaxError extends Exception {
 	private String token;
 	
 	public SyntaxError(int line, String token){
-		super();
+		super("SyntaxError in line:" + line + " in Token: " + token);
 		this.line = line;
 		this.token = token;
 	}
 
-	public String toString(){
-		return "SyntaxError in line: " + line + "in Token: " + token;
-	}
 	
 }

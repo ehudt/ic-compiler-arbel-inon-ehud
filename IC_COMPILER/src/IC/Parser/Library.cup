@@ -20,11 +20,15 @@ parser code  {:
 	public int getLine() {
 		return lexer.getCurrentLine();
 	}
+
 	
-	public void syntax_error(Symbol s) {
-		Token tok = (Token) s;
-		System.out.println("Line " + tok.getLine()+": Syntax error; unexpected " + tok);
+	// override method: syntax_error
+	public void unrecovered_syntax_error(Symbol curr_tok) throws SyntaxError{
+		throw new SyntaxError(curr_tok.left, (String)curr_tok.value);
 	}
+	
+	// override method to avoid duplicate errors
+	public void syntax_error(Symbol curr_tok){}
 	
 :};
 	
