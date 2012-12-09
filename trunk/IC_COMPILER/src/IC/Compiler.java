@@ -70,7 +70,7 @@ public class Compiler
         		LibraryParser libParser = new LibraryParser(libScanner);
         		Symbol libParseSymbol = new Symbol(1);
         		// parse and generate AST
-        		libParseSymbol = libParser.debug_parse();//.parse();
+        		libParseSymbol = libParser.parse();//.parse();
         		ICClass libraryRoot = (ICClass)libParseSymbol.value;
         		
         		if(printAst){
@@ -85,7 +85,7 @@ public class Compiler
     		Parser parser = new Parser(scanner);
     		Symbol parseSymbol = new Symbol(1);
     		// parse and generate AST
-    		parseSymbol = parser.debug_parse();
+    		parseSymbol = parser.parse();
     		Program programRoot = (Program)parseSymbol.value;
 
     		// print the generated AST
@@ -106,7 +106,7 @@ public class Compiler
 		}
     	// If the input file is not found, print an error to the user
     	catch (FileNotFoundException e) {
-			System.out.println("Error: file not found " + args[0] + ". Check file path.");
+			System.out.println("Error: " + e.getMessage() + ". Check file path.");
 			System.exit(-1);
 		}
     	// Catch other I/O errors
