@@ -1,0 +1,9 @@
+class Ehud {
+	static void main(){
+		if(true)
+			if(false)
+				x = 5;
+			else
+				y = 6;
+	}
+}

@@ -111,7 +111,7 @@ precedence left  PLUS, MINUS;
 precedence left  MULTIPLY, DIVIDE, MOD;
 precedence right UMINUS, LNEG;
 precedence left  LB, RB, LP, RP, DOT;
-precedence left  ELSE; //Maybe if
+precedence left  ELSE; 
 
 
 //////////////

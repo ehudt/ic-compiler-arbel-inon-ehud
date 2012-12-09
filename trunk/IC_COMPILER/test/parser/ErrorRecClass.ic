@@ -1,6 +1,20 @@
-class Ehud {
-	void ehud(){	
-		int blah;
-		blah = ++ 5;
+class Ehud( {
+	void ehud){	
+		int x = 6;
+	}
+	void tamir(){
+		rehiuhl;
+		int x;
+	}
+	void arbel({
+	}
+	void ehlkh(){
+		int x;
 	}
 }
+
+class Hipster{}
+
+class What dkjweh{}
+
+class This{}
