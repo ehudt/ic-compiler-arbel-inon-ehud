@@ -1,0 +1,6 @@
+//tests what happens when a bad char is entered
+class classtest
+{
+	int i = 55;
+	string abc%abc;
+}
