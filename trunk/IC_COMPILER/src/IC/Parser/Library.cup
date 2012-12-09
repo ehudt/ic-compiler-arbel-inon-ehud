@@ -85,6 +85,11 @@ libmethod_list ::= libmethod:lm
 			lmList.add(lm);
 			RESULT = lmList;
 		:}
+		|
+		{:
+			List<Method> lmList = new LinkedList<Method>();
+			RESULT = lmList;
+		:}
 ;
 		
 libmethod ::= STATIC type:t ID:id LP formal_list:fl RP SEMI
