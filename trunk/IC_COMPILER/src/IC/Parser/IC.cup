@@ -199,6 +199,11 @@ method ::= STATIC type:t ID:met_name LP formalList:fl RP LCBR stmtList:sl RCBR
 		   {:
 				RESULT=new VirtualMethod(new PrimitiveType(vleft, DataTypes.VOID), met_name, fl, sl);
 		   :}
+		   |
+		   error LCBR stmtList:sl RCBR
+		   {:
+		   	RESULT = new ErrorMethod(slleft);
+		   :}
 ;
 
 formalList ::= formalList:fl COMMA formal:f

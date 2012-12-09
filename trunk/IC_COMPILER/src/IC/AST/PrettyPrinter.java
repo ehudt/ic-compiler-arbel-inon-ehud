@@ -185,14 +185,6 @@ public class PrettyPrinter implements Visitor {
 		return output.toString();
 	}
 
-	public Object visit(EmptyStatement statement){
-		StringBuffer output = new StringBuffer();
-
-		indent(output, statement);
-		output.append("Erroneuous statement");
-		
-		return output.toString();
-	}
 	public Object visit(If ifStatement) {
 		StringBuffer output = new StringBuffer();
 
@@ -448,4 +440,23 @@ public class PrettyPrinter implements Visitor {
 		depth -= 2;
 		return output.toString();
 	}
+
+	public Object visit(EmptyStatement statement){
+		StringBuffer output = new StringBuffer();
+
+		indent(output, statement);
+		output.append("Syntax error in statement");
+		
+		return output.toString();
+	}
+	
+	@Override
+	public Object visit(ErrorMethod errorMethod) {
+		StringBuffer output = new StringBuffer();
+
+		indent(output, errorMethod);
+		output.append("Syntax error in method declaration");
+		
+		return output.toString();
+		}
 }

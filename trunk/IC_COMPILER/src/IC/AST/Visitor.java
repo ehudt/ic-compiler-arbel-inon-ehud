@@ -74,4 +74,6 @@ public interface Visitor {
 	public Object visit(FieldMethodList fieldMethodList);
 
 	public Object visit(EmptyStatement emptyStatement);
+
+	public Object visit(ErrorMethod errorMethod);
 }
