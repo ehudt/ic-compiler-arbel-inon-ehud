@@ -26,7 +26,7 @@ public class Compiler
 	public static void main(String[] args)
     {
 		boolean printAst = false, useLib = false;
-		String 	srcPath, libPath = "";
+		String 	srcPath, libPath = "", currentFile = "";
 
 		// validate the number of arguments
 		if(args.length < 1 || args.length > 3)
@@ -66,6 +66,7 @@ public class Compiler
     	try {
     		// parse library file
     		if(useLib){
+    			currentFile = libPath;
     			FileReader libFile = new FileReader(libPath);
         		Lexer libScanner = new Lexer(libFile);
         		
@@ -87,6 +88,7 @@ public class Compiler
     		}
     		
     		// parse IC source file
+    		currentFile = srcPath;
     		FileReader txtFile = new FileReader(srcPath);
     		Lexer scanner = new Lexer(txtFile);    		
     		Parser parser = new Parser(scanner);
@@ -111,6 +113,8 @@ public class Compiler
     	// Handle syntax errors
     	catch (SyntaxError e) {
 			System.out.println(e.getMessage());
+			if(useLib)
+				System.out.println("Failure in parsing " + currentFile);
 			System.exit(-1);
 		}
     	// If the input file is not found, print an error to the user
