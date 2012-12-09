@@ -75,12 +75,10 @@ nonterminal StaticCall	staticCall;
 nonterminal VirtualCall	virtualCall;
 nonterminal BinaryOps	mathBinOp;
 nonterminal BinaryOps	logicalBinOp;
-//nonterminal UnaryOps	mathUnOp;
-//nonterminal UnaryOps	logicalUnOp;
 nonterminal BinaryOp	binExpr;
 nonterminal UnaryOp		unExpr;
 nonterminal Literal		literal;	
-	
+
 
 //////////////////////////
 // Precedence declarations
@@ -105,14 +103,7 @@ program ::= classList:c_list
 			:} 
 ;
 
-classList ::= /*classDecl:c
-			   {: 
-			   		List cl = new LinkedList<ICClass>();
-			   		cl.add(c);
-			   		RESULT = cl;
-			   :}
-			   |*/
-			   classList:c_list classDecl:c
+classList ::= classList:c_list classDecl:c
 			   {: 
 			   		c_list.add(c);
 			   		RESULT = c_list;
@@ -358,10 +349,31 @@ expr ::=		location:l
 				{: RESULT = e; :}
 ;
 
-binExpr ::=		expr:e1 mathBinOp:op expr:e2
-				{: RESULT = new MathBinaryOp(e1, op, e2); :}
-				| expr:e1 logicalBinOp:op expr:e2
-				{: RESULT = new LogicalBinaryOp(e1, op, e2); :}
+binExpr ::=		expr:e1 PLUS expr:e2
+				{: RESULT = new MathBinaryOp(e1, BinaryOps.PLUS, e2); :}
+				|expr:e1 MINUS expr:e2
+				{: RESULT = new MathBinaryOp(e1, BinaryOps.MINUS, e2); :}
+				|expr:e1 MULTIPLY expr:e2
+				{: RESULT = new MathBinaryOp(e1, BinaryOps.MULTIPLY, e2); :}
+				|expr:e1 DIVIDE expr:e2
+				{: RESULT = new MathBinaryOp(e1, BinaryOps.DIVIDE, e2); :}
+				|expr:e1 MOD expr:e2
+				{: RESULT = new MathBinaryOp(e1, BinaryOps.MOD, e2); :}| expr:e1 LAND expr:e2
+				{:	RESULT = new LogicalBinaryOp(e1, BinaryOps.LAND, e2); :}
+				| expr:e1 LOR expr:e2
+				{:	RESULT = new LogicalBinaryOp(e1, BinaryOps.LOR, e2); :}
+				| expr:e1 LT expr:e2
+				{:	RESULT = new LogicalBinaryOp(e1, BinaryOps.LT, e2); :}
+				| expr:e1 LTE expr:e2
+				{:	RESULT = new LogicalBinaryOp(e1, BinaryOps.LTE, e2); :}
+				| expr:e1 GT expr:e2
+				{:	RESULT = new LogicalBinaryOp(e1, BinaryOps.GT, e2); :}
+				| expr:e1 GTE expr:e2
+				{:	RESULT = new LogicalBinaryOp(e1, BinaryOps.GTE, e2); :}
+				| expr:e1 EQUAL expr:e2
+				{:	RESULT = new LogicalBinaryOp(e1, BinaryOps.EQUAL, e2); :}
+				| expr:e1 NEQUAL expr:e2
+				{:	RESULT = new LogicalBinaryOp(e1, BinaryOps.NEQUAL, e2); :}
 ;
 
 unExpr ::=		MINUS expr:e
@@ -394,43 +406,7 @@ location ::= ID:id
 			| expr:arr LB expr:index RB
 			{: RESULT = new ArrayLocation(arr, index); :}
 ;
-			 		
 
-mathBinOp ::=	PLUS:x
-			{: RESULT = BinaryOps.PLUS; :}
-			| MINUS:x
-			{: RESULT = BinaryOps.MINUS; :}
-			| MULTIPLY:x
-			{: RESULT = BinaryOps.MULTIPLY; :}
-			| DIVIDE:x
-			{: RESULT = BinaryOps.DIVIDE; :}
-			| MOD:x
-			{: RESULT = BinaryOps.MOD; :}
-;
-
-logicalBinOp ::= LAND:x
-			{: RESULT = BinaryOps.LAND; :}
-			| LOR:x
-			{: RESULT = BinaryOps.LOR; :}
-			| LT:x
-			{: RESULT = BinaryOps.LT; :}
-			| LTE:x
-			{: RESULT = BinaryOps.LTE; :}
-			| GT:x
-			{: RESULT = BinaryOps.GT; :}
-			| GTE:x
-			{: RESULT = BinaryOps.GTE; :}
-			| EQUAL:x
-			{: RESULT = BinaryOps.EQUAL; :}
-			| NEQUAL:x
-			{: RESULT = BinaryOps.NEQUAL; :}
-;
-/*
-mathUnOp ::=	MINUS:x
-			{: RESULT = UnaryOps.UMINUS; :};
-logicalUnOp ::= LNEG:x
-			{: RESULT = UnaryOps.LNEG; :};
-*/
 literal ::= INTEGER:n 
 			{:  long num_val = Long.parseLong(n);
 				if (num_val > 2147483648L){
