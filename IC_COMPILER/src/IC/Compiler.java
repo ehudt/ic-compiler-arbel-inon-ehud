@@ -87,7 +87,6 @@ public class Compiler
     		}
     		
     		// parse IC source file
-    		System.out.println("Processing source file: " + srcPath);
     		FileReader txtFile = new FileReader(srcPath);
     		Lexer scanner = new Lexer(txtFile);    		
     		Parser parser = new Parser(scanner);
