@@ -52,13 +52,13 @@ parser code  {:
 	
 :};
 
-
-scan with {:
+// for debugging
+/*scan with {:
 	Token t = lexer.next_token();
-	if (false/*true*/)
+	if (true)
 		System.out.println(t.getLine() + ":" + t + " " + t.value);
 	return t; 
-:};
+:};*/
 
 	
 ////////////////////////////////////////////

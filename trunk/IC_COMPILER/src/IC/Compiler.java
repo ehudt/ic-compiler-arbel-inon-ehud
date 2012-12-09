@@ -66,14 +66,14 @@ public class Compiler
     	try {
     		// parse library file
     		if(useLib){
-    			System.out.println("Processing library file: " + libPath);
     			FileReader libFile = new FileReader(libPath);
         		Lexer libScanner = new Lexer(libFile);
         		
         		LibraryParser libParser = new LibraryParser(libScanner);
         		Symbol libParseSymbol = new Symbol(1);
         		// parse and generate AST
-        		libParseSymbol = libParser.parse();//.parse();
+        		libParseSymbol = libParser.parse();
+        		System.out.println("Parsed " + libPath + " successfully!");
         		ICClass libraryRoot = (ICClass)libParseSymbol.value;
         		
         		List<ICClass> dummyList = new ArrayList<ICClass>();
@@ -83,18 +83,19 @@ public class Compiler
         		if(printAst){
 	        		PrettyPrinter libPrinter = new PrettyPrinter(libPath);
 	    			System.out.println(libraryProgram.accept(libPrinter));
-	    			System.out.println();
         		}
     		}
     		
     		// parse IC source file
-    		System.out.println("Processing source file: " + libPath);
+    		System.out.println("Processing source file: " + srcPath);
     		FileReader txtFile = new FileReader(srcPath);
     		Lexer scanner = new Lexer(txtFile);    		
     		Parser parser = new Parser(scanner);
     		Symbol parseSymbol = new Symbol(1);
     		// parse and generate AST
     		parseSymbol = parser.parse();
+    		System.out.println("Parsed " + srcPath + " successfully!");
+    		
     		Program programRoot = (Program)parseSymbol.value;
 
     		// print the generated AST
