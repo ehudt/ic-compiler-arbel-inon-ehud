@@ -1,5 +1,7 @@
 package IC.Parser;
 
+import com.sun.java_cup.internal.runtime.Symbol;
+
 public class SyntaxError extends Exception {
 	/**
 	 * 
@@ -12,6 +14,11 @@ public class SyntaxError extends Exception {
 		super("SyntaxError in line:" + line + " in Token: " + token);
 		this.line = line;
 		this.token = token;
+	}
+	
+	public SyntaxError(Token token){
+		super("Syntax error in line " + token.getLine() + " in token: " + Token.getTokenName(token.getId()) + 
+				(token.value != "" ? " (" + token.value + ")" : ""));
 	}
 
 	
