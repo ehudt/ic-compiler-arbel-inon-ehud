@@ -33,10 +33,10 @@ parser code  {:
 :};
 	
 	
-
+// This is for debugging, please ignore
 scan with {:
 	Token t = lexer.next_token();
-	if (true)
+	if (false)
 		System.out.println(t.getLine() + ":" + t);
 	return t; 
 :};
