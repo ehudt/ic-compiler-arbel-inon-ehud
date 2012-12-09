@@ -32,7 +32,8 @@ public class Compiler
 		
 		// process command line arguments: paths and flags 
 		srcPath = args[0];
-		for( String arg : args ){
+		for( int i = 1; i < args.length; i++ ){
+			String arg = args[i];
 			if(arg.startsWith("-L")){
 				if (useLib){
 					System.out.println("Error: only 1 library file supported per compiler execution.");
