@@ -1,0 +1,9 @@
+class Nothing {
+	static void main(string[] args){
+		string s;
+		Libary.println(s);
+		int x = Libary.readi();
+		
+	
+	}
+}
