@@ -75,8 +75,8 @@ nonterminal StaticCall	staticCall;
 nonterminal VirtualCall	virtualCall;
 nonterminal BinaryOps	mathBinOp;
 nonterminal BinaryOps	logicalBinOp;
-nonterminal UnaryOps	mathUnOp;
-nonterminal UnaryOps	logicalUnOp;
+//nonterminal UnaryOps	mathUnOp;
+//nonterminal UnaryOps	logicalUnOp;
 nonterminal BinaryOp	binExpr;
 nonterminal UnaryOp		unExpr;
 nonterminal Literal		literal;	
@@ -364,10 +364,11 @@ binExpr ::=		expr:e1 mathBinOp:op expr:e2
 				{: RESULT = new LogicalBinaryOp(e1, op, e2); :}
 ;
 
-unExpr ::=		mathUnOp:op expr:e
-				{: RESULT = new MathUnaryOp(op, e); :}
-				| logicalUnOp:op expr:e
-				{: RESULT = new LogicalUnaryOp(op, e); :}
+unExpr ::=		MINUS expr:e
+				{: RESULT = new MathUnaryOp(UnaryOps.UMINUS, e); :}
+				%prec UMINUS
+				| LNEG expr:e
+				{: RESULT = new LogicalUnaryOp(UnaryOps.LNEG, e); :}
 ; 
 
 
@@ -424,12 +425,12 @@ logicalBinOp ::= LAND:x
 			| NEQUAL:x
 			{: RESULT = BinaryOps.NEQUAL; :}
 ;
-
-mathUnOp ::=	UMINUS:x
+/*
+mathUnOp ::=	MINUS:x
 			{: RESULT = UnaryOps.UMINUS; :};
 logicalUnOp ::= LNEG:x
 			{: RESULT = UnaryOps.LNEG; :};
-
+*/
 literal ::= INTEGER:n 
 			{:  long num_val = Long.parseLong(n);
 				if (num_val > 2147483648L){
