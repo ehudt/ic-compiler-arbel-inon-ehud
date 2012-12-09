@@ -1,5 +1,5 @@
 //tests what happens when a bad char is entered while calling to a method
-class classtest
+class Classtest
 {
 	void met()
 	{
