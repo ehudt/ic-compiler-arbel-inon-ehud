@@ -1,0 +1,11 @@
+class Our_class{
+	void main (){
+		boolean b = true;
+		if (b) {
+			x = 3;
+			}
+		else{
+		x=4;}
+		}
+	
+}
