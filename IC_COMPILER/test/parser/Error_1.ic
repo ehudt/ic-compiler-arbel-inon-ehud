@@ -1,0 +1,24 @@
+//tests what happens when a bad char is entered
+class Classtest
+{
+	int x;
+	int y;
+	int z;
+	string ret;
+	
+	void mult(int a, int b)
+	{
+		z = a*b;
+	}
+	void main()
+	{
+		mult(x,y);
+		if(z == x*y)
+			if(x==y)
+				ret="Ok";
+			else
+	}
+	
+	
+	
+}
