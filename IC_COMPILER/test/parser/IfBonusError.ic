@@ -1,0 +1,9 @@
+class Nothing {
+	static void main(string[] args){
+		int x;
+		if(x == 6)
+			int y;
+
+		return;
+	}
+}

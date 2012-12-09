@@ -1,0 +1,13 @@
+class Ehud {
+	static void main(string[] args){
+		int x = 6;
+		while(x != 5){
+			x = x-1;
+		}
+		if(x == 7) print(x);
+		else {
+			int y = 5;
+			print(y);
+		}
+	}
+}	
