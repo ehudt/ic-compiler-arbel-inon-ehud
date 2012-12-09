@@ -3,6 +3,8 @@ package IC;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import java_cup.runtime.Symbol;
 
@@ -73,9 +75,13 @@ public class Compiler
         		libParseSymbol = libParser.parse();//.parse();
         		ICClass libraryRoot = (ICClass)libParseSymbol.value;
         		
+        		List<ICClass> dummyList = new ArrayList<ICClass>();
+        		dummyList.add(libraryRoot);
+        		Program libraryProgram = new Program(dummyList);
+        		
         		if(printAst){
 	        		PrettyPrinter libPrinter = new PrettyPrinter(libPath);
-	    			System.out.println(libraryRoot.accept(libPrinter));
+	    			System.out.println(libraryProgram.accept(libPrinter));
         		}
     		}
     		

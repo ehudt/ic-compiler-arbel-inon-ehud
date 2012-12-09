@@ -185,6 +185,14 @@ public class PrettyPrinter implements Visitor {
 		return output.toString();
 	}
 
+	public Object visit(EmptyStatement statement){
+		StringBuffer output = new StringBuffer();
+
+		indent(output, statement);
+		output.append("Erroneuous statement");
+		
+		return output.toString();
+	}
 	public Object visit(If ifStatement) {
 		StringBuffer output = new StringBuffer();
 

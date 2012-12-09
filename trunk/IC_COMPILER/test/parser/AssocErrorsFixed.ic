@@ -1,0 +1,5 @@
+ class AssocError {
+	 void blah(int j){
+		 j = 7 -- 6; // j = (7 - (-6))
+	 }
+ }
