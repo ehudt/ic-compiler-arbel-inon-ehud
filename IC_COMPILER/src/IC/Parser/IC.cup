@@ -73,8 +73,6 @@ nonterminal Location	location;
 nonterminal Call		call;
 nonterminal StaticCall	staticCall;
 nonterminal VirtualCall	virtualCall;
-nonterminal BinaryOps	mathBinOp;
-nonterminal BinaryOps	logicalBinOp;
 nonterminal BinaryOp	binExpr;
 nonterminal UnaryOp		unExpr;
 nonterminal Literal		literal;	
@@ -277,11 +275,21 @@ stmt ::= location:l ASSIGN expr:e SEMI
 		 	RESULT= new Return(rleft);
 		 :}
 		 | 
-		 ifStmt:if_st
+/*		 IF:i LP expr:e RP type:tp ID:id SEMI
+		{:
+			throw new SyntaxError(ileft, "Invalid if statement. Includes only variable declaration.");
+		:}
+		 |*/
+		 IF LP expr:e RP stmt:st ELSE stmt:s_else
 		 {:
-		 	RESULT = if_st;
-	 	 :}
+		 	RESULT = new If(e, st, s_else);
+		 :}
 		 |
+		 IF LP expr:e RP stmt:st
+		 {:
+		 	RESULT = new If(e, st);
+	 	 :}
+	 	 |
 		 WHILE LP expr:e RP stmt:st
 		 {:
 		 	RESULT = new While(e,st);
@@ -313,21 +321,6 @@ stmt ::= location:l ASSIGN expr:e SEMI
 		 :}
 ;		 		 		 		 
 
-ifStmt ::=	IF:i LP expr:e RP type:tp ID:id SEMI
-			{:
-				throw new SyntaxError(ileft, "Invalid if statement. Includes only variable declaration.");
-			:}
-			 |
-			 IF LP  stmt:st ELSE stmt:s_else
-			 {:
-			 	RESULT = new If(e, st, s_else);
-			 :}
-			 |
-			 IF LP expr:e RP stmt:st
-			 {:
-			 	RESULT = new If(e, st);
-		 	 :}
-;
 exprList ::=	/* empty list */
 				{: RESULT = new LinkedList<Expression>(); :}
 				| exprList:el COMMA expr:e
