@@ -34,12 +34,12 @@ parser code  {:
 	
 	
 // This is for debugging, please ignore
-scan with {:
+/*scan with {:
 	Token t = lexer.next_token();
 	if (false)
 		System.out.println(t.getLine() + ":" + t);
 	return t; 
-:};
+:};*/
 
 //Terminals
 terminal		ASSIGN, BOOLEAN, BREAK, CLASS, COMMA;
