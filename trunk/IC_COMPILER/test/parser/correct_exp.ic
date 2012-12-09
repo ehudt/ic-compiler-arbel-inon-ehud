@@ -1,0 +1,12 @@
+class Our_class{
+	void main (){
+		int x = 3;
+		int y = SecondClass.method(x);
+		int z = this.method();
+		int c = (2+4-y);
+		boolean w = new OtherClass();
+		string a = "new string"; 
+		int [] b = new int[200];		
+			
+	}
+}
