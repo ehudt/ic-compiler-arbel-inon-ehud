@@ -92,17 +92,22 @@ program ::= classList:c_list
 			:} 
 ;
 
-classList ::= classDecl:c
+classList ::= /*classDecl:c
 			   {: 
-			   		RESULT = new LinkedList<ICClass>();
-			   		RESULT.add(c);
+			   		List cl = new LinkedList<ICClass>();
+			   		cl.add(c);
+			   		RESULT = cl;
 			   :}
-			   |
+			   |*/
 			   classList:c_list classDecl:c
 			   {: 
 			   		c_list.add(c);
 			   		RESULT = c_list;
 			   :} 
+			   |
+			   {:
+			   		RESULT = new LinkedList<ICClass>();
+			   :}
 ;
 
 classDecl ::= CLASS:cl CLASS_ID:c_name EXTENDS CLASS_ID:super_name LCBR fmList:l RCBR

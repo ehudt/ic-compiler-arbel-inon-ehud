@@ -74,13 +74,14 @@ libic ::= CLASS CLASS_ID:libname LCBR libmethod_list:lmList RCBR
 			:}
 		;
 		
-libmethod_list ::= libmethod:lm	
+libmethod_list ::= /*libmethod:lm	
 		{:	
 			List<Method> lmList = new LinkedList<Method>();
 			lmList.add(lm);
 			RESULT = lmList;
 		:}
-		| libmethod_list:lmList libmethod:lm
+		|*/
+		libmethod_list:lmList libmethod:lm
 		{:	
 			lmList.add(lm);
 			RESULT = lmList;
