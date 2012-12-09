@@ -10,6 +10,8 @@ import java.util.ArrayList;
 
 parser code  {:	
 	private Lexer lexer;
+	private boolean isError = false;
+	int firstError = -1;
 
 	public Parser(Lexer lexer) {
 		super(lexer);
@@ -23,19 +25,37 @@ parser code  {:
 	
 	
 	// override method: syntax_error
-	//public void unrecovered_syntax_error(Symbol curr_tok) throws SyntaxError{
-	//	throw new SyntaxError((Token) curr_tok);
-	//}
+	public void unrecovered_syntax_error(Symbol curr_tok) throws SyntaxError{
+		if(firstError < 0) firstError = curr_tok.left;
+		throw new SyntaxError((Token) curr_tok);
+	}
 	
 	// override method to avoid duplicate errors
-	//public void syntax_error(Symbol curr_tok){}
+	public void syntax_error(Symbol curr_tok){
+		SyntaxError error = new SyntaxError((Token) curr_tok);
+		System.out.println(error.getMessage());
+		isError = true;
+		if(firstError < 0) firstError = curr_tok.left;
+	}
+	
+	public Symbol parse() throws Exception
+	{
+		Symbol parseSymbol = super.parse();
+		
+		if (isError)
+		{
+			throw new SyntaxError(firstError, "Error: Syntax error(s) found in file.");
+		}
+		
+		return parseSymbol;
+	}
 	
 :};
 
 
 scan with {:
 	Token t = lexer.next_token();
-	if (true)
+	if (false/*true*/)
 		System.out.println(t.getLine() + ":" + t + " " + t.value);
 	return t; 
 :};
@@ -126,7 +146,7 @@ classDecl ::= CLASS:cl CLASS_ID:c_name EXTENDS CLASS_ID:super_name LCBR fmList:l
 			  |
 			  error LCBR fmList:l RCBR
 			  {:
-			  		RESULT = new ICClass(0, "", new ArrayList<Field>(), new ArrayList<Method>());
+			  		RESULT = new ErrorClass(lleft);
 			  :}
 ;
 

@@ -76,4 +76,6 @@ public interface Visitor {
 	public Object visit(EmptyStatement emptyStatement);
 
 	public Object visit(ErrorMethod errorMethod);
+	
+	public Object visit(ErrorClass errorClass);
 }
