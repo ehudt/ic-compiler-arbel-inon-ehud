@@ -276,16 +276,11 @@ stmt ::= location:l ASSIGN expr:e SEMI
 		 {:
 		 	RESULT= new Return(rleft);
 		 :}
-		 |
-		 IF LP expr:e RP stmt:st ELSE stmt:s_else
+		 | 
+		 ifStmt:if_st
 		 {:
-		 	RESULT = new If(e, st, s_else);
-		 :}
-		 |
-		 IF LP expr:e RP stmt:st
-		 {:
-		 	RESULT = new If(e, st);
-		 :}
+		 	RESULT = if_st;
+	 	 :}
 		 |
 		 WHILE LP expr:e RP stmt:st
 		 {:
@@ -318,6 +313,21 @@ stmt ::= location:l ASSIGN expr:e SEMI
 		 :}
 ;		 		 		 		 
 
+ifStmt ::=	IF:i LP expr:e RP type:tp ID:id SEMI
+			{:
+				throw new SyntaxError(ileft, "Invalid if statement. Includes only variable declaration.");
+			:}
+			 |
+			 IF LP  stmt:st ELSE stmt:s_else
+			 {:
+			 	RESULT = new If(e, st, s_else);
+			 :}
+			 |
+			 IF LP expr:e RP stmt:st
+			 {:
+			 	RESULT = new If(e, st);
+		 	 :}
+;
 exprList ::=	/* empty list */
 				{: RESULT = new LinkedList<Expression>(); :}
 				| exprList:el COMMA expr:e

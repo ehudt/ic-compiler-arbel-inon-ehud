@@ -62,21 +62,6 @@ public class Compiler
 
 		// start processing the source file(s)
     	try {
-    		// parse IC source file
-    		FileReader txtFile = new FileReader(srcPath);
-    		Lexer scanner = new Lexer(txtFile);    		
-    		Parser parser = new Parser(scanner);
-    		Symbol parseSymbol = new Symbol(1);
-    		// parse and generate AST
-    		parseSymbol = parser.parse();
-    		Program programRoot = (Program)parseSymbol.value;
-
-    		// print the generated AST
-    		if(printAst){
-    			PrettyPrinter printer = new PrettyPrinter(srcPath);
-    			System.out.println(programRoot.accept(printer));
-    		}
-    		
     		// parse library file
     		if(useLib){
     			FileReader libFile = new FileReader(libPath);
@@ -94,6 +79,20 @@ public class Compiler
         		}
     		}
     		
+    		// parse IC source file
+    		FileReader txtFile = new FileReader(srcPath);
+    		Lexer scanner = new Lexer(txtFile);    		
+    		Parser parser = new Parser(scanner);
+    		Symbol parseSymbol = new Symbol(1);
+    		// parse and generate AST
+    		parseSymbol = parser.debug_parse();
+    		Program programRoot = (Program)parseSymbol.value;
+
+    		// print the generated AST
+    		if(printAst){
+    			PrettyPrinter printer = new PrettyPrinter(srcPath);
+    			System.out.println(programRoot.accept(printer));
+    		}
     	}
     	// Catch lexical Errors and print the line and the value of the token
     	catch (LexicalError e) {

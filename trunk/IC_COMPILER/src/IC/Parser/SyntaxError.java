@@ -10,14 +10,14 @@ public class SyntaxError extends Exception {
 	private int line;
 	private String token;
 	
-	public SyntaxError(int line, String token){
-		super("SyntaxError in line:" + line + " in Token: " + token);
+	public SyntaxError(int line, String message){
+		super(line + ": Syntax error: " + message);
 		this.line = line;
 		this.token = token;
 	}
 	
 	public SyntaxError(Token token){
-		super("Syntax error in line " + token.getLine() + " in token: " + Token.getTokenName(token.getId()) + 
+		super(token.getLine() + ": Syntax error in token: " + Token.getTokenName(token.getId()) + 
 				(token.value != "" ? " (" + token.value + ")" : ""));
 	}
 
