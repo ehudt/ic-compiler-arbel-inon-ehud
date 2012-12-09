@@ -1,0 +1,11 @@
+class Our_class{
+	void main (){
+	
+		boolean b = true;
+		int x = -2;
+		boolean t = false || b;
+		boolean w = !t;
+		
+
+	}
+}
