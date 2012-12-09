@@ -1,0 +1,14 @@
+//tests what happens when a bad char is entered while calling to a method
+class classtest
+{
+	void met()
+	{
+		int i=33;
+		met2(%);
+		i= i+5;
+	}
+	void met2(int j)
+	{
+		string s="abc";
+	}
+}
