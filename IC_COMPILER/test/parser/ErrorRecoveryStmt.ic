@@ -1,0 +1,8 @@
+class Something {
+	int getCalc(){
+		int x = 7;
+		int y;
+		y = x -+ 5;
+		return y;
+	}
+}

@@ -64,7 +64,7 @@ public interface Visitor {
 	public Object visit(LogicalBinaryOp binaryOp);
 
 	public Object visit(MathUnaryOp unaryOp);
-
+	
 	public Object visit(LogicalUnaryOp unaryOp);
 
 	public Object visit(Literal literal);
@@ -72,4 +72,6 @@ public interface Visitor {
 	public Object visit(ExpressionBlock expressionBlock);
 
 	public Object visit(FieldMethodList fieldMethodList);
+
+	public Object visit(EmptyStatement emptyStatement);
 }

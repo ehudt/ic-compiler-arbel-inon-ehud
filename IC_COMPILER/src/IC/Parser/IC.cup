@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.LinkedList;
 import java_cup.runtime.*;
 import IC.Parser.Lexer;
+import java.util.ArrayList;
 
 parser code  {:	
 	private Lexer lexer;
@@ -22,12 +23,12 @@ parser code  {:
 	
 	
 	// override method: syntax_error
-	public void unrecovered_syntax_error(Symbol curr_tok) throws SyntaxError{
-		throw new SyntaxError((Token) curr_tok);
-	}
+	//public void unrecovered_syntax_error(Symbol curr_tok) throws SyntaxError{
+	//	throw new SyntaxError((Token) curr_tok);
+	//}
 	
 	// override method to avoid duplicate errors
-	public void syntax_error(Symbol curr_tok){}
+	//public void syntax_error(Symbol curr_tok){}
 	
 :};
 
@@ -121,6 +122,11 @@ classDecl ::= CLASS:cl CLASS_ID:c_name EXTENDS CLASS_ID:super_name LCBR fmList:l
 			  CLASS:cl CLASS_ID:c_name LCBR fmList:l RCBR
 			  {:
 			  		RESULT = new ICClass(clleft, c_name, l.getFieldList(), l.getMethodList());
+			  :}
+			  |
+			  error LCBR fmList:l RCBR
+			  {:
+			  		RESULT = new ICClass(0, "", new ArrayList<Field>(), new ArrayList<Method>());
 			  :}
 ;
 
@@ -310,6 +316,11 @@ stmt ::= location:l ASSIGN expr:e SEMI
 		 LCBR:lb stmtList:sl RCBR
 		 {:
 		 	RESULT = new StatementsBlock(lbleft,sl);
+		 :}
+		 | 
+		 error SEMI:sem
+		 {:
+		 	RESULT = new EmptyStatement(semleft);
 		 :}
 ;		
 
