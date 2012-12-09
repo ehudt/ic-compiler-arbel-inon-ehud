@@ -75,7 +75,8 @@ nonterminal StaticCall	staticCall;
 nonterminal VirtualCall	virtualCall;
 nonterminal BinaryOp	binExpr;
 nonterminal UnaryOp		unExpr;
-nonterminal Literal		literal;	
+nonterminal Literal		literal;
+nonterminal LocalVariable varDecl;	
 
 
 //////////////////////////
@@ -247,7 +248,13 @@ type ::= INT:i
 stmtList ::= stmtList:sl stmt:s
 		      {:
 		     	 	sl.add(s);
-					RESULT=sl;
+					RESULT = sl;
+		      :}
+		      |
+		      stmtList:sl varDecl:v
+		      {:
+		      		sl.add(v);
+		      		RESULT = sl;
 		      :}
 		      |
 		      {:
@@ -272,14 +279,9 @@ stmt ::= location:l ASSIGN expr:e SEMI
 		 |
 		 RETURN:r SEMI
 		 {:
-		 	RESULT= new Return(rleft);
+		 	RESULT = new Return(rleft);
 		 :}
 		 | 
-/*		 IF:i LP expr:e RP type:tp ID:id SEMI
-		{:
-			throw new SyntaxError(ileft, "Invalid if statement. Includes only variable declaration.");
-		:}
-		 |*/
 		 IF LP expr:e RP stmt:st ELSE stmt:s_else
 		 {:
 		 	RESULT = new If(e, st, s_else);
@@ -309,8 +311,9 @@ stmt ::= location:l ASSIGN expr:e SEMI
 		 {:
 		 	RESULT = new StatementsBlock(lbleft,sl);
 		 :}
-		 |
-		 type:t ID:id ASSIGN expr:e SEMI
+;		
+
+varDecl ::=	type:t ID:id ASSIGN expr:e SEMI
 		 {:
 		 	RESULT = new LocalVariable(t, id, e); 
 		 :}
@@ -319,7 +322,7 @@ stmt ::= location:l ASSIGN expr:e SEMI
 		 {:
 			RESULT = new LocalVariable(t, id);
 		 :}
-;		 		 		 		 
+;			 		 		 		 
 
 exprList ::=	/* empty list */
 				{: RESULT = new LinkedList<Expression>(); :}
