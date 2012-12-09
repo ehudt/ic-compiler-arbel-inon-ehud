@@ -458,5 +458,15 @@ public class PrettyPrinter implements Visitor {
 		output.append("Syntax error in method declaration");
 		
 		return output.toString();
-		}
+	}
+
+	@Override
+	public Object visit(ErrorClass errorClass) {
+		StringBuffer output = new StringBuffer();
+
+		indent(output, errorClass);
+		output.append("Syntax error in class declaration");
+		
+		return output.toString();
+	}
 }

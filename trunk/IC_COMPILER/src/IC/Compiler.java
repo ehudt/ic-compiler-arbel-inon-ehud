@@ -66,6 +66,7 @@ public class Compiler
     	try {
     		// parse library file
     		if(useLib){
+    			System.out.println("Processing library file: " + libPath);
     			FileReader libFile = new FileReader(libPath);
         		Lexer libScanner = new Lexer(libFile);
         		
@@ -82,10 +83,12 @@ public class Compiler
         		if(printAst){
 	        		PrettyPrinter libPrinter = new PrettyPrinter(libPath);
 	    			System.out.println(libraryProgram.accept(libPrinter));
+	    			System.out.println();
         		}
     		}
     		
     		// parse IC source file
+    		System.out.println("Processing source file: " + libPath);
     		FileReader txtFile = new FileReader(srcPath);
     		Lexer scanner = new Lexer(txtFile);    		
     		Parser parser = new Parser(scanner);
