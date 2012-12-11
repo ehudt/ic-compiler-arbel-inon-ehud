@@ -1,8 +1,6 @@
 package IC.AST;
 
 import java.util.ArrayList;
-import java.util.List;
-
 import IC.DataTypes;
 
 public class ErrorMethod extends Method {

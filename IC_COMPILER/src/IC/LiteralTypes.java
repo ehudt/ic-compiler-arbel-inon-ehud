@@ -10,6 +10,7 @@ public enum LiteralTypes {
 
 	INTEGER(DataTypes.INT.getDefaultValue(), "Integer literal"), 
 	STRING(DataTypes.STRING.getDefaultValue(), "String literal") {
+		@SuppressWarnings("unused")
 		private void replaceEscapeSequences(StringBuffer string) {
 			for (int i = 0; i < string.length(); ++i) {
 				String replacement = String.valueOf(string.charAt(i));
