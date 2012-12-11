@@ -1,7 +1,6 @@
 package IC.Parser;
 
 import java_cup.runtime.Symbol;
-import IC.Parser.sym;
 import java.lang.reflect.*;
 
 /**
