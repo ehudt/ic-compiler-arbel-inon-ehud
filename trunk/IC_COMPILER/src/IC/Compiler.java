@@ -25,8 +25,8 @@ public class Compiler
     */
 	public static void main(String[] args)
     {
-		boolean printAst = false, useLib = false;
-		String 	srcPath, libPath = "", currentFile = "";
+		boolean printAst = false, useExternalLib = false;
+		String 	srcPath, libPath = "libic.sig", currentFile = "";
 
 		// validate the number of arguments
 		if(args.length < 1 || args.length > 3)
@@ -37,7 +37,7 @@ public class Compiler
 		for( int i = 1; i < args.length; i++ ){
 			String arg = args[i];
 			if(arg.startsWith("-L")){
-				if (useLib){
+				if (useExternalLib){
 					System.out.println("Error: only 1 library file supported per compiler execution.");
 					usage();
 				}
@@ -47,7 +47,7 @@ public class Compiler
 				} 
 				else { // arg.length() > 2
 					libPath = arg.substring(2);
-					useLib = true;
+					useExternalLib = true;
 				}
 			}
 			else if(arg.equals("-print-ast")){
@@ -65,27 +65,25 @@ public class Compiler
 		// start processing the source file(s)
     	try {
     		// parse library file
-    		if(useLib){
-    			currentFile = libPath;
-    			FileReader libFile = new FileReader(libPath);
-        		Lexer libScanner = new Lexer(libFile);
-        		
-        		LibraryParser libParser = new LibraryParser(libScanner);
-        		Symbol libParseSymbol = new Symbol(1);
-        		// parse and generate AST
-        		libParseSymbol = libParser.parse();
-        		System.out.println("Parsed " + libPath + " successfully!");
-        		ICClass libraryRoot = (ICClass)libParseSymbol.value;
-        		
-        		List<ICClass> dummyList = new ArrayList<ICClass>();
-        		dummyList.add(libraryRoot);
-        		Program libraryProgram = new Program(dummyList);
-        		
-        		if(printAst){
-	        		PrettyPrinter libPrinter = new PrettyPrinter(libPath);
-	    			System.out.println(libraryProgram.accept(libPrinter));
-        		}
-    		}
+			currentFile = libPath;
+			FileReader libFile = new FileReader(libPath);
+    		Lexer libScanner = new Lexer(libFile);
+    		
+    		LibraryParser libParser = new LibraryParser(libScanner);
+    		Symbol libParseSymbol = new Symbol(1);
+    		// parse and generate AST
+    		libParseSymbol = libParser.parse();
+    		//System.out.println("Parsed " + libPath + " successfully!");
+    		ICClass libraryRoot = (ICClass)libParseSymbol.value;
+    		
+    		/*List<ICClass> dummyList = new ArrayList<ICClass>();
+    		dummyList.add(libraryRoot);
+    		Program libraryProgram = new Program(dummyList);
+    		
+    		if(printAst){
+        		PrettyPrinter libPrinter = new PrettyPrinter(libPath);
+    			System.out.println(libraryProgram.accept(libPrinter));
+    		}*/
     		
     		// parse IC source file
     		currentFile = srcPath;
@@ -98,6 +96,9 @@ public class Compiler
     		System.out.println("Parsed " + srcPath + " successfully!");
     		
     		Program programRoot = (Program)parseSymbol.value;
+    		
+    		// add the library AST as a node to the program AST
+    		programRoot.getClasses().add(libraryRoot);
 
     		// print the generated AST
     		if(printAst){
@@ -108,13 +109,13 @@ public class Compiler
     	// Catch lexical Errors and print the line and the value of the token
     	catch (LexicalError e) {
 			System.out.println(e.getMessage());
+			System.out.println("Lexical error in file: " + currentFile);
 			System.exit(-1);
 		}
     	// Handle syntax errors
     	catch (SyntaxError e) {
 			System.out.println(e.getMessage());
-			if(useLib)
-				System.out.println("Failure in parsing " + currentFile);
+			System.out.println("Syntax error(s) in file: " + currentFile);
 			System.exit(-1);
 		}
     	// If the input file is not found, print an error to the user
@@ -132,7 +133,6 @@ public class Compiler
     		e.printStackTrace();
     		System.exit(-1);
     	}
-    	
     }
 	
 	private static void usage(){
