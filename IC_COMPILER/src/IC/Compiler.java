@@ -28,7 +28,7 @@ public class Compiler
 		String 	srcPath, libPath = "libic.sig", currentFile = "";
 
 		// validate the number of arguments
-		if(args.length < 1 || args.length > 3)
+		if(args.length < 1)
 			usage();
 		
 		// process command line arguments: paths and flags 
