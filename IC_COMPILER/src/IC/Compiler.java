@@ -24,7 +24,7 @@ public class Compiler
     */
 	public static void main(String[] args)
     {
-		boolean printAst = false, useExternalLib = false;
+		boolean printAst = false, useExternalLib = false, printSymTab=false;
 		String 	srcPath, libPath = "libic.sig", currentFile = "";
 
 		// validate the number of arguments
@@ -54,7 +54,14 @@ public class Compiler
 					System.out.println("Error: duplicate flag: " + arg);
 					usage();
 				} else printAst = true;
-			} 
+			}
+			else if(arg.equals("-dump-symtab")){
+				if(printSymTab)
+				{
+					System.out.println("Error: duplicate flag: " + arg);
+					usage();
+				} else printSymTab=true;
+			}
 			else {
 				System.out.println("Error: invalid argument: " + arg);
 				usage();
