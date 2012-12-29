@@ -14,6 +14,10 @@ public class BlockSymbolTable extends SymbolTable {
 		super(parent);
 	}
 	
+	public BlockSymbolTable(SymbolTable parent, String name) {
+		super(parent, name);
+	}
+
 	public void insert(LocalVariable local) throws SemanticError{
 		if(locals.containsKey(local.getName())){
 			throw new SemanticError("Duplicate declaration of local variable " + local.getName());
