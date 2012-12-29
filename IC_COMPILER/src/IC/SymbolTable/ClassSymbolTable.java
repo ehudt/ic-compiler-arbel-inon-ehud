@@ -5,16 +5,16 @@ import java.util.Map;
 
 import IC.SemanticError;
 import IC.AST.Field;
+import IC.AST.Method;
 
 public class ClassSymbolTable extends SymbolTable {
 	private String name;
 	private boolean isStatic;
 	private Map<String, FieldSymbol> classFieldTable = new HashMap<String, FieldSymbol>();
 	private Map<String, MethodSymbol> classMethodTable = new HashMap<String, MethodSymbol>();
-	private GlobalSymbolTable parentTable;
 	
 	public ClassSymbolTable(GlobalSymbolTable parent, String name, boolean isStatic){
-		parentTable = parent;
+		super(parent);
 		this.name = name;
 		this.isStatic = isStatic;
 	}
@@ -33,6 +33,13 @@ public class ClassSymbolTable extends SymbolTable {
 		classFieldTable.put(newField.getName(), new FieldSymbol(newField));
 	}
 	
+	public void insert(Method newMethod) throws SemanticError {
+		if(hasFieldOrMethod(newMethod.getName())){
+			throw new SemanticError("Class " + name + " already has a method or a field with name " + newMethod.getName());
+		}
+		classMethodTable.put(newMethod.getName(), new MethodSymbol(newMethod));
+	}
+	
 	private boolean hasFieldOrMethod(String name) {
 		return classFieldTable.containsKey(name) || classMethodTable.containsKey(name);
 	}
@@ -44,7 +51,7 @@ public class ClassSymbolTable extends SymbolTable {
 		else if(classMethodTable.containsKey(name)){
 			return classMethodTable.get(name);
 		}
-		else return parentTable.lookup(name);
+		else return parent.lookup(name);
 	}
 	
 }
