@@ -12,6 +12,12 @@ public abstract class Symbol {
 		this.kind=kind;
 	}
 	
+	public Symbol(String id,Kind kind,int line)
+	{
+		this.id=id;
+		this.kind=kind;
+		this.line=line;
+	}
 	//getters
 	public String getID()
 	{
@@ -23,4 +29,12 @@ public abstract class Symbol {
 		return this.kind;
 	}
 	
+	public int getLine()
+	{
+		return this.line;
+	}
+	public void setLine(int line)
+	{
+		this.line=line;
+	}
 }
