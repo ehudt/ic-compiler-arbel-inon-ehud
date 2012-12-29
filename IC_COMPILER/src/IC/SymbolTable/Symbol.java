@@ -1,5 +1,7 @@
 package IC.SymbolTable;
 
+import IC.Types.Type;
+
 public abstract class Symbol {
 	protected String id;
 	protected Type type;

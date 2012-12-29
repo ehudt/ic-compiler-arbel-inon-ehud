@@ -11,7 +11,7 @@ public class GlobalSymbolTable extends SymbolTable {
 	private Map<String, ClassSymbolTable> childrenSymbolTables = new HashMap<String, ClassSymbolTable>();
 
 	@Override
-	public Symbol lookup(Symbol symbol) {
+	public Symbol lookup(String name) {
 		return getClassSymbol(name);
 	}
 	
