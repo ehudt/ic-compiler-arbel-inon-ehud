@@ -40,6 +40,5 @@ public class TypeTable {
 		bRes=primitiveTypes.containsKey(typeName);
 		return bRes;
 	}
-	}
 	
 }
