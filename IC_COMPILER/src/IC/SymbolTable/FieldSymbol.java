@@ -1,4 +1,4 @@
-package SymbolTable;
+package IC.SymbolTable;
 
 import IC.AST.Field;
 
