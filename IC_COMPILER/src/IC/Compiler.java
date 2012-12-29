@@ -115,22 +115,22 @@ public class Compiler
     	catch (SyntaxError e) {
 			System.out.println(e.getMessage());
 			System.out.println("Syntax error(s) in file: " + currentFile);
-			System.exit(-1);
+			System.exit(0);
 		}
     	// If the input file is not found, print an error to the user
     	catch (FileNotFoundException e) {
 			System.out.println("Error: " + e.getMessage() + ". Check file path.");
-			System.exit(-1);
+			System.exit(0);
 		}
     	// Catch other I/O errors
     	catch (IOException e) {
     		System.out.println("Error: I/O error: " + e.getMessage());
-    		System.exit(-1);
+    		System.exit(0);
     	}
     	catch (Exception e) {
     		System.out.println("Error: " + e.getMessage());
     		e.printStackTrace();
-    		System.exit(-1);
+    		System.exit(0);
     	}
     }
 	
