@@ -1,4 +1,4 @@
-package SymbolTable;
+package IC.SymbolTable;
 
 public abstract class Symbol {
 	protected String id;

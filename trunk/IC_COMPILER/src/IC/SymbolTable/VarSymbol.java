@@ -1,4 +1,4 @@
-package SymbolTable;
+package IC.SymbolTable;
 
 public class VarSymbol extends Symbol{
 
