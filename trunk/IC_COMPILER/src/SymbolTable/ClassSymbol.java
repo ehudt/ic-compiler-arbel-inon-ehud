@@ -10,8 +10,6 @@ public class ClassSymbol extends Symbol {
 	public ClassSymbol(ICClass cl) throws SemanticError
 	{
 		super(cl.getName(),Kind.CLASS);
-		TypeTable.addClassType(cl);
-		this.type = TypeTable.getClassType(this.id);
 		this.pclass =cl;
 	}
 	//getters

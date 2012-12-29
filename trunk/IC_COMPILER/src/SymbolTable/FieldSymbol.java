@@ -10,7 +10,13 @@ public class FieldSymbol extends Symbol{
 	public FieldSymbol(Field f)
 	{
 		super(f.getName(),Kind.FIELD);
-		
+		this.field=f;
+	}
+	//getters
+	
+	public Field getField()
+	{
+		return field;
 	}
 
 }

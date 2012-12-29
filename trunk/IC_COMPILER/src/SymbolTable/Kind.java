@@ -1,6 +1,5 @@
 package SymbolTable;
 
 public enum Kind {
-	CLASS,METHOD,RETURN,VARIABLE,PARAM,
-	FIELD
+	CLASS,METHOD,VARIABLE,FIELD
 }
