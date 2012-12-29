@@ -1,10 +1,8 @@
 package IC.SymbolTable;
 
-import IC.AST.Type;
-
 public abstract class Symbol {
 	protected String id;
-	protected Type type;
+	//protected Type type;
 	protected int line;
 	protected Kind kind;
 	
@@ -14,7 +12,7 @@ public abstract class Symbol {
 		this.kind=kind;
 	}
 	
-//getters
+	//getters
 	public String getID()
 	{
 		return this.id;
@@ -25,8 +23,4 @@ public abstract class Symbol {
 		return this.kind;
 	}
 	
-	public Type getType()
-	{
-		return this.type;
-	}
 }
