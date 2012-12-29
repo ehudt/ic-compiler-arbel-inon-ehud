@@ -6,7 +6,7 @@ public abstract class SymbolTable {
 	protected SymbolTable parent;
 	protected int depth;
 	
-	abstract public Symbol lookup(String name) throws SemanticError;
+	abstract public Symbol lookup(String name);
 		
 	public int getDepth() {
 		return depth;

@@ -8,15 +8,22 @@ import IC.AST.Field;
 
 public class ClassSymbolTable extends SymbolTable {
 	private String name;
-	private boolean staticMethod;
+	private boolean isStatic;
 	private Map<String, FieldSymbol> classFieldTable = new HashMap<String, FieldSymbol>();
 	private Map<String, MethodSymbol> classMethodTable = new HashMap<String, MethodSymbol>();
+	private GlobalSymbolTable parentTable;
+	
+	public ClassSymbolTable(GlobalSymbolTable parent, String name, boolean isStatic){
+		parentTable = parent;
+		this.name = name;
+		this.isStatic = isStatic;
+	}
 	
 	public String getName() {
 		return name;
 	}
-	public boolean isStaticMethod() {
-		return staticMethod;
+	public boolean isStatic() {
+		return isStatic;
 	}
 	
 	public void insert(Field newField) throws SemanticError {
@@ -30,9 +37,14 @@ public class ClassSymbolTable extends SymbolTable {
 		return classFieldTable.containsKey(name) || classMethodTable.containsKey(name);
 	}
 	@Override
-	public Symbol lookup(String name) throws SemanticError {
-		// TODO Auto-generated method stub
-		return null;
+	public Symbol lookup(String name) {
+		if(classFieldTable.containsKey(name)){
+			return classFieldTable.get(name);
+		} 
+		else if(classMethodTable.containsKey(name)){
+			return classMethodTable.get(name);
+		}
+		else return parentTable.lookup(name);
 	}
 	
 }
