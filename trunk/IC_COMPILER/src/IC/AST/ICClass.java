@@ -2,6 +2,8 @@ package IC.AST;
 
 import java.util.List;
 
+import IC.SemanticError;
+
 /**
  * Class declaration AST node.
  * 
@@ -17,7 +19,7 @@ public class ICClass extends ASTNode {
 
 	private List<Method> methods;
 
-	public Object accept(Visitor visitor) {
+	public Object accept(Visitor visitor){
 		return visitor.visit(this);
 	}
 

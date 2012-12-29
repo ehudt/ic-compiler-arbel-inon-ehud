@@ -8,13 +8,16 @@ import IC.AST.Formal;
 import IC.AST.LocalVariable;
 
 public class MethodSymbolTable extends BlockSymbolTable {
-	private String name;
+	private boolean isStatic;
 	private Map<String, VarSymbol> parameters = new HashMap<String, VarSymbol>();
 	
-	
-	public MethodSymbolTable(SymbolTable parent, String name) {
-		super(parent);
-		this.setName(name);
+	public MethodSymbolTable(SymbolTable parent, String name, boolean isStatic) {
+		super(parent, name);
+		this.isStatic = isStatic;
+	}
+
+	public boolean isStatic() {
+		return isStatic;
 	}
 	
 	public boolean hasLocalOrParameter(String name){
@@ -38,11 +41,6 @@ public class MethodSymbolTable extends BlockSymbolTable {
 
 	public String getName() {
 		return name;
-	}
-
-
-	private void setName(String name) {
-		this.name = name;
 	}
 
 }

@@ -1,5 +1,7 @@
 package IC.AST;
 
+import IC.SemanticError;
+
 /**
  * AST visitor interface. Declares methods for visiting each type of AST node.
  * 
@@ -78,4 +80,6 @@ public interface Visitor {
 	public Object visit(ErrorMethod errorMethod);
 	
 	public Object visit(ErrorClass errorClass);
+
+	public Object visit(Method method);
 }

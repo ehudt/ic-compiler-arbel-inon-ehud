@@ -469,4 +469,10 @@ public class PrettyPrinter implements Visitor {
 		
 		return output.toString();
 	}
+
+	@Override
+	public Object visit(Method method) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

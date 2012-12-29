@@ -8,22 +8,12 @@ import IC.AST.Field;
 import IC.AST.Method;
 
 public class ClassSymbolTable extends SymbolTable {
-	private String name;
-	private boolean isStatic;
+
 	private Map<String, FieldSymbol> classFieldTable = new HashMap<String, FieldSymbol>();
 	private Map<String, MethodSymbol> classMethodTable = new HashMap<String, MethodSymbol>();
 	
-	public ClassSymbolTable(GlobalSymbolTable parent, String name, boolean isStatic){
-		super(parent);
-		this.name = name;
-		this.isStatic = isStatic;
-	}
-	
-	public String getName() {
-		return name;
-	}
-	public boolean isStatic() {
-		return isStatic;
+	public ClassSymbolTable(SymbolTable parent, String name){
+		super(parent, name);
 	}
 	
 	public void insert(Field newField) throws SemanticError {
@@ -53,5 +43,4 @@ public class ClassSymbolTable extends SymbolTable {
 		}
 		else return parent.lookup(name);
 	}
-	
 }
