@@ -9,6 +9,7 @@ import IC.AST.Continue;
 import IC.AST.EmptyStatement;
 import IC.AST.ErrorClass;
 import IC.AST.ErrorMethod;
+import IC.AST.Expression;
 import IC.AST.ExpressionBlock;
 import IC.AST.Field;
 import IC.AST.FieldMethodList;
@@ -118,18 +119,6 @@ public class BuildSymbolTables implements Visitor {
 		for(Statement stmt : method.getStatements()){
 			stmt.setEnclosingScope(symbols);
 			stmt.accept(this);
-			/*if(stmt instanceof LocalVariable){
-				try{
-					symbols.insert((LocalVariable) stmt);
-				}
-				catch(SemanticError semantic){
-					tableError(stmt.getLine() + ": " + semantic.getMessage());
-				}
-			}*/
-			/*SymbolTable child = (SymbolTable)stmt.accept(this);
-			if(child != null){
-				symbols.insertChildSymbolTable(child);
-			}*/
 		}		
 		method.getEnclosingScope().insertChildSymbolTable(symbols);
 		return null;
@@ -142,13 +131,11 @@ public class BuildSymbolTables implements Visitor {
 
 	@Override
 	public Object visit(StaticMethod method) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(LibraryMethod method) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -161,13 +148,11 @@ public class BuildSymbolTables implements Visitor {
 
 	@Override
 	public Object visit(PrimitiveType type) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(UserType type) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -196,14 +181,13 @@ public class BuildSymbolTables implements Visitor {
 
 	@Override
 	public Object visit(If ifStatement) {
-		// TODO from here
-		// after updating the chidren's enclosing scope, we can visit them
-		// and they will add themselves and their symbol tables (if there are any) to the enclosing table 
 		ifStatement.getCondition().setEnclosingScope(ifStatement.getEnclosingScope());
 		ifStatement.getCondition().accept(this);
 		ifStatement.getOperation().setEnclosingScope(ifStatement.getEnclosingScope());
+		ifStatement.getOperation().accept(this);
 		if(ifStatement.hasElse()){
-			ifStatement.getElseOperation();
+			ifStatement.getElseOperation().setEnclosingScope(ifStatement.getEnclosingScope());
+			ifStatement.getElseOperation().accept(this);
 		}
 		
 		return null;
@@ -211,25 +195,31 @@ public class BuildSymbolTables implements Visitor {
 
 	@Override
 	public Object visit(While whileStatement) {
-		// TODO Auto-generated method stub
+		whileStatement.getCondition().setEnclosingScope(whileStatement.getEnclosingScope());
+		whileStatement.getCondition().accept(this);
+		whileStatement.getOperation().setEnclosingScope(whileStatement.getEnclosingScope());
+		whileStatement.getOperation().accept(this);
 		return null;
 	}
 
 	@Override
 	public Object visit(Break breakStatement) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(Continue continueStatement) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(StatementsBlock statementsBlock) {
-		// TODO Auto-generated method stub
+		BlockSymbolTable symbols = new BlockSymbolTable(statementsBlock.getEnclosingScope());
+		for(Statement stmt : statementsBlock.getStatements()){
+			stmt.setEnclosingScope(symbols);
+			stmt.accept(this);
+		}
+		statementsBlock.getEnclosingScope().insertChildSymbolTable(symbols);
 		return null;
 	}
 
@@ -246,109 +236,128 @@ public class BuildSymbolTables implements Visitor {
 
 	@Override
 	public Object visit(VariableLocation location) {
-		// TODO Auto-generated method stub
+		location.getLocation().setEnclosingScope(location.getEnclosingScope());
+		location.getLocation().accept(this);
 		return null;
 	}
 
 	@Override
 	public Object visit(ArrayLocation location) {
-		// TODO Auto-generated method stub
+		location.getArray().setEnclosingScope(location.getEnclosingScope());
+		location.getArray().accept(this);
+		location.getIndex().setEnclosingScope(location.getEnclosingScope());
+		location.getIndex().accept(this);
 		return null;
 	}
 
 	@Override
 	public Object visit(StaticCall call) {
-		// TODO Auto-generated method stub
+		for(Expression expr : call.getArguments()){
+			expr.setEnclosingScope(call.getEnclosingScope());
+			expr.accept(this);
+		}
 		return null;
 	}
 
 	@Override
 	public Object visit(VirtualCall call) {
-		// TODO Auto-generated method stub
+		call.getLocation().setEnclosingScope(call.getEnclosingScope());
+		for(Expression expr : call.getArguments()){
+			expr.setEnclosingScope(call.getEnclosingScope());
+			expr.accept(this);
+		}
 		return null;
 	}
 
 	@Override
 	public Object visit(This thisExpression) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(NewClass newClass) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(NewArray newArray) {
-		// TODO Auto-generated method stub
+		newArray.getSize().setEnclosingScope(newArray.getEnclosingScope());
+		newArray.getSize().accept(this);
+		newArray.getType().setEnclosingScope(newArray.getEnclosingScope());
+		newArray.getType().accept(this);
 		return null;
 	}
 
 	@Override
 	public Object visit(Length length) {
-		// TODO Auto-generated method stub
+		length.getArray().setEnclosingScope(length.getEnclosingScope());
+		length.getArray().accept(this);
 		return null;
 	}
 
 	@Override
 	public Object visit(MathBinaryOp binaryOp) {
-		// TODO Auto-generated method stub
+		binaryOp.getFirstOperand().setEnclosingScope(binaryOp.getEnclosingScope());
+		binaryOp.getFirstOperand().accept(this);
+		binaryOp.getSecondOperand().setEnclosingScope(binaryOp.getEnclosingScope());
+		binaryOp.getSecondOperand().accept(this);
 		return null;
 	}
 
 	@Override
 	public Object visit(LogicalBinaryOp binaryOp) {
-		// TODO Auto-generated method stub
+		binaryOp.getFirstOperand().setEnclosingScope(binaryOp.getEnclosingScope());
+		binaryOp.getFirstOperand().accept(this);
+		binaryOp.getSecondOperand().setEnclosingScope(binaryOp.getEnclosingScope());
+		binaryOp.getSecondOperand().accept(this);
 		return null;
 	}
 
 	@Override
 	public Object visit(MathUnaryOp unaryOp) {
-		// TODO Auto-generated method stub
+		unaryOp.getOperand().setEnclosingScope(unaryOp.getEnclosingScope());
+		unaryOp.getOperand().accept(this);
 		return null;
 	}
 
 	@Override
 	public Object visit(LogicalUnaryOp unaryOp) {
-		// TODO Auto-generated method stub
+		unaryOp.getOperand().setEnclosingScope(unaryOp.getEnclosingScope());
+		unaryOp.getOperand().accept(this);
 		return null;
 	}
 
 	@Override
 	public Object visit(Literal literal) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(ExpressionBlock expressionBlock) {
-		// TODO Auto-generated method stub
+		expressionBlock.getExpression().setEnclosingScope(expressionBlock.getEnclosingScope());
+		expressionBlock.getExpression().accept(this);
 		return null;
 	}
 
 	@Override
 	public Object visit(FieldMethodList fieldMethodList) {
-		// TODO Auto-generated method stub
+		// TODO Delete before handing in!!!
+		System.err.println("Visited FieldMethodList in build symbol table. shouldn't happen.");
 		return null;
 	}
 
 	@Override
 	public Object visit(EmptyStatement emptyStatement) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(ErrorMethod errorMethod) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(ErrorClass errorClass) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
