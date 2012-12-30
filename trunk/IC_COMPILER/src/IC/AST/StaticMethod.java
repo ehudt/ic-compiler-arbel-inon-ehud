@@ -28,6 +28,7 @@ public class StaticMethod extends Method {
 	public StaticMethod(Type type, String name, List<Formal> formals,
 			List<Statement> statements) {
 		super(type, name, formals, statements);
+		this.isStatic = true;
 	}
 
 }

@@ -1,5 +1,8 @@
 package IC.SymbolTable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import IC.SemanticError;
 import IC.AST.ArrayLocation;
 import IC.AST.Assignment;
@@ -57,13 +60,26 @@ public class BuildSymbolTables implements Visitor {
 			try{
 				classDecl.setEnclosingScope(global);
 				global.insert(classDecl);
-				//global.insertChildSymbolTable((ClassSymbolTable)classDecl.accept(this));
 				classDecl.accept(this);
 			}
 			catch (SemanticError semantic){
-				//throw new SemanticError(classDecl.getLine() + ": " + semantic.getMessage());
 				tableError(classDecl.getLine() + ": " + semantic.getMessage());
 			}
+		}
+		List<SymbolTable> toBeRemoved = new ArrayList<SymbolTable>();
+		for(ICClass classDecl : program.getClasses()){
+			if(classDecl.getSuperClassName() != null){
+				SymbolTable parent = global.getSymbolTable(classDecl.getSuperClassName());
+				SymbolTable child = global.getSymbolTable(classDecl.getName());
+				if (parent != null && child != null){
+					parent.insertChildSymbolTable(child);
+					child.setParent(parent);
+					toBeRemoved.add(child);
+				}
+			}
+		}
+		for(SymbolTable child : toBeRemoved){
+			global.removeChildTable(child.getName());
 		}
 		return global;
 	}
@@ -77,16 +93,14 @@ public class BuildSymbolTables implements Visitor {
 				field.setEnclosingScope(symbols);
 			}
 			catch (SemanticError semantic){
-				//throw new SemanticError(field.getLine() + ": " + semantic.getMessage());
 				tableError(field.getLine() + ": " + semantic.getMessage());
 			}
 		}
 		
 		for(Method method : icClass.getMethods()){
 			try{
-				method.setEnclosingScope(symbols);
 				symbols.insert(method);
-				//symbols.insertChildSymbolTable((SymbolTable)((Method)
+				method.setEnclosingScope(symbols);
 				((Method)method).accept(this);
 			}
 			catch(SemanticError semantic){
@@ -106,7 +120,8 @@ public class BuildSymbolTables implements Visitor {
 
 	@Override
 	public Object visit(Method method) {
-		MethodSymbolTable symbols = new MethodSymbolTable(method.getEnclosingScope(), method.getName(), !(method instanceof VirtualMethod));
+	/*	MethodSymbolTable symbols = new MethodSymbolTable(method.getEnclosingScope(), method.getName(), !(method instanceof VirtualMethod));
+		method.getEnclosingScope().insertChildSymbolTable(symbols);
 		for(Formal formal : method.getFormals()){
 			formal.setEnclosingScope(symbols);
 			try{
@@ -119,23 +134,44 @@ public class BuildSymbolTables implements Visitor {
 		for(Statement stmt : method.getStatements()){
 			stmt.setEnclosingScope(symbols);
 			stmt.accept(this);
-		}		
-		method.getEnclosingScope().insertChildSymbolTable(symbols);
+		}*/		
 		return null;
+	}
+	
+	private void visitMethod(Method method, boolean isStatic) {
+		MethodSymbolTable symbols = new MethodSymbolTable(method.getEnclosingScope(), method.getName(), isStatic);
+		method.getEnclosingScope().insertChildSymbolTable(symbols);
+		for(Formal formal : method.getFormals()){
+			try{
+				symbols.insert(formal);
+			}
+			catch(SemanticError semantic){
+				tableError(formal.getLine() + ": " + semantic.getMessage());
+			}
+			formal.setEnclosingScope(symbols);
+			formal.accept(this);
+		}
+		for(Statement stmt : method.getStatements()){
+			stmt.setEnclosingScope(symbols);
+			stmt.accept(this);
+		}		
 	}
 	
 	@Override
 	public Object visit(VirtualMethod method) {
+		visitMethod(method, false);
 		return null;
 	}
 
 	@Override
 	public Object visit(StaticMethod method) {
+		visitMethod(method, true);
 		return null;
 	}
 
 	@Override
 	public Object visit(LibraryMethod method) {
+		visitMethod(method, true);
 		return null;
 	}
 
@@ -174,6 +210,7 @@ public class BuildSymbolTables implements Visitor {
 
 	@Override
 	public Object visit(Return returnStatement) {
+		if (returnStatement.getValue() == null) return null;
 		returnStatement.getValue().setEnclosingScope(returnStatement.getEnclosingScope());
 		returnStatement.getValue().accept(this);
 		return null;
@@ -231,11 +268,18 @@ public class BuildSymbolTables implements Visitor {
 		catch(SemanticError semantic){
 			tableError(localVariable.getLine() + ": " + semantic.getMessage());
 		}
+		localVariable.getType().setEnclosingScope(localVariable.getEnclosingScope());
+		localVariable.getType().accept(this);
+		if(localVariable.getInitValue() != null){
+			localVariable.getInitValue().setEnclosingScope(localVariable.getEnclosingScope());
+			localVariable.getInitValue().accept(this);
+		}
 		return null;
 	}
 
 	@Override
 	public Object visit(VariableLocation location) {
+		if (location.getLocation() == null) return null;
 		location.getLocation().setEnclosingScope(location.getEnclosingScope());
 		location.getLocation().accept(this);
 		return null;
@@ -261,7 +305,9 @@ public class BuildSymbolTables implements Visitor {
 
 	@Override
 	public Object visit(VirtualCall call) {
-		call.getLocation().setEnclosingScope(call.getEnclosingScope());
+		if(call.getLocation() != null){
+			call.getLocation().setEnclosingScope(call.getEnclosingScope());
+		}
 		for(Expression expr : call.getArguments()){
 			expr.setEnclosingScope(call.getEnclosingScope());
 			expr.accept(this);

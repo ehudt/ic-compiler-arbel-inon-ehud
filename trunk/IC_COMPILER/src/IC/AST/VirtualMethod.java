@@ -28,6 +28,7 @@ public class VirtualMethod extends Method {
 	public VirtualMethod(Type type, String name, List<Formal> formals,
 			List<Statement> statements) {
 		super(type, name, formals, statements);
+		this.isStatic = false;
 	}
 
 }
