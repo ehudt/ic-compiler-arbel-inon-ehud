@@ -1,5 +1,4 @@
 package IC.Types;
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,9 +10,9 @@ import IC.AST.Type;
 
 public class TypeTable {
 	
-	private static Map<String, ICClass> UserTypes=new HashMap<>();
-	private static Map<String,Type> primitiveTypes=new HashMap<>();
-	private static Map<String,MethodType> methodTypes=new HashMap<>();
+	private static Map<String, ICClass> UserTypes=new HashMap<String, ICClass>();
+	private static Map<String,Type> primitiveTypes=new HashMap<String, Type>();
+	private static Map<String,MethodType> methodTypes=new HashMap<String, MethodType>();
 	
 	
 	
