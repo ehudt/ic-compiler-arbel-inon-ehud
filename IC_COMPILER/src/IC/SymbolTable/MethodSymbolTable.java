@@ -1,6 +1,8 @@
 package IC.SymbolTable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import IC.SemanticError;
@@ -26,6 +28,10 @@ public class MethodSymbolTable extends BlockSymbolTable {
 			parameters.containsKey(name);
 	}
 
+	public List<VarSymbol> getParameterSymbols(){
+		return new ArrayList<VarSymbol>(parameters.values());
+	}
+	
 	public void insert(Formal formal) throws SemanticError{
 		if(hasLocalOrParameter(formal.getName())){
 			throw new SemanticError("Duplicate declaration of variable or parameter " + formal.getName());
@@ -42,6 +48,10 @@ public class MethodSymbolTable extends BlockSymbolTable {
 
 	public String getName() {
 		return name;
+	}
+	
+	public String toString(){
+		return getName();
 	}
 	
 	public Object accept(Visitor visitor) {

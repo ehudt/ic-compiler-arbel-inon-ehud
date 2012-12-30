@@ -31,6 +31,10 @@ public abstract class SymbolTable {
 		return parent;
 	}
 	
+	public void setParent(SymbolTable parent) {
+		this.parent = parent;
+	}
+	
 	public void insertChildSymbolTable(SymbolTable childTable){
 		childrenSymbolTables.put(childTable.getName(), childTable);
 	}
@@ -40,11 +44,21 @@ public abstract class SymbolTable {
 		return list;
 	}
 	
+	public SymbolTable getSymbolTable(String tableName){
+		return childrenSymbolTables.get(tableName);
+	}
+	
 	public Object accept(Visitor visitor) {
 		return visitor.visit(this);
 	}
 	
 	public String toString(){
 		return name;
+	}
+	
+	public SymbolTable removeChildTable(String tableName){
+		if(childrenSymbolTables.containsKey(tableName)){
+			return childrenSymbolTables.remove(tableName);
+		} else return null;
 	}
 }

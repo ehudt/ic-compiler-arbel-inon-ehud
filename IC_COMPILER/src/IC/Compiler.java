@@ -81,18 +81,11 @@ public class Compiler
     		Symbol libParseSymbol = new Symbol(1);
     		// parse and generate AST
     		libParseSymbol = libParser.parse();
-    		//System.out.println("Parsed " + libPath + " successfully!");
+    		if(useExternalLib){
+    			System.out.println("Parsed " + libPath + " successfully!");
+    		}
     		ICClass libraryRoot = (ICClass)libParseSymbol.value;
-    		
-    		/*List<ICClass> dummyList = new ArrayList<ICClass>();
-    		dummyList.add(libraryRoot);
-    		Program libraryProgram = new Program(dummyList);
-    		
-    		if(printAst){
-        		PrettyPrinter libPrinter = new PrettyPrinter(libPath);
-    			System.out.println(libraryProgram.accept(libPrinter));
-    		}*/
-    		
+        		
     		// parse IC source file
     		currentFile = srcPath;
     		FileReader txtFile = new FileReader(srcPath);
@@ -102,11 +95,11 @@ public class Compiler
     		// parse and generate AST
     		parseSymbol = parser.parse();
     		System.out.println("Parsed " + srcPath + " successfully!");
-    		
+    		System.out.println();
     		Program programRoot = (Program)parseSymbol.value;
     		
     		// add the library AST as a node to the program AST
-    		programRoot.getClasses().add(libraryRoot);
+    		programRoot.getClasses().add(0, libraryRoot);
     		// print the generated AST
     		if(printAst){
     			PrettyPrinter printer = new PrettyPrinter(srcPath);

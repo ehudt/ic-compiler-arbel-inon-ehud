@@ -8,14 +8,12 @@ public class MethodSymbol extends Symbol{
 	private MethodType type;
 	private boolean isStatic;
 	//constructor
-	public MethodSymbol(Method met)
-	{
-		super(met.getName(),Kind.METHOD);
-		this.type=new MethodType(met);
-		this.isStatic=false;
+	
+	public MethodSymbol(Method met){
+		this(met, met.isStatic());
 	}
 	
-	public MethodSymbol(Method met,boolean isStatic)
+	public MethodSymbol(Method met, boolean isStatic)
 	{
 		super(met.getName(),Kind.METHOD);
 		this.type=new MethodType(met);

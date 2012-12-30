@@ -11,10 +11,12 @@ import IC.AST.Visitor;
 
 
 public class BlockSymbolTable extends SymbolTable {
+	private static Integer enumerateIds = 0;
 	protected Map<String, VarSymbol> locals = new HashMap<String, VarSymbol>();
 	
 	public BlockSymbolTable(SymbolTable parent){
-		super(parent);
+		this(parent, "block" + enumerateIds.toString());
+		enumerateIds++;
 	}
 	
 	public BlockSymbolTable(SymbolTable parent, String name) {
@@ -41,7 +43,7 @@ public class BlockSymbolTable extends SymbolTable {
 	}
 	
 	public String toString(){
-		return "statement block in " + this.parent.getName();
+		return "statement block in " + this.parent.toString();
 	}
 	
 	public Object accept(Visitor visitor) {

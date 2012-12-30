@@ -2,8 +2,6 @@ package IC.AST;
 
 import java.util.List;
 
-import IC.SemanticError;
-
 /**
  * Class declaration AST node.
  * 
