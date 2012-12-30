@@ -1,16 +1,27 @@
 package IC.SymbolTable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import IC.SemanticError;
 import IC.AST.Field;
 import IC.AST.Method;
+import IC.AST.Visitor;
 
 public class ClassSymbolTable extends SymbolTable {
 
 	private Map<String, FieldSymbol> classFieldTable = new HashMap<String, FieldSymbol>();
 	private Map<String, MethodSymbol> classMethodTable = new HashMap<String, MethodSymbol>();
+	
+	public List<MethodSymbol> getMethodSymbols(){
+		return new ArrayList<MethodSymbol>(classMethodTable.values());
+	}
+	
+	public List<FieldSymbol> getFieldSymbols(){
+		return new ArrayList<FieldSymbol>(classFieldTable.values());
+	}
 	
 	public ClassSymbolTable(SymbolTable parent, String name){
 		super(parent, name);
@@ -42,5 +53,9 @@ public class ClassSymbolTable extends SymbolTable {
 			return classMethodTable.get(name);
 		}
 		else return parent.lookup(name);
+	}
+	
+	public Object accept(Visitor visitor) {
+		return visitor.visit(this);
 	}
 }

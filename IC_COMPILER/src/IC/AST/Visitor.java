@@ -1,6 +1,10 @@
 package IC.AST;
 
-import IC.SemanticError;
+import IC.SymbolTable.BlockSymbolTable;
+import IC.SymbolTable.ClassSymbolTable;
+import IC.SymbolTable.GlobalSymbolTable;
+import IC.SymbolTable.MethodSymbolTable;
+import IC.SymbolTable.SymbolTable;
 
 /**
  * AST visitor interface. Declares methods for visiting each type of AST node.
@@ -82,4 +86,14 @@ public interface Visitor {
 	public Object visit(ErrorClass errorClass);
 
 	public Object visit(Method method);
+	
+	public Object visit(GlobalSymbolTable table);
+	
+	public Object visit(ClassSymbolTable table);
+	
+	public Object visit(BlockSymbolTable table);
+	
+	public Object visit(MethodSymbolTable table);
+
+	public Object visit(SymbolTable symbolTable);
 }

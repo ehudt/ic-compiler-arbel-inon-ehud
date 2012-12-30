@@ -1,14 +1,21 @@
 package IC.SymbolTable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import IC.SemanticError;
 import IC.AST.ICClass;
+import IC.AST.Visitor;
 
 public class GlobalSymbolTable extends SymbolTable {
 	private Map<String, ClassSymbol> table = new HashMap<String, ClassSymbol>();
 	
+	public List<ClassSymbol> getClassSymbols(){
+		List<ClassSymbol> classSymbols = new ArrayList<ClassSymbol>(table.values());
+		return classSymbols;
+	}
 
 	public GlobalSymbolTable(SymbolTable parent) {
 		super(parent);
@@ -28,5 +35,9 @@ public class GlobalSymbolTable extends SymbolTable {
 	
 	public ClassSymbol getClassSymbol(String className){
 		return table.get(className);
+	}
+	
+	public Object accept(Visitor visitor) {
+		return visitor.visit(this);
 	}
 }
