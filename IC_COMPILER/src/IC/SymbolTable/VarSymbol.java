@@ -35,4 +35,13 @@ public class VarSymbol extends Symbol{
 	{
 		return this.type;
 	}
+	
+	public String toString(){
+		StringBuilder str = new StringBuilder();
+		str.append(isParam() ? "Parameter: " : "Local variable: ");
+		str.append(getType());
+		str.append(" ");
+		str.append(getID());
+		return str.toString();
+	}
 }

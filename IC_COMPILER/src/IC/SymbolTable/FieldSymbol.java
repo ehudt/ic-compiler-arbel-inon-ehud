@@ -26,5 +26,14 @@ public class FieldSymbol extends Symbol{
 	{
 		return this.type;
 	}
+	
+	public String toString(){
+		StringBuilder str = new StringBuilder();
+		str.append("Field: ");
+		str.append(getType());
+		str.append(" ");
+		str.append(getID());
+		return str.toString();
+	}
 
 }

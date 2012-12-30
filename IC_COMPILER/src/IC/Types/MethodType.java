@@ -19,4 +19,11 @@ public class MethodType {
 			paramTypes.add(formal.getType());
 		}
 	}
+	public String toString(){
+		StringBuilder str = new StringBuilder();
+		str.append("{");
+		str.append(paramTypes.toString());
+		str.append("}");
+		return str.toString();
+	}
 }

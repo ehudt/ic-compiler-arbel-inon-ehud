@@ -30,4 +30,12 @@ public class MethodSymbol extends Symbol{
 	{
 		return this.isStatic;
 	}
+	public String toString(){
+		StringBuilder str = new StringBuilder();
+		str.append(isStatic() ? "Static" : "Virtual");
+		str.append(" method: " );
+		str.append(getID());
+		str.append(getMetType());
+		return str.toString();
+	}
 }

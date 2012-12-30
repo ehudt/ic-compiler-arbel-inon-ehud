@@ -7,6 +7,8 @@ import java_cup.runtime.Symbol;
 
 import IC.AST.*;
 import IC.Parser.*;
+import IC.SymbolTable.BuildSymbolTables;
+import IC.SymbolTable.GlobalSymbolTable;
 
 /**
  * class Compiler opens a source file of IC language, scans the file
@@ -111,6 +113,11 @@ public class Compiler
     			PrettyPrinter printer = new PrettyPrinter(srcPath);
     			System.out.println(programRoot.accept(printer));
     		}
+    		
+    		// build symbol table
+    		BuildSymbolTables symTableBuilder = new BuildSymbolTables();
+    		GlobalSymbolTable globalSymbolTable = (GlobalSymbolTable)programRoot.accept(symTableBuilder);
+    		System.out.println("globalSymbolTable is " + globalSymbolTable);
     	}
     	// Catch lexical Errors and print the line and the value of the token
     	catch (LexicalError e) {
