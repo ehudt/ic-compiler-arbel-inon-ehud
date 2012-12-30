@@ -107,7 +107,6 @@ public class Compiler
     		
     		// add the library AST as a node to the program AST
     		programRoot.getClasses().add(libraryRoot);
-
     		// print the generated AST
     		if(printAst){
     			PrettyPrinter printer = new PrettyPrinter(srcPath);
@@ -117,7 +116,11 @@ public class Compiler
     		// build symbol table
     		BuildSymbolTables symTableBuilder = new BuildSymbolTables();
     		GlobalSymbolTable globalSymbolTable = (GlobalSymbolTable)programRoot.accept(symTableBuilder);
-    		System.out.println("globalSymbolTable is " + globalSymbolTable);
+    		//System.out.println("globalSymbolTable is " + globalSymbolTable);
+    		if(printSymTab){
+    			PrettyPrinter symTabPrint = new PrettyPrinter(srcPath);
+    			System.out.println(globalSymbolTable.accept(symTabPrint));
+    		}
     	}
     	// Catch lexical Errors and print the line and the value of the token
     	catch (LexicalError e) {

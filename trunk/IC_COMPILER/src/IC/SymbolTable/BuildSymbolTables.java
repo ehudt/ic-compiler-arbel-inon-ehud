@@ -361,5 +361,35 @@ public class BuildSymbolTables implements Visitor {
 		return null;
 	}
 
+	@Override
+	public Object visit(GlobalSymbolTable table) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object visit(ClassSymbolTable table) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object visit(BlockSymbolTable table) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object visit(MethodSymbolTable table) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object visit(SymbolTable symbolTable) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 }

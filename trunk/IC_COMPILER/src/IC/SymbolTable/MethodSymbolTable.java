@@ -6,6 +6,7 @@ import java.util.Map;
 import IC.SemanticError;
 import IC.AST.Formal;
 import IC.AST.LocalVariable;
+import IC.AST.Visitor;
 
 public class MethodSymbolTable extends BlockSymbolTable {
 	private boolean isStatic;
@@ -41,6 +42,10 @@ public class MethodSymbolTable extends BlockSymbolTable {
 
 	public String getName() {
 		return name;
+	}
+	
+	public Object accept(Visitor visitor) {
+		return visitor.visit(this);
 	}
 
 }

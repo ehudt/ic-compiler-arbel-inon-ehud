@@ -8,7 +8,6 @@ import java.util.List;
  * @author Tovi Almozlino
  */
 public class Program extends ASTNode {
-
 	private List<ICClass> classes;
 
 	public Object accept(Visitor visitor) {
@@ -29,5 +28,4 @@ public class Program extends ASTNode {
 	public List<ICClass> getClasses() {
 		return classes;
 	}
-
 }

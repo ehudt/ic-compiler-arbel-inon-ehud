@@ -1,5 +1,15 @@
 package IC.AST;
 
+import IC.SymbolTable.BlockSymbolTable;
+import IC.SymbolTable.ClassSymbol;
+import IC.SymbolTable.ClassSymbolTable;
+import IC.SymbolTable.FieldSymbol;
+import IC.SymbolTable.GlobalSymbolTable;
+import IC.SymbolTable.MethodSymbol;
+import IC.SymbolTable.MethodSymbolTable;
+import IC.SymbolTable.SymbolTable;
+import IC.SymbolTable.VarSymbol;
+
 /**
  * Pretty printing visitor - travels along the AST and prints info about each
  * node, in an easy-to-comprehend format.
@@ -475,4 +485,105 @@ public class PrettyPrinter implements Visitor {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public Object visit(GlobalSymbolTable table) {
+		depth = 0;
+		StringBuffer str = new StringBuffer();
+		str.append("Global Symbol Table: ");
+		str.append(ICFilePath);
+		depth++;
+		for(ClassSymbol symbol : table.getClassSymbols()){
+			indent(str);
+			str.append(symbol.toString());
+		}
+		depth--;
+		indent(str);
+		str.append("Children tables: ");
+		str.append(table.getSymbolTables());
+		indent(str);
+		for(SymbolTable child : table.getSymbolTables()){
+			str.append(child.accept(this));
+		}
+		return str.toString();
+	}
+
+	@Override
+	public Object visit(ClassSymbolTable table) {
+		depth = 0;
+		StringBuffer str = new StringBuffer();
+		str.append("Class Symbol Table: ");
+		str.append(table.getName());
+		depth++;
+		for(FieldSymbol symbol : table.getFieldSymbols()){
+			indent(str);
+			str.append(symbol.toString());
+		}
+		for(MethodSymbol symbol : table.getMethodSymbols()){
+			indent(str);
+			str.append(symbol.toString());
+		}
+		depth--;
+		indent(str);
+		str.append("Children tables: ");
+		str.append(table.getSymbolTables());
+		indent(str);
+		for(SymbolTable child : table.getSymbolTables()){
+			str.append(child.accept(this));
+		}
+		return str.toString();
+	}
+
+	@Override
+	public Object visit(BlockSymbolTable table) {
+		depth = 0;
+		StringBuffer str = new StringBuffer();
+		str.append("Statement Block Symbol Table: ");
+		str.append(" ( located in ");
+		str.append(table.getParent().getName());
+		str.append(" )");
+		depth++;
+		for(VarSymbol symbol : table.getLocalSymbols()){
+			indent(str);
+			str.append(symbol.toString());
+		}
+		depth--;
+		indent(str);
+		str.append("Children tables: ");
+		str.append(table.getSymbolTables());
+		indent(str);
+		for(SymbolTable child : table.getSymbolTables()){
+			str.append(child.accept(this));
+		}
+		return str.toString();
+	}
+
+	@Override
+	public Object visit(MethodSymbolTable table) {
+		depth = 0;
+		StringBuffer str = new StringBuffer();
+		str.append("Global Symbol Table: ");
+		str.append(table.getName());
+		depth++;
+		for(VarSymbol symbol : table.getLocalSymbols()){
+			indent(str);
+			str.append(symbol.toString());
+		}
+		depth--;
+		indent(str);
+		str.append("Children tables: ");
+		str.append(table.getSymbolTables());
+		indent(str);
+		for(SymbolTable child : table.getSymbolTables()){
+			str.append(child.accept(this));
+		}
+		return str.toString();
+	}
+
+	@Override
+	public Object visit(SymbolTable symbolTable) {
+		//return symbolTable.accept(this);
+		return null;
+	}
+
 }
