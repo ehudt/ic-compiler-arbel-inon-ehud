@@ -32,4 +32,13 @@ public abstract class Type extends ASTNode {
 	public void incrementDimension() {
 		++dimension;
 	}
+	
+	public String toString(){
+		StringBuilder str = new StringBuilder();
+		str.append(this.getName());
+		for(int i = 0; i < dimension; i++){
+			str.append("[]");
+		}
+		return str.toString();
+	}
 }

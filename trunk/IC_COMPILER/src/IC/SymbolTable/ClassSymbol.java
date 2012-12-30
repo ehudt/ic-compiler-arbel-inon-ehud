@@ -12,11 +12,11 @@ public class ClassSymbol extends Symbol {
 		super(cl.getName(),Kind.CLASS);
 		//this.pclass =cl;
 	}
-	/*
-	//getters
-	public ICClass getPClass()
-	{
-		return pclass;
+
+	public String toString(){
+		StringBuilder str = new StringBuilder();
+		str.append("Class: ");
+		str.append(getID());
+		return str.toString();
 	}
-	*/
 }
