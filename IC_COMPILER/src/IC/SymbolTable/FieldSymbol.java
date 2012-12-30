@@ -35,5 +35,4 @@ public class FieldSymbol extends Symbol{
 		str.append(getID());
 		return str.toString();
 	}
-
 }
