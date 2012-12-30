@@ -3,6 +3,7 @@ package IC.Types;
 import IC.AST.Formal;
 import IC.AST.Method;
 import IC.AST.Type;
+import IC.AST.PrettyPrinter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +23,9 @@ public class MethodType {
 	public String toString(){
 		StringBuilder str = new StringBuilder();
 		str.append("{");
-		str.append(paramTypes.toString());
+		str.append(PrettyPrinter.printListNicely(paramTypes));
+		str.append(" -> ");
+		str.append(returnType);
 		str.append("}");
 		return str.toString();
 	}

@@ -35,6 +35,7 @@ public class MethodSymbol extends Symbol{
 		str.append(isStatic() ? "Static" : "Virtual");
 		str.append(" method: " );
 		str.append(getID());
+		str.append(" ");
 		str.append(getMetType());
 		return str.toString();
 	}

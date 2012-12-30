@@ -1,5 +1,7 @@
 package IC.AST;
 
+import java.util.List;
+
 import IC.SymbolTable.BlockSymbolTable;
 import IC.SymbolTable.ClassSymbol;
 import IC.SymbolTable.ClassSymbolTable;
@@ -492,15 +494,15 @@ public class PrettyPrinter implements Visitor {
 		StringBuffer str = new StringBuffer();
 		str.append("Global Symbol Table: ");
 		str.append(ICFilePath);
-		depth++;
+		depth += 4;
 		for(ClassSymbol symbol : table.getClassSymbols()){
 			indent(str);
 			str.append(symbol.toString());
 		}
-		depth--;
+		depth -= 4;
 		indent(str);
-		str.append("Children tables: ");
-		str.append(table.getSymbolTables());
+		str.append(printChildrenTables(table));
+		indent(str);
 		indent(str);
 		for(SymbolTable child : table.getSymbolTables()){
 			str.append(child.accept(this));
@@ -514,7 +516,7 @@ public class PrettyPrinter implements Visitor {
 		StringBuffer str = new StringBuffer();
 		str.append("Class Symbol Table: ");
 		str.append(table.getName());
-		depth++;
+		depth += 4;
 		for(FieldSymbol symbol : table.getFieldSymbols()){
 			indent(str);
 			str.append(symbol.toString());
@@ -523,10 +525,10 @@ public class PrettyPrinter implements Visitor {
 			indent(str);
 			str.append(symbol.toString());
 		}
-		depth--;
+		depth -= 4;
 		indent(str);
-		str.append("Children tables: ");
-		str.append(table.getSymbolTables());
+		str.append(printChildrenTables(table));
+		indent(str);
 		indent(str);
 		for(SymbolTable child : table.getSymbolTables()){
 			str.append(child.accept(this));
@@ -542,15 +544,15 @@ public class PrettyPrinter implements Visitor {
 		str.append(" ( located in ");
 		str.append(table.getParent().getName());
 		str.append(" )");
-		depth++;
+		depth += 4;
 		for(VarSymbol symbol : table.getLocalSymbols()){
 			indent(str);
 			str.append(symbol.toString());
 		}
-		depth--;
+		depth -= 4;
 		indent(str);
-		str.append("Children tables: ");
-		str.append(table.getSymbolTables());
+		str.append(printChildrenTables(table));
+		indent(str);
 		indent(str);
 		for(SymbolTable child : table.getSymbolTables()){
 			str.append(child.accept(this));
@@ -564,15 +566,15 @@ public class PrettyPrinter implements Visitor {
 		StringBuffer str = new StringBuffer();
 		str.append("Global Symbol Table: ");
 		str.append(table.getName());
-		depth++;
+		depth += 4;
 		for(VarSymbol symbol : table.getLocalSymbols()){
 			indent(str);
 			str.append(symbol.toString());
 		}
-		depth--;
+		depth -= 4;
 		indent(str);
-		str.append("Children tables: ");
-		str.append(table.getSymbolTables());
+		str.append(printChildrenTables(table));
+		indent(str);
 		indent(str);
 		for(SymbolTable child : table.getSymbolTables()){
 			str.append(child.accept(this));
@@ -584,6 +586,32 @@ public class PrettyPrinter implements Visitor {
 	public Object visit(SymbolTable symbolTable) {
 		//return symbolTable.accept(this);
 		return null;
+	}
+	
+	private Object printChildrenTables(SymbolTable table) {
+		StringBuffer str = new StringBuffer();
+		if(table.getSymbolTables().size() == 0)
+			return "";
+		str.append("Children tables: ");
+		/*String delim="";
+		for(SymbolTable child : table.getSymbolTables()){
+			str.append(delim);
+			str.append(child);
+			delim = ", ";
+		}*/
+		str.append(printListNicely(table.getSymbolTables()));
+		return str.toString();
+	}
+	
+	public static String printListNicely(List<? extends Object> list){
+		StringBuffer str = new StringBuffer();
+		String delim="";
+		for(Object item : list){
+			str.append(delim);
+			str.append(item);
+			delim = ", ";
+		}
+		return str.toString();
 	}
 
 }
