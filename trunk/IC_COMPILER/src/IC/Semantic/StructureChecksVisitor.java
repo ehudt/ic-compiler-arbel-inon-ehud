@@ -431,7 +431,7 @@ public class StructureChecksVisitor implements Visitor {
 
 	@Override
 	public Object visit(SymbolTable symbolTable) {
-		for(SymbolTable child : table.getSymbolTables()){
+		for(SymbolTable child : symbolTable.getSymbolTables()){
 			child.accept(this);
 		}
 		return null;
