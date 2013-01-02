@@ -44,9 +44,12 @@ import IC.AST.Visitor;
 import IC.AST.While;
 import IC.SymbolTable.BlockSymbolTable;
 import IC.SymbolTable.ClassSymbolTable;
+import IC.SymbolTable.FieldSymbol;
 import IC.SymbolTable.GlobalSymbolTable;
+import IC.SymbolTable.Kind;
 import IC.SymbolTable.MethodSymbol;
 import IC.SymbolTable.MethodSymbolTable;
+import IC.SymbolTable.Symbol;
 import IC.SymbolTable.SymbolTable;
 import IC.Types.TypeTable;
 import IC.Types.MethodType;
@@ -407,12 +410,36 @@ public class StructureChecksVisitor implements Visitor {
 		return null;
 	}
 
+
 	@Override
 	public Object visit(ClassSymbolTable table) {
-		// TODO Auto-generated method stub
-		return null;
+		for (FieldSymbol field : table.getFieldSymbols()){
+			Symbol parentField = table.getParent().lookup(field.getID());
+			if (!(parentField == null)){
+				structureError(field.getLine(), "Illegal structure. Field: "+ field.getID()+ " is already used!");
+			}
+		}
+		
+		for (MethodSymbol method : table.getMethodSymbols()){
+			Symbol parentField = table.getParent().lookup(method.getID());
+			if (!(parentField == null)){
+				if (!parentField.getKind().equals(Kind.METHOD)){
+					structureError(method.getLine(), "Illegal structure: "+ method.getID() + " is already used!");
+				}
+				
+				MethodType methodType = method.getMetType();
+				MethodSymbol parentMethod = (MethodSymbol)parentField;
+				MethodType parentType = parentMethod.getMetType();
+				
+				if (methodType.equals(parentType)){
+					structureError(method.getLine(), "Illegal structure: "+ method.getID() + " is already used!");
+				}
+			}}
+		for(SymbolTable child : table.getSymbolTables()){
+		child.accept(this);		}
+	return null;
 	}
-
+		
 	@Override
 	public Object visit(BlockSymbolTable table) {
 		for(SymbolTable child : table.getSymbolTables()){
