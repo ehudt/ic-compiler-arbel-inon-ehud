@@ -42,6 +42,11 @@ public class BlockSymbolTable extends SymbolTable {
 		else return parent.lookup(name);
 	}
 	
+	@Override
+	public Symbol staticLookup(String name) {
+		return locals.get(name);
+	}
+	
 	public String toString(){
 		return "statement block in " + this.parent.toString();
 	}
@@ -49,4 +54,5 @@ public class BlockSymbolTable extends SymbolTable {
 	public Object accept(Visitor visitor) {
 		return visitor.visit(this);
 	}
+
 }

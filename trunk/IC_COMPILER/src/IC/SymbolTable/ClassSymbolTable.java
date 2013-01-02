@@ -54,8 +54,20 @@ public class ClassSymbolTable extends SymbolTable {
 		}
 		else return parent.lookup(name);
 	}
+
+	@Override
+	public Symbol staticLookup(String name) {
+		if(classFieldTable.containsKey(name)){
+			return classFieldTable.get(name);
+		} 
+		else if(classMethodTable.containsKey(name)){
+			return classMethodTable.get(name);
+		}
+		else return null;
+	}
 	
 	public Object accept(Visitor visitor) {
 		return visitor.visit(this);
 	}
+
 }

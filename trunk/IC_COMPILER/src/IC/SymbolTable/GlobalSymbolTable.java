@@ -8,7 +8,6 @@ import java.util.Map;
 import IC.SemanticError;
 import IC.AST.ICClass;
 import IC.AST.Visitor;
-import IC.Types.TypeTable;
 
 public class GlobalSymbolTable extends SymbolTable {
 	private Map<String, ClassSymbol> table = new HashMap<String, ClassSymbol>();
@@ -27,6 +26,12 @@ public class GlobalSymbolTable extends SymbolTable {
 		return getClassSymbol(name);
 	}
 	
+
+	@Override
+	public Symbol staticLookup(String name) {
+		return lookup(name);
+	}
+	
 	public void insert(ICClass new_class) throws SemanticError {
 		if(table.containsKey(new_class.getName())){
 			throw new SemanticError("Duplicate declaration of class " + new_class.getName());
@@ -42,4 +47,5 @@ public class GlobalSymbolTable extends SymbolTable {
 	public Object accept(Visitor visitor) {
 		return visitor.visit(this);
 	}
+
 }

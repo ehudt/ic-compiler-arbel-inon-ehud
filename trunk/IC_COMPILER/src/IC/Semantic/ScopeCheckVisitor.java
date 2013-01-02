@@ -46,6 +46,7 @@ import IC.SymbolTable.ClassSymbol;
 import IC.SymbolTable.ClassSymbolTable;
 import IC.SymbolTable.GlobalSymbolTable;
 import IC.SymbolTable.Kind;
+import IC.SymbolTable.MethodSymbol;
 import IC.SymbolTable.MethodSymbolTable;
 import IC.SymbolTable.Symbol;
 import IC.SymbolTable.SymbolTable;
@@ -56,11 +57,6 @@ public class ScopeCheckVisitor implements Visitor {
 	private boolean inVirtualMethodContext = false;
 	
 	private void scopeError(int line, String message) {
-		System.out.println("semantic error at line " + line + ": " + message);
-		System.exit(0);
-	}
-	
-	private void typeError(int line, String message) {
 		System.out.println("semantic error at line " + line + ": " + message);
 		System.exit(0);
 	}
@@ -219,15 +215,21 @@ public class ScopeCheckVisitor implements Visitor {
 
 	@Override
 	public Object visit(StaticCall call) {
-		SymbolTable scope = call.getEnclosingScope();
 		String className = call.getClassName();
-		Symbol classSymbol = scope.lookup(className);
-		if(classSymbol == null || classSymbol.getKind() != Kind.CLASS){
+		ICClass classInstance = null;
+		try {
+			classInstance = TypeTable.getUserTypeByName(className);
+		} catch (SemanticError e) {
 			scopeError(call.getLine(), className + ": no such class");
 		}
-		//SymbolTable classScope = classSymbol.get
+		// query the class' scope for the static method
+		SymbolTable classScope = classInstance.getEnclosingScope().getSymbolTable(className);
 		String staticMethodName = call.getName();
-		//Symbol methodSymbol = 
+		Symbol methodSymbol = classScope.staticLookup(staticMethodName);
+		if(methodSymbol == null || methodSymbol.getKind() != Kind.METHOD ||
+				!((MethodSymbol)methodSymbol).isStatic()){
+			scopeError(call.getLine(), staticMethodName + ": no such static method in " + className);	
+		}
 		
 		for(Expression arg : call.getArguments()){
 			arg.accept(this);

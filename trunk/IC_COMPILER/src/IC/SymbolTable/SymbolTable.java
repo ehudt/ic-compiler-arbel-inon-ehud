@@ -26,6 +26,7 @@ public abstract class SymbolTable {
 	}
 	
 	abstract public Symbol lookup(String name);
+	abstract public Symbol staticLookup(String name);
 
 	public SymbolTable getParent() {
 		return parent;
