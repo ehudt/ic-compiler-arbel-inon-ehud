@@ -23,7 +23,7 @@ public class TypeTable {
 	private static String filename = null;
 	private static int counter= 0;
 	
-	public static void addPrimitiveTypes2Table(String fileName)
+	static
 	{	
 		primitiveTypes.put("int",new PrimitiveType(1,DataTypes.INT));
 		primitiveTypes.put("boolean", new PrimitiveType(2,DataTypes.BOOLEAN));
@@ -31,6 +31,9 @@ public class TypeTable {
 		primitiveTypes.put("string", new PrimitiveType(4,DataTypes.STRING));
 		primitiveTypes.put("void", new PrimitiveType(5,DataTypes.VOID));
 		TypeTable.counter = 6;
+	}
+	
+	public static void setFileName(String fileName){
 		TypeTable.filename = fileName;
 	}
 	
