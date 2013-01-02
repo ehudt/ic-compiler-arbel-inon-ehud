@@ -23,6 +23,30 @@ public class MethodSymbolTable extends BlockSymbolTable {
 		return isStatic;
 	}
 	
+	@Override
+	public Symbol lookup(String name){
+		if(parameters.containsKey(name)){
+			return parameters.get(name);
+		}
+		else if(locals.containsKey(name)){
+			return locals.get(name);
+		}
+		else return parent.lookup(name);
+	}
+	
+	@Override
+	public Symbol staticLookup(String name) {
+		if(parameters.containsKey(name)){
+			return parameters.get(name);
+		}
+		else if(locals.containsKey(name)){
+			return locals.get(name);
+		}
+		else return null;
+	}
+	
+	
+	
 	public boolean hasLocalOrParameter(String name){
 		return locals.containsKey(name) || 
 			parameters.containsKey(name);

@@ -51,13 +51,13 @@ public class TypeTable {
 		//TODO: fix error messages
 		if(UserTypes.containsKey(c.getName()))
 		{
-			throw new SemanticError("semantic error at line "+c.getLine()+": A class with the name - "+c.getName()+" already defined");
+			throw new SemanticError(c.getLine(), "A class with the name "+c.getName()+" already exists");
 		}
 		if(c.hasSuperClass())
 		{
 			if(!UserTypes.containsKey(c.getSuperClassName()))
 			{
-				throw new SemanticError("semantic error at line "+c.getLine()+": Super class ,"+c.getSuperClassName()+", for this class wasn't defined");
+				throw new SemanticError(c.getLine(), "super class " + c.getSuperClassName() + " for this class wasn't defined");
 			}
 		}
 		c.setTypeTableID(TypeTable.counter);
@@ -70,7 +70,7 @@ public class TypeTable {
 		ICClass cl;
 		if ((cl= UserTypes.get(className))==null)
 		{
-			throw new SemanticError("semantic error: Requested Class("+className+") not Exists");
+			throw new SemanticError("requested class(" + className + ") does not exist");
 		}
 		else
 		{
