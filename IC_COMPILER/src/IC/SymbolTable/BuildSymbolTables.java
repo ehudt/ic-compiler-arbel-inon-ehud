@@ -47,8 +47,8 @@ import IC.AST.While;
 
 public class BuildSymbolTables implements Visitor {
 
-	private void tableError(String message) {
-		System.out.println("semantic error at line " + message);
+	private void tableError(int line, String message) {
+		System.out.println("semantic error at line " + line + ": " + message);
 		System.exit(0);
 	}
 	
@@ -62,7 +62,7 @@ public class BuildSymbolTables implements Visitor {
 				if(superClass != null){
 					ClassSymbol superClassSymbol = global.getClassSymbol(superClass);
 					if(superClassSymbol == null){
-						tableError(classDecl.getLine() + ": " + 
+						tableError(classDecl.getLine(), 
 									"Definition of inheriting class " + classDecl.getName() +
 									" must appear after definition of superclass " + superClass);
 					}
@@ -72,7 +72,7 @@ public class BuildSymbolTables implements Visitor {
 				classDecl.accept(this);
 			}
 			catch (SemanticError semantic){
-				tableError(classDecl.getLine() + ": " + semantic.getMessage());
+				tableError(classDecl.getLine(), semantic.getMessage());
 			}
 		}
 		List<SymbolTable> toBeRemoved = new ArrayList<SymbolTable>();
@@ -103,7 +103,7 @@ public class BuildSymbolTables implements Visitor {
 				field.setEnclosingScope(symbols);
 			}
 			catch (SemanticError semantic){
-				tableError(field.getLine() + ": " + semantic.getMessage());
+				tableError(field.getLine(), semantic.getMessage());
 			}
 		}
 		
@@ -114,7 +114,7 @@ public class BuildSymbolTables implements Visitor {
 				((Method)method).accept(this);
 			}
 			catch(SemanticError semantic){
-				tableError(method.getLine() + ": " + semantic.getMessage());
+				tableError(method.getLine(), semantic.getMessage());
 			}
 		}
 		icClass.getEnclosingScope().insertChildSymbolTable(symbols);
@@ -156,7 +156,7 @@ public class BuildSymbolTables implements Visitor {
 				symbols.insert(formal);
 			}
 			catch(SemanticError semantic){
-				tableError(formal.getLine() + ": " + semantic.getMessage());
+				tableError(formal.getLine(), semantic.getMessage());
 			}
 			formal.setEnclosingScope(symbols);
 			formal.accept(this);
@@ -276,7 +276,7 @@ public class BuildSymbolTables implements Visitor {
 			((BlockSymbolTable)localVariable.getEnclosingScope()).insert(localVariable);
 		}
 		catch(SemanticError semantic){
-			tableError(localVariable.getLine() + ": " + semantic.getMessage());
+			tableError(localVariable.getLine(), semantic.getMessage());
 		}
 		localVariable.getType().setEnclosingScope(localVariable.getEnclosingScope());
 		localVariable.getType().accept(this);
