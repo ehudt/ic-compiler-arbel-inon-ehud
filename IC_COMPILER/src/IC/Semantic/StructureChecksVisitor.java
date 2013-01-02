@@ -60,13 +60,6 @@ public class StructureChecksVisitor implements Visitor {
 	private boolean isMain(MethodSymbol ms, Method m){
 		
 		//check the method name
-		if (!m.getName().equals("main")) 
-			return false; 
-		
-		if (hasMain){
-			structureError(m.getLine(), "There are more than one main() method");
-		}
-
 		
 		if (!m.getName().equals("main")) 
 			return false; 

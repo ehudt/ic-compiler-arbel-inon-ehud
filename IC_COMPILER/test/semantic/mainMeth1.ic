@@ -1,0 +1,8 @@
+class Bla{
+	static void main(string[] args) {}
+	}
+
+class Bbb{
+		static void main(string[] args) {}
+	}
+	
