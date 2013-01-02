@@ -7,6 +7,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.lang.model.type.NullType;
+
 import IC.DataTypes;
 import IC.SemanticError;
 import IC.AST.ICClass;
@@ -23,16 +25,25 @@ public class TypeTable {
 	private static Map<String, Type> arrayTypes=new HashMap<String,Type>();
 	
 	private static String filename = null;
-	private static int counter= 0;
+	private static int counter= 1;
 	
 	static
 	{	
-		primitiveTypes.put("int",new PrimitiveType(1,DataTypes.INT));
-		primitiveTypes.put("boolean", new PrimitiveType(2,DataTypes.BOOLEAN));
-		primitiveTypes.put("null", new PrimitiveType(3,DataTypes.NULL));
-		primitiveTypes.put("string", new PrimitiveType(4,DataTypes.STRING));
-		primitiveTypes.put("void", new PrimitiveType(5,DataTypes.VOID));
-		TypeTable.counter = 6;
+		Type intType=new PrimitiveType(0,DataTypes.INT);
+		intType.setTypeTableID(counter++);
+		primitiveTypes.put("int",intType);
+		Type boolType=new PrimitiveType(0,DataTypes.BOOLEAN);
+		boolType.setTypeTableID(counter++);
+		primitiveTypes.put("boolean", boolType);
+		Type nulllType=new PrimitiveType(0,DataTypes.NULL);
+		nulllType.setTypeTableID(counter++);
+		primitiveTypes.put("null", nulllType);
+		Type stringType=new PrimitiveType(0,DataTypes.STRING);
+		stringType.setTypeTableID(counter++);
+		primitiveTypes.put("string", stringType);
+		Type voidType=new PrimitiveType(0,DataTypes.VOID);
+		voidType.setTypeTableID(counter++);
+		primitiveTypes.put("void", voidType);
 	}
 	
 	public static void setFileName(String fileName){
@@ -135,13 +146,13 @@ public class TypeTable {
 		Collections.sort(primitiveTypeslist,
 				new Comparator<Type>(){
 	        	public int compare(Type t1, Type t2) {
-	        		return t1.getLine() - t2.getLine();
+	        		return t1.getTypeTableID() - t2.getTypeTableID();
 	        	}});
 		
 		for(Type t : primitiveTypeslist)
 		{
 			str.append("\t");
-			str.append(t.getLine()+": Primitive type: "+ t.getName());
+			str.append(t.getTypeTableID()+": Primitive type: "+ t.getTypeTableID());
 			str.append("\n");
 		}
 		
