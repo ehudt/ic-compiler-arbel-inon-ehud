@@ -102,10 +102,17 @@ public class TypeTable {
 	{
 		if (atArr.getDimension()>0)
 		{
-			if(!arrayTypes.containsKey(atArr.getName()))
+			String brackets="";
+			String atName=atArr.getName();
+			for(int i=0;i<atArr.getDimension();i++)
+			{
+				brackets+="[]";
+			}
+			atName+=brackets;
+			if(!arrayTypes.containsKey(atName))
 			{
 				atArr.setTypeTableID(counter);
-				arrayTypes.put(atArr.getName(), atArr);
+				arrayTypes.put(atName, atArr);
 				TypeTable.counter++;
 				return atArr;
 			}
