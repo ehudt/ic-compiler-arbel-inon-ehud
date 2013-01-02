@@ -46,6 +46,11 @@ import IC.SymbolTable.SymbolTable;
 
 public class StructureChecksVisitor implements Visitor {
 
+	private void structureError(String message, int line) {
+		System.out.println("semantic error at line " + line + ": " + message);
+		System.exit(0);
+	}
+	
 	@Override
 	public Object visit(Program program) {
 		// TODO Auto-generated method stub
