@@ -102,24 +102,21 @@ public class TypeTable {
 	{
 		if (atArr.getDimension()>0)
 		{
-			String brackets="";
+			//String brackets="";
 			String atName=atArr.getName();
-			for(int i=0;i<atArr.getDimension();i++)
+			int dim=atArr.getDimension();
+			for(int i=1;i<=dim;i++)
 			{
-				brackets+="[]";
+				atName+="[]";
+				if(!arrayTypes.containsKey(atName))
+				{
+					Type cloned = atArr.clone(i);
+					cloned.setTypeTableID(counter);
+					arrayTypes.put(atName, cloned);
+					TypeTable.counter++;
+				}
 			}
-			atName+=brackets;
-			if(!arrayTypes.containsKey(atName))
-			{
-				atArr.setTypeTableID(counter);
-				arrayTypes.put(atName, atArr);
-				TypeTable.counter++;
-				return atArr;
-			}
-			else
-			{
-				return arrayTypes.get(atName);
-			}
+			return arrayTypes.get(atName);
 		}
 		else
 		{
