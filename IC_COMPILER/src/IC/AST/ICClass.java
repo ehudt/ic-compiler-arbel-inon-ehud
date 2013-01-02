@@ -16,7 +16,9 @@ public class ICClass extends ASTNode {
 	private List<Field> fields;
 
 	private List<Method> methods;
-
+	
+	private int typeTableID;
+	
 	public Object accept(Visitor visitor){
 		return visitor.visit(this);
 	}
@@ -79,6 +81,17 @@ public class ICClass extends ASTNode {
 
 	public List<Method> getMethods() {
 		return methods;
+	}
+	
+	//added for TypeTable
+	public void setTypeTableID(int id)
+	{
+		typeTableID =id;
+	}
+	
+	public int getTypeTableID()
+	{
+		return typeTableID;
 	}
 
 }

@@ -38,7 +38,7 @@ public abstract class ASTNode {
 	public int getLine() {
 		return line;
 	}
-
+	
 	public SymbolTable getEnclosingScope() {
 		return enclosingScope;
 	}
