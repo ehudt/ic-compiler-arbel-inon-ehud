@@ -14,14 +14,14 @@ public class VarSymbol extends Symbol{
 	
 	public VarSymbol(LocalVariable lv)
 	{
-		super(lv.getName(),Kind.VARIABLE);
+		super(lv.getName(),Kind.VARIABLE, lv.getLine());
 		this.isParam=false;
 		this.type = TypeTable.getType(lv.getType());
 	}
 	
 	public VarSymbol(Formal f)
 	{
-		super(f.getName(),Kind.VARIABLE);
+		super(f.getName(),Kind.VARIABLE, f.getLine());
 		this.isParam=true;
 		this.type = TypeTable.getType(f.getType());
 	}

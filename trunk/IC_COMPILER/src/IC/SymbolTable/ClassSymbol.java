@@ -10,7 +10,7 @@ public class ClassSymbol extends Symbol {
 	
 	public ClassSymbol(ICClass cl) throws SemanticError
 	{
-		super(cl.getName(),Kind.CLASS);
+		super(cl.getName(),Kind.CLASS, cl.getLine());
 		TypeTable.addUserType(cl);
 	}
 

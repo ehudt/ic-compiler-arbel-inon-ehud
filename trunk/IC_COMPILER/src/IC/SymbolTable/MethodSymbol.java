@@ -16,7 +16,7 @@ public class MethodSymbol extends Symbol{
 	
 	public MethodSymbol(Method met, boolean isStatic)
 	{
-		super(met.getName(),Kind.METHOD);
+		super(met.getName(),Kind.METHOD, met.getLine());
 		this.type= TypeTable.getType(met);
 		this.isStatic=isStatic;
 	}
