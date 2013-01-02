@@ -1,8 +1,10 @@
 package IC.Types;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import IC.DataTypes;
@@ -18,7 +20,7 @@ public class TypeTable {
 	private static Map<String, ICClass> UserTypes=new HashMap<String, ICClass>();
 	private static Map<String,Type> primitiveTypes=new HashMap<String, Type>();
 	private static Map<String,MethodType> methodTypes=new HashMap<String, MethodType>();
-	private static Map<String, ArrayType> arrayTypes=new HashMap<String,ArrayType>();
+	private static Map<String, Type> arrayTypes=new HashMap<String,Type>();
 	
 	private static String filename = null;
 	private static int counter= 0;
@@ -85,18 +87,24 @@ public class TypeTable {
 		}
 	}
 	
-	public static ArrayType getType(Type atArr)
+	public static Type getType(Type atArr)
 	{
-		ArrayType at = new ArrayType(atArr, atArr.getDimension(),TypeTable.counter);
-		if(!arrayTypes.containsKey(at.getName()))
+		if (atArr.getDimension()>0)
 		{
-			arrayTypes.put(at.getName(), at);
-			TypeTable.counter++;
-			return at;
+			if(!arrayTypes.containsKey(atArr.getName()))
+			{
+				arrayTypes.put(atArr.getName(), atArr);
+				TypeTable.counter++;
+				return atArr;
+			}
+			else
+			{
+				return arrayTypes.get(atArr.getName());
+			}
 		}
 		else
 		{
-			return arrayTypes.get(at.getName());
+			return primitiveTypes.get(atArr.getName());
 		}
 	}
 	
@@ -129,14 +137,28 @@ public class TypeTable {
 		str.append("Type Table: "+TypeTable.filename);
 		str.append("\n");
 		
-		for(Type t : TypeTable.primitiveTypes.values())
+		List<Type> primitiveTypeslist=new ArrayList<Type>(TypeTable.primitiveTypes.values());
+		Collections.sort(primitiveTypeslist,
+				new Comparator<Type>(){
+	        	public int compare(Type t1, Type t2) {
+	        		return t1.getLine() - t2.getLine();
+	        	}});
+		
+		for(Type t : primitiveTypeslist)
 		{
 			str.append("\t");
 			str.append(t.getLine()+": Primitive type: "+ t.getName());
 			str.append("\n");
 		}
 		
-		for(ICClass c : TypeTable.UserTypes.values())
+		List<ICClass> classlist=new ArrayList<ICClass>(TypeTable.UserTypes.values());
+		Collections.sort(classlist,
+				new Comparator<ICClass>(){
+	        	public int compare(ICClass c1, ICClass c2) {
+	        		return c1.getTypeTableID() - c2.getTypeTableID();
+	        	}});
+		
+		for(ICClass c : classlist)
 		{
 			str.append("\t");
 			str.append(c.getTypeTableID()+": Class: "+ c.getName());
@@ -147,12 +169,32 @@ public class TypeTable {
 			str.append("\n");
 		}
 		
-		for(ArrayType at : TypeTable.arrayTypes.values())
+		List<Type> arrayTypelist=new ArrayList<Type>(TypeTable.arrayTypes.values());
+		Collections.sort(arrayTypelist,
+				new Comparator<Type>(){
+	        	public int compare(Type a1, Type a2) {
+	        		return a1.getTypeTableID() - a2.getTypeTableID();
+	        	}});
+		
+		
+		for(Type at : arrayTypelist)
 		{
+			String brackets="";
+			for(int i=0; i<at.getDimension();i++)
+			{
+				brackets+="[]";
+			}
 			str.append("\t");
-			str.append(at.getTypeTableID()+": Array type: "+ at.getName());
+			str.append(at.getTypeTableID()+": Array type: "+ at.getName()+brackets);
 			str.append("\n");
 		}
+		
+		List<MethodType> methodTypelist=new ArrayList<MethodType>(TypeTable.methodTypes.values());
+		Collections.sort(methodTypelist,
+				new Comparator<MethodType>(){
+	        	public int compare(MethodType m1, MethodType m2) {
+	        		return m1.getTypeTableID() - m2.getTypeTableID();
+	        	}});
 		
 		for(MethodType mt : TypeTable.methodTypes.values())
 		{
