@@ -118,7 +118,7 @@ public class Compiler
     		if(printSymTab){
     			PrettyPrinter symTabPrint = new PrettyPrinter(srcPath);
     			System.out.println(globalSymbolTable.accept(symTabPrint));
-    			TypeTable.setFileName("test.ic");
+    			TypeTable.setFileName(srcPath);
     			System.out.println(TypeTable.toTypeTableString());
     		}
     		
