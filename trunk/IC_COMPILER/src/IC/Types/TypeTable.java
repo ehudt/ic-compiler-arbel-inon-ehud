@@ -93,6 +93,7 @@ public class TypeTable {
 		{
 			if(!arrayTypes.containsKey(atArr.getName()))
 			{
+				atArr.setTypeTableID(counter);
 				arrayTypes.put(atArr.getName(), atArr);
 				TypeTable.counter++;
 				return atArr;
