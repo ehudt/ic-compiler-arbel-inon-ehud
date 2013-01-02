@@ -2,6 +2,7 @@ package IC.SymbolTable;
 
 import IC.SemanticError;
 import IC.AST.ICClass;
+import IC.Types.TypeTable;
 
 public class ClassSymbol extends Symbol {
 
@@ -10,7 +11,7 @@ public class ClassSymbol extends Symbol {
 	public ClassSymbol(ICClass cl) throws SemanticError
 	{
 		super(cl.getName(),Kind.CLASS);
-		//this.pclass =cl;
+		TypeTable.addUserType(cl);
 	}
 
 	public String toString(){

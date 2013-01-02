@@ -1,6 +1,5 @@
 package IC.Semantic;
 
-import IC.LiteralTypes;
 import IC.AST.ArrayLocation;
 import IC.AST.Assignment;
 import IC.AST.Break;
@@ -44,54 +43,28 @@ import IC.AST.While;
 import IC.SymbolTable.BlockSymbolTable;
 import IC.SymbolTable.ClassSymbolTable;
 import IC.SymbolTable.GlobalSymbolTable;
-import IC.SymbolTable.MethodSymbol;
 import IC.SymbolTable.MethodSymbolTable;
 import IC.SymbolTable.SymbolTable;
-import IC.Types.TypeTable;
-import IC.Types.MethodType;
 
-public class StructureChecksVisitor implements Visitor {
-	boolean hasMain = false;
+public class ScopeAndTypeCheck implements Visitor {
 	private boolean inLoopContext = false;
 	private boolean inVirtualMethodContext = false;
-
-	//return true iff this is a correct main method with the correct signature
-	private boolean isMain(MethodSymbol ms, Method m){
-		
-		//check the method name
-		if (!m.getName().equals("main")) 
-			return false; 
-		
-		if (hasMain){
-			structureError(m.getLine(), "There are more than one main() method");
-		}
-		
-		MethodType mt = ms.getMetType();
-		if (mt.getReturnType() != TypeTable.getType("void"))
-			structureError(m.getLine(),"The main method return type is not void");
-		
-		if (m.getFormals().size() != 1){
-			structureError(m.getLine(),"There should be only one argument for the main method");
-		}
-		
-		if (!TypeTable.getType(ms.getMetType().getParamTypes().get(0)).equals(TypeTable.getType("string[]"))){
-			structureError(m.getLine(),"The argument type for the main method should be String[]");
-		}
-		
-		return true;
-	}
 	
-	private void structureError(int line, String message) {
+	private void scopeError(int line, String message) {
 		System.out.println("semantic error at line " + line + ": " + message);
 		System.exit(0);
 	}
 	
+	private void typeError(int line, String message) {
+		System.out.println("semantic error at line " + line + ": " + message);
+		System.exit(0);
+	}
+
 	@Override
 	public Object visit(Program program) {
 		for(ICClass icClass : program.getClasses()){
 			icClass.accept(this);
 		}
-		inLoopContext = false;
 		return null;
 	}
 
@@ -101,9 +74,6 @@ public class StructureChecksVisitor implements Visitor {
 			field.accept(this);
 		}
 		for(Method method : icClass.getMethods()){
-			MethodSymbol methodSymbol = (MethodSymbol) method.getEnclosingScope().lookup(method.getName());
-			if (isMain(methodSymbol, method))
-					hasMain = true;
 			method.accept(this);
 		}
 		return null;
@@ -192,29 +162,19 @@ public class StructureChecksVisitor implements Visitor {
 	@Override
 	public Object visit(While whileStatement) {
 		whileStatement.getCondition().accept(this);
-		if(!inLoopContext){
-			inLoopContext = true;
-			whileStatement.getOperation().accept(this);
-			inLoopContext = false;
-		} else {
-			whileStatement.getOperation().accept(this);
-		}
+		whileStatement.getOperation().accept(this);
 		return null;
 	}
 
 	@Override
 	public Object visit(Break breakStatement) {
-		if(!inLoopContext){
-			structureError(breakStatement.getLine(), "break statement must be inside a loop context");
-		}
+		// TODO
 		return null;
 	}
 
 	@Override
 	public Object visit(Continue continueStatement) {
-		if(!inLoopContext){
-			structureError(continueStatement.getLine(), "continue statement must be inside a loop context");
-		}
+		// TODO
 		return null;
 	}
 
@@ -269,15 +229,13 @@ public class StructureChecksVisitor implements Visitor {
 
 	@Override
 	public Object visit(This thisExpression) {
-		if(!inVirtualMethodContext){
-			structureError(thisExpression.getLine(), "'this' can only be used inside an instance method context");
-		}
+		// TODO
 		return null;
 	}
 
 	@Override
 	public Object visit(NewClass newClass) {
-			// TODO Auto-generated method stub
+		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -310,26 +268,7 @@ public class StructureChecksVisitor implements Visitor {
 
 	@Override
 	public Object visit(MathUnaryOp unaryOp) {
-		Expression expr = unaryOp.getOperand();
-		if(expr instanceof Literal) {
-			Literal literal = (Literal) expr;
-			if(literal.getType() == LiteralTypes.INTEGER){
-				try{
-					long value = Long.parseLong((String)literal.getValue());
-					if(value > 2147483648L){ // check negative integer range
-						structureError(unaryOp.getLine(), "integer literal out of range");
-					}
-				}
-				catch (NumberFormatException numberFormatErr){
-					structureError(unaryOp.getLine(), numberFormatErr.getMessage());
-				}
-			}
-		}
-		else
-		{
-			expr.accept(this);
-		}
-		
+		unaryOp.getOperand().accept(this);
 		return null;
 	}
 
@@ -341,14 +280,7 @@ public class StructureChecksVisitor implements Visitor {
 
 	@Override
 	public Object visit(Literal literal) {
-		if(literal.getType() == LiteralTypes.INTEGER){
-			try {
-				Integer.parseInt((String)literal.getValue());
-			}
-			catch (NumberFormatException numberFormatErr){
-				structureError(literal.getLine(), "integer literal out of range");
-			}
-		}
+		// TODO
 		return null;
 	}
 
@@ -419,5 +351,4 @@ public class StructureChecksVisitor implements Visitor {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 }

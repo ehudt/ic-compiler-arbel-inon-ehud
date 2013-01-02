@@ -3,6 +3,7 @@ package IC.SymbolTable;
 import IC.AST.Formal;
 import IC.AST.LocalVariable;
 import IC.AST.Type;
+import IC.Types.TypeTable;
 
 public class VarSymbol extends Symbol{
 
@@ -15,14 +16,14 @@ public class VarSymbol extends Symbol{
 	{
 		super(lv.getName(),Kind.VARIABLE);
 		this.isParam=false;
-		this.type=lv.getType();
+		this.type = TypeTable.getType(lv.getType());
 	}
 	
 	public VarSymbol(Formal f)
 	{
 		super(f.getName(),Kind.VARIABLE);
 		this.isParam=true;
-		this.type=f.getType();
+		this.type = TypeTable.getType(f.getType());
 	}
 	//geters
 	
