@@ -2,6 +2,7 @@ package IC.SymbolTable;
 
 import IC.AST.Method;
 import IC.Types.MethodType;
+import IC.Types.TypeTable;
 
 public class MethodSymbol extends Symbol{
 
@@ -16,8 +17,7 @@ public class MethodSymbol extends Symbol{
 	public MethodSymbol(Method met, boolean isStatic)
 	{
 		super(met.getName(),Kind.METHOD);
-		//TODO:Fix
-		this.type=new MethodType(met,0);
+		this.type= TypeTable.getType(met);
 		this.isStatic=isStatic;
 	}
 	//getters

@@ -2,6 +2,7 @@ package IC.SymbolTable;
 
 import IC.AST.Field;
 import IC.AST.Type;
+import IC.Types.TypeTable;
 
 public class FieldSymbol extends Symbol{
 	
@@ -13,7 +14,7 @@ public class FieldSymbol extends Symbol{
 	{
 		super(f.getName(),Kind.FIELD);
 		this.field=f;
-		this.type=f.getType();
+		this.type= TypeTable.getType(f.getType());
 	}
 	//getters
 	
