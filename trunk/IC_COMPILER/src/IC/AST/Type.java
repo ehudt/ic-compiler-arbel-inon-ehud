@@ -53,5 +53,6 @@ public abstract class Type extends ASTNode {
 		typeTableID=id;
 	}
 	
+	public abstract boolean subTypeOf(Type otherType);
 	
 }

@@ -2,6 +2,9 @@ package IC.AST;
 
 import java.util.List;
 
+import IC.SemanticError;
+import IC.Types.TypeTable;
+
 /**
  * Class declaration AST node.
  * 
@@ -92,6 +95,29 @@ public class ICClass extends ASTNode {
 	public int getTypeTableID()
 	{
 		return typeTableID;
+	}
+	
+	public boolean subTypeOf(ICClass c)
+	{
+		if (this == c) // case A <= A
+		{
+			return true;
+		}
+		if(this.hasSuperClass())
+		{
+			try{// case A<=B B<=C -> A<=C
+			return TypeTable.getUserTypeByName(this.superClassName).subTypeOf(c);
+			}
+			catch (SemanticError se)
+			{
+				return false;
+			}
+			
+		}// ! A <= B
+		else
+		{
+			return false;
+		}
 	}
 
 }
