@@ -3,17 +3,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import javax.lang.model.type.NullType;
 
 import IC.DataTypes;
 import IC.SemanticError;
 import IC.AST.ICClass;
 import IC.AST.Method;
-//import IC.AST.PrettyPrinter;
 import IC.AST.PrimitiveType;
 import IC.AST.Type;
 
