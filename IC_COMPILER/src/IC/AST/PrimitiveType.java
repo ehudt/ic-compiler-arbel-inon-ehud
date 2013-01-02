@@ -32,11 +32,20 @@ public class PrimitiveType extends Type {
 		return type.getDescription();
 	}
 	
+	
 	public Type clone(int newDimension){
 		Type cloned = new PrimitiveType(getLine(), type);
 		for(int i = 0; i < newDimension; i++){
 			cloned.incrementDimension();
 		}
 		return cloned;
+	}
+
+	@Override
+	public boolean subTypeOf(Type otherType) {
+		if (this.type == DataTypes.NULL) //Case null<=A
+			return true;
+		
+		return this == otherType;
 	}
 }
