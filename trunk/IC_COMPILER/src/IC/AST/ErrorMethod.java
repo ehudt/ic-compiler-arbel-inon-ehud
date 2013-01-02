@@ -2,7 +2,11 @@ package IC.AST;
 
 import java.util.ArrayList;
 import IC.DataTypes;
-
+/**
+ * a class for Erroneous methods. Used for error recovery
+ * @author ehud
+ *
+ */
 public class ErrorMethod extends Method {
 	public Object accept(Visitor visitor) {
 		return visitor.visit(this);
