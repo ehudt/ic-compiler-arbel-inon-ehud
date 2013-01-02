@@ -25,7 +25,8 @@ public abstract class Type extends ASTNode {
 	}
 
 	public abstract String getName();
-
+	public abstract Type clone(int newDimension);
+	
 	public int getDimension() {
 		return dimension;
 	}
@@ -51,4 +52,6 @@ public abstract class Type extends ASTNode {
 	{
 		typeTableID=id;
 	}
+	
+	
 }

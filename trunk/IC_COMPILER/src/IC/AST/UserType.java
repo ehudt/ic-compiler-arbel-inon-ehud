@@ -30,4 +30,13 @@ public class UserType extends Type {
 		return name;
 	}
 
+	@Override
+	public Type clone(int newDimension) {
+		Type cloned = new UserType(getLine(), name);
+		for(int i = 0; i < newDimension; i++){
+			cloned.incrementDimension();
+		}
+		return cloned;
+	}
+
 }
