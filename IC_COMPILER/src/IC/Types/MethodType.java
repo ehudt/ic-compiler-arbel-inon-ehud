@@ -12,13 +12,15 @@ public class MethodType {
 	String name;
 	Type returnType;
 	List<Type> paramTypes = new ArrayList<Type>();
+	int typeTableID;
 	
-	public MethodType(Method method){
+	public MethodType(Method method,int id){
 		name = method.getName();
 		returnType = method.getType();
 		for(Formal formal : method.getFormals()){
 			paramTypes.add(formal.getType());
 		}
+		typeTableID = id;
 	}
 	public String toString(){
 		StringBuilder str = new StringBuilder();
@@ -28,5 +30,10 @@ public class MethodType {
 		str.append(returnType);
 		str.append("}");
 		return str.toString();
+	}
+	
+	public int getTypeTableID()
+	{
+		return typeTableID;
 	}
 }
