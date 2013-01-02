@@ -415,19 +415,25 @@ public class StructureChecksVisitor implements Visitor {
 
 	@Override
 	public Object visit(BlockSymbolTable table) {
-		// TODO Auto-generated method stub
+		for(SymbolTable child : table.getSymbolTables()){
+			child.accept(this);
+		}
 		return null;
 	}
 
 	@Override
 	public Object visit(MethodSymbolTable table) {
-		// TODO Auto-generated method stub
+		for(SymbolTable child : table.getSymbolTables()){
+			child.accept(this);
+		}
 		return null;
 	}
 
 	@Override
 	public Object visit(SymbolTable symbolTable) {
-		// TODO Auto-generated method stub
+		for(SymbolTable child : table.getSymbolTables()){
+			child.accept(this);
+		}
 		return null;
 	}
 
