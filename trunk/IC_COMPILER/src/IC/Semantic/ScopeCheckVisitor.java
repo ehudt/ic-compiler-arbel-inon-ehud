@@ -1,5 +1,6 @@
 package IC.Semantic;
 
+import IC.SemanticError;
 import IC.AST.ArrayLocation;
 import IC.AST.Assignment;
 import IC.AST.Break;
@@ -41,12 +42,16 @@ import IC.AST.VirtualMethod;
 import IC.AST.Visitor;
 import IC.AST.While;
 import IC.SymbolTable.BlockSymbolTable;
+import IC.SymbolTable.ClassSymbol;
 import IC.SymbolTable.ClassSymbolTable;
 import IC.SymbolTable.GlobalSymbolTable;
+import IC.SymbolTable.Kind;
 import IC.SymbolTable.MethodSymbolTable;
+import IC.SymbolTable.Symbol;
 import IC.SymbolTable.SymbolTable;
+import IC.Types.TypeTable;
 
-public class ScopeAndTypeCheck implements Visitor {
+public class ScopeCheckVisitor implements Visitor {
 	private boolean inLoopContext = false;
 	private boolean inVirtualMethodContext = false;
 	
@@ -125,7 +130,11 @@ public class ScopeAndTypeCheck implements Visitor {
 
 	@Override
 	public Object visit(UserType type) {
-		// TODO Auto-generated method stub
+		try {
+			TypeTable.getUserTypeByName(type.getName());				
+		} catch (SemanticError semantic) {
+			scopeError(semantic.line, semantic.getMessage());
+		}
 		return null;
 	}
 
@@ -210,6 +219,16 @@ public class ScopeAndTypeCheck implements Visitor {
 
 	@Override
 	public Object visit(StaticCall call) {
+		SymbolTable scope = call.getEnclosingScope();
+		String className = call.getClassName();
+		Symbol classSymbol = scope.lookup(className);
+		if(classSymbol == null || classSymbol.getKind() != Kind.CLASS){
+			scopeError(call.getLine(), className + ": no such class");
+		}
+		//SymbolTable classScope = classSymbol.get
+		String staticMethodName = call.getName();
+		//Symbol methodSymbol = 
+		
 		for(Expression arg : call.getArguments()){
 			arg.accept(this);
 		}
