@@ -36,4 +36,12 @@ public class MethodType {
 	{
 		return typeTableID;
 	}
+	
+	public Type getReturnType(){
+		return returnType;
+	}
+	
+	public List<Type> getParamTypes(){
+		return paramTypes;
+	}
 }
