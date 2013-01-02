@@ -1,5 +1,6 @@
 package IC.Semantic;
 
+import IC.LiteralTypes;
 import IC.AST.ArrayLocation;
 import IC.AST.Assignment;
 import IC.AST.Break;
@@ -8,6 +9,7 @@ import IC.AST.Continue;
 import IC.AST.EmptyStatement;
 import IC.AST.ErrorClass;
 import IC.AST.ErrorMethod;
+import IC.AST.Expression;
 import IC.AST.ExpressionBlock;
 import IC.AST.Field;
 import IC.AST.FieldMethodList;
@@ -28,6 +30,7 @@ import IC.AST.NewClass;
 import IC.AST.PrimitiveType;
 import IC.AST.Program;
 import IC.AST.Return;
+import IC.AST.Statement;
 import IC.AST.StatementsBlock;
 import IC.AST.StaticCall;
 import IC.AST.StaticMethod;
@@ -51,15 +54,30 @@ public class StructureChecksVisitor implements Visitor {
 		System.exit(0);
 	}
 	
+	private class Context{
+		public boolean inLoopContext = false;
+		public boolean inVirtualMethodContext = false;
+	}
+	
+	private Context context = new Context();
+	
 	@Override
 	public Object visit(Program program) {
-		// TODO Auto-generated method stub
+		for(ICClass icClass : program.getClasses()){
+			icClass.accept(this);
+		}
+		context.inLoopContext = false;
 		return null;
 	}
 
 	@Override
 	public Object visit(ICClass icClass) {
-		// TODO Auto-generated method stub
+		for(Field field : icClass.getFields()){
+			field.accept(this);
+		}
+		for(Method method : icClass.getMethods()){
+			method.accept(this);
+		}
 		return null;
 	}
 
@@ -71,19 +89,27 @@ public class StructureChecksVisitor implements Visitor {
 
 	@Override
 	public Object visit(VirtualMethod method) {
-		// TODO Auto-generated method stub
+		context.inVirtualMethodContext = true;
+		for(Statement stmt : method.getStatements()){
+			stmt.accept(this);
+		}
+		context.inVirtualMethodContext = false;
 		return null;
 	}
 
 	@Override
 	public Object visit(StaticMethod method) {
-		// TODO Auto-generated method stub
+		for(Statement stmt : method.getStatements()){
+			stmt.accept(this);
+		}
 		return null;
 	}
 
 	@Override
 	public Object visit(LibraryMethod method) {
-		// TODO Auto-generated method stub
+		for(Statement stmt : method.getStatements()){
+			stmt.accept(this);
+		}
 		return null;
 	}
 
@@ -125,31 +151,46 @@ public class StructureChecksVisitor implements Visitor {
 
 	@Override
 	public Object visit(If ifStatement) {
-		// TODO Auto-generated method stub
+		ifStatement.getOperation().accept(this);
+		if(ifStatement.hasElse()){
+			ifStatement.getElseOperation().accept(this);
+		}
 		return null;
 	}
-
+	
 	@Override
 	public Object visit(While whileStatement) {
-		// TODO Auto-generated method stub
+		if(!context.inLoopContext){
+			context.inLoopContext = true;
+			whileStatement.getOperation().accept(this);
+			context.inLoopContext = false;
+		} else {
+			whileStatement.getOperation().accept(this);
+		}
 		return null;
 	}
 
 	@Override
 	public Object visit(Break breakStatement) {
-		// TODO Auto-generated method stub
+		if(!context.inLoopContext){
+			structureError(breakStatement.getLine(), "break statement must be inside a loop context");
+		}
 		return null;
 	}
 
 	@Override
 	public Object visit(Continue continueStatement) {
-		// TODO Auto-generated method stub
+		if(!context.inLoopContext){
+			structureError(continueStatement.getLine(), "break statement must be inside a loop context");
+		}
 		return null;
 	}
 
 	@Override
 	public Object visit(StatementsBlock statementsBlock) {
-		// TODO Auto-generated method stub
+		for(Statement stmt : statementsBlock.getStatements()){
+			stmt.accept(this);
+		}
 		return null;
 	}
 
@@ -185,7 +226,9 @@ public class StructureChecksVisitor implements Visitor {
 
 	@Override
 	public Object visit(This thisExpression) {
-		// TODO Auto-generated method stub
+		if(!context.inVirtualMethodContext){
+			structureError(thisExpression.getLine(), "'this'can only be used inside an instance method context");
+		}
 		return null;
 	}
 
@@ -221,7 +264,10 @@ public class StructureChecksVisitor implements Visitor {
 
 	@Override
 	public Object visit(MathUnaryOp unaryOp) {
-		// TODO Auto-generated method stub
+		Expression expr = unaryOp.getOperand();
+		if(expr instanceof Literal){
+			
+		}
 		return null;
 	}
 
@@ -233,7 +279,14 @@ public class StructureChecksVisitor implements Visitor {
 
 	@Override
 	public Object visit(Literal literal) {
-		// TODO Auto-generated method stub
+		if(literal.getType() == LiteralTypes.INTEGER){
+			try {
+				Integer.parseInt((String)literal.getValue());
+			}
+			catch (NumberFormatException numberFormatErr){
+				structureError(literal.getLine(), numberFormatErr.getMessage());
+			}
+		}
 		return null;
 	}
 
@@ -269,7 +322,9 @@ public class StructureChecksVisitor implements Visitor {
 
 	@Override
 	public Object visit(Method method) {
-		// TODO Auto-generated method stub
+		for(Statement stmt : method.getStatements()){
+			stmt.accept(this);
+		}
 		return null;
 	}
 
