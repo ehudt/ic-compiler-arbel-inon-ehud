@@ -1,5 +1,6 @@
 package IC.Semantic;
 
+import IC.LiteralTypes;
 import IC.SemanticError;
 import IC.AST.ArrayLocation;
 import IC.AST.Assignment;
@@ -35,6 +36,7 @@ import IC.AST.StatementsBlock;
 import IC.AST.StaticCall;
 import IC.AST.StaticMethod;
 import IC.AST.This;
+import IC.AST.Type;
 import IC.AST.UserType;
 import IC.AST.VariableLocation;
 import IC.AST.VirtualCall;
@@ -52,11 +54,6 @@ import IC.Types.TypeTable;
 
 public class TypeCheckVisitor implements Visitor {
 	
-	private void typeError(int line, String message) {
-		System.out.println("semantic error at line " + line + ": " + message);
-		System.exit(0);
-	}
-
 	@Override
 	public Object visit(Program program) {
 		for(ICClass icClass : program.getClasses()){
@@ -126,8 +123,22 @@ public class TypeCheckVisitor implements Visitor {
 
 	@Override
 	public Object visit(Assignment assignment) {
+		
+		//type check for assignment
+		Type variableType = (Type) assignment.getVariable().accept(this);
+		Type assignmentType = (Type) assignment.getAssignment().accept(this);
+		
+		if (assignmentType == null) 
+			return null;
+		
+		if (!(assignmentType.subTypeOf(variableType))){
+			typeError(assignment.getLine(), "Type error: " + assignmentType);
+			
+		}
+		
 		assignment.getAssignment().accept(this);
 		assignment.getVariable().accept(this);
+		
 		return null;
 	}
 
@@ -275,7 +286,14 @@ public class TypeCheckVisitor implements Visitor {
 
 	@Override
 	public Object visit(Literal literal) {
-		// TODO
+		LiteralTypes type = literal.getType(); 
+		switch (type){
+         case STRING: return TypeTable.getType("string");
+         case INTEGER: return TypeTable.getType("int");
+         case TRUE: return TypeTable.getType("boolean");
+         case FALSE: return TypeTable.getType("boolean");
+         case NULL: return TypeTable.getType("null");
+         }
 		return null;
 	}
 
@@ -346,6 +364,10 @@ public class TypeCheckVisitor implements Visitor {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	
+	private void typeError(int line, String message) {
+		System.out.println("semantic error at line " + line + ": " + message);
+		System.exit(0);
+	}
 
 }
