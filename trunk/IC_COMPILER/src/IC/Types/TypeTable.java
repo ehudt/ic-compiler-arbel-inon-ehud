@@ -152,7 +152,7 @@ public class TypeTable {
 		for(Type t : primitiveTypeslist)
 		{
 			str.append("\t");
-			str.append(t.getTypeTableID()+": Primitive type: "+ t.getTypeTableID());
+			str.append(t.getTypeTableID()+": Primitive type: "+ t.getName());
 			str.append("\n");
 		}
 		
