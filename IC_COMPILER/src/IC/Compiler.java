@@ -10,6 +10,7 @@ import IC.Parser.*;
 import IC.Semantic.StructureChecksVisitor;
 import IC.SymbolTable.BuildSymbolTables;
 import IC.SymbolTable.GlobalSymbolTable;
+import IC.Types.TypeTable;
 
 /**
  * class Compiler opens a source file of IC language, scans the file
@@ -117,6 +118,7 @@ public class Compiler
     		if(printSymTab){
     			PrettyPrinter symTabPrint = new PrettyPrinter(srcPath);
     			System.out.println(globalSymbolTable.accept(symTabPrint));
+    			System.out.println(TypeTable.toTypeTableString());
     		}
     		
     		
