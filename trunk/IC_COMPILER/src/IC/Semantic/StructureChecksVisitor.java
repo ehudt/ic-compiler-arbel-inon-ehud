@@ -401,7 +401,9 @@ public class StructureChecksVisitor implements Visitor {
 
 	@Override
 	public Object visit(GlobalSymbolTable table) {
-		// TODO Auto-generated method stub
+		for(SymbolTable child : table.getSymbolTables()){
+			child.accept(this);
+		}
 		return null;
 	}
 
