@@ -7,6 +7,7 @@ import java_cup.runtime.Symbol;
 
 import IC.AST.*;
 import IC.Parser.*;
+import IC.Semantic.StructureChecksVisitor;
 import IC.SymbolTable.BuildSymbolTables;
 import IC.SymbolTable.GlobalSymbolTable;
 
@@ -109,17 +110,22 @@ public class Compiler
     		// build symbol table
     		BuildSymbolTables symTableBuilder = new BuildSymbolTables();
     		GlobalSymbolTable globalSymbolTable = (GlobalSymbolTable)programRoot.accept(symTableBuilder);
+    		// perform semantic checks
+    		StructureChecksVisitor checkStructure = new StructureChecksVisitor();
+    		programRoot.accept(checkStructure);
     		//System.out.println("globalSymbolTable is " + globalSymbolTable);
     		if(printSymTab){
     			PrettyPrinter symTabPrint = new PrettyPrinter(srcPath);
     			System.out.println(globalSymbolTable.accept(symTabPrint));
     		}
+    		
+    		
     	}
     	// Catch lexical Errors and print the line and the value of the token
     	catch (LexicalError e) {
 			System.out.println(e.getMessage());
 			System.out.println("Lexical error in file: " + currentFile);
-			System.exit(-1);
+			System.exit(0);
 		}
     	// Handle syntax errors
     	catch (SyntaxError e) {

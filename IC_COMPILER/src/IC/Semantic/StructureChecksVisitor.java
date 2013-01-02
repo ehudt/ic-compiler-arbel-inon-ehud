@@ -1,5 +1,7 @@
 package IC.Semantic;
 
+import java.util.Collections;
+
 import IC.LiteralTypes;
 import IC.AST.ArrayLocation;
 import IC.AST.Assignment;
@@ -166,19 +168,21 @@ public class StructureChecksVisitor implements Visitor {
 
 	@Override
 	public Object visit(Assignment assignment) {
-		// TODO Auto-generated method stub
+		assignment.getAssignment().accept(this);
+		assignment.getVariable().accept(this);
 		return null;
 	}
 
 	@Override
 	public Object visit(CallStatement callStatement) {
-		// TODO Auto-generated method stub
+		callStatement.getCall().accept(this);
 		return null;
 	}
 
 	@Override
 	public Object visit(Return returnStatement) {
-		// TODO Auto-generated method stub
+		if (returnStatement.getValue() == null) return null;
+		returnStatement.getValue().accept(this);
 		return null;
 	}
 
@@ -214,7 +218,7 @@ public class StructureChecksVisitor implements Visitor {
 	@Override
 	public Object visit(Continue continueStatement) {
 		if(!context.inLoopContext){
-			structureError(continueStatement.getLine(), "break statement must be inside a loop context");
+			structureError(continueStatement.getLine(), "continue statement must be inside a loop context");
 		}
 		return null;
 	}
@@ -229,84 +233,113 @@ public class StructureChecksVisitor implements Visitor {
 
 	@Override
 	public Object visit(LocalVariable localVariable) {
-		// TODO Auto-generated method stub
+		if(localVariable.getInitValue() == null) return null;
+		localVariable.getInitValue().accept(this);
 		return null;
 	}
 
 	@Override
 	public Object visit(VariableLocation location) {
-		// TODO Auto-generated method stub
+		if(location.getLocation() == null) return null;
+		location.getLocation().accept(this);
 		return null;
 	}
 
 	@Override
 	public Object visit(ArrayLocation location) {
-		// TODO Auto-generated method stub
+		location.getArray().accept(this);
+		location.getIndex().accept(this);
 		return null;
 	}
 
 	@Override
 	public Object visit(StaticCall call) {
-		// TODO Auto-generated method stub
+		for(Expression arg : call.getArguments()){
+			arg.accept(this);
+		}
 		return null;
 	}
 
 	@Override
 	public Object visit(VirtualCall call) {
-		// TODO Auto-generated method stub
+		if(call.getLocation() != null){
+			call.getLocation().accept(this);
+		}
+		for(Expression arg : call.getArguments()){
+			arg.accept(this);
+		}
 		return null;
 	}
 
 	@Override
 	public Object visit(This thisExpression) {
 		if(!context.inVirtualMethodContext){
-			structureError(thisExpression.getLine(), "'this'can only be used inside an instance method context");
+			structureError(thisExpression.getLine(), "'this' can only be used inside an instance method context");
 		}
 		return null;
 	}
 
 	@Override
 	public Object visit(NewClass newClass) {
-		// TODO Auto-generated method stub
+			// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(NewArray newArray) {
-		// TODO Auto-generated method stub
+		newArray.getSize().accept(this);
+		newArray.getType().accept(this);
 		return null;
 	}
 
 	@Override
 	public Object visit(Length length) {
-		// TODO Auto-generated method stub
+		length.getArray().accept(this);
 		return null;
 	}
 
 	@Override
 	public Object visit(MathBinaryOp binaryOp) {
-		// TODO Auto-generated method stub
+		binaryOp.getFirstOperand().accept(this);
+		binaryOp.getSecondOperand().accept(this);
 		return null;
 	}
 
 	@Override
 	public Object visit(LogicalBinaryOp binaryOp) {
-		// TODO Auto-generated method stub
+		binaryOp.getFirstOperand().accept(this);
+		binaryOp.getSecondOperand().accept(this);
 		return null;
 	}
 
 	@Override
 	public Object visit(MathUnaryOp unaryOp) {
 		Expression expr = unaryOp.getOperand();
-		if(expr instanceof Literal){
-			
+		if(expr instanceof Literal) {
+			Literal literal = (Literal) expr;
+			if(literal.getType() == LiteralTypes.INTEGER){
+				try{
+					long value = Long.parseLong((String)literal.getValue());
+					if(value > 2147483648L){ // check negative integer range
+						structureError(unaryOp.getLine(), "integer literal out of range");
+					}
+				}
+				catch (NumberFormatException numberFormatErr){
+					structureError(unaryOp.getLine(), numberFormatErr.getMessage());
+				}
+			}
 		}
+		else
+		{
+			expr.accept(this);
+		}
+		
 		return null;
 	}
 
 	@Override
 	public Object visit(LogicalUnaryOp unaryOp) {
-		// TODO Auto-generated method stub
+		unaryOp.getOperand().accept(this);
 		return null;
 	}
 
@@ -317,7 +350,7 @@ public class StructureChecksVisitor implements Visitor {
 				Integer.parseInt((String)literal.getValue());
 			}
 			catch (NumberFormatException numberFormatErr){
-				structureError(literal.getLine(), numberFormatErr.getMessage());
+				structureError(literal.getLine(), "integer literal out of range");
 			}
 		}
 		return null;
@@ -325,7 +358,7 @@ public class StructureChecksVisitor implements Visitor {
 
 	@Override
 	public Object visit(ExpressionBlock expressionBlock) {
-		// TODO Auto-generated method stub
+		expressionBlock.getExpression().accept(this);
 		return null;
 	}
 

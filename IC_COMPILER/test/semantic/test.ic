@@ -1,0 +1,34 @@
+class A {
+	int foo;
+	int getFoo(){
+		return foo;
+	}
+	int loop(string name){
+		int i;
+		i = 0;
+		while(i < name.length){
+			if(i == 5){
+				continue;
+			}
+			else if(i % 10 < 3)
+				break;
+		}
+		return i + this.foo + 2147483647 + (-2147483648);
+	}
+	static int badLoop(string name){
+		int i;
+		i = 0;
+		while(i < name.length){
+			if(i == 5){
+				continue;
+				while(true){
+					break;
+				}
+			}
+			else if(i % 10 < 3)
+				break;
+		}
+		return i + foo + 2147483647 + (-2147483648);
+	}
+}
+			
