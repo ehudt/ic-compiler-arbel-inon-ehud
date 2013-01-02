@@ -35,6 +35,7 @@ import IC.AST.StatementsBlock;
 import IC.AST.StaticCall;
 import IC.AST.StaticMethod;
 import IC.AST.This;
+import IC.AST.Type;
 import IC.AST.UserType;
 import IC.AST.VariableLocation;
 import IC.AST.VirtualCall;
@@ -65,21 +66,36 @@ public class StructureChecksVisitor implements Visitor {
 		if (hasMain){
 			structureError(m.getLine(), "There are more than one main() method");
 		}
+
+		
+		if (!m.getName().equals("main")) 
+			return false; 
+		
+		if (hasMain){
+			structureError(m.getLine(), "There is more than one main() method");
+		}
 		
 		MethodType mt = ms.getMetType();
-		if (mt.getReturnType() != TypeTable.getType("void"))
+		if (mt.getReturnType().getName() != TypeTable.getType("void").getName()){
+			
 			structureError(m.getLine(),"The main method return type is not void");
+		}
 		
 		if (m.getFormals().size() != 1){
 			structureError(m.getLine(),"There should be only one argument for the main method");
 		}
 		
-		if (!TypeTable.getType(ms.getMetType().getParamTypes().get(0)).equals(TypeTable.getType("string[]"))){
-			structureError(m.getLine(),"The argument type for the main method should be String[]");
+		Type ty = TypeTable.getType(ms.getMetType().getParamTypes().get(0));
+		if ((!ty.getName().equals("string"))||
+				!(ty.getDimension() == 1))
+		{
+			structureError(m.getLine(),"The argument type for the main method should be string[]");
+
 		}
 		
 		return true;
 	}
+	
 	
 	private void structureError(int line, String message) {
 		System.out.println("semantic error at line " + line + ": " + message);
