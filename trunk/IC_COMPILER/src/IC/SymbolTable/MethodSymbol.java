@@ -16,7 +16,8 @@ public class MethodSymbol extends Symbol{
 	public MethodSymbol(Method met, boolean isStatic)
 	{
 		super(met.getName(),Kind.METHOD);
-		this.type=new MethodType(met);
+		//TODO:Fix
+		this.type=new MethodType(met,0);
 		this.isStatic=isStatic;
 	}
 	//getters
