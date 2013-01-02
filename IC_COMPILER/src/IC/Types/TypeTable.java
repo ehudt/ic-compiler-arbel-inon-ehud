@@ -125,16 +125,6 @@ public class TypeTable {
 		return primitiveTypes.get(tName);
 	}
 	
-	/*
-	public static boolean inTypeTable(String typeName)
-	{
-		boolean bRes=false;
-		bRes=primitiveTypes.containsKey(typeName);
-		bRes=UserTypes.containsKey(typeName);
-		bRes=methodTypes.containsKey(typeName);
-		return bRes;
-	}
-	*/
 	public static String toTypeTableString()
 	{
 		StringBuilder str = new StringBuilder();
