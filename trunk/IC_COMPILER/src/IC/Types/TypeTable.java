@@ -118,7 +118,7 @@ public class TypeTable {
 			}
 			else
 			{
-				return arrayTypes.get(atArr.getName());
+				return arrayTypes.get(atName);
 			}
 		}
 		else
