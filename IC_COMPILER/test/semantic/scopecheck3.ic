@@ -1,0 +1,12 @@
+
+class A{
+	int foo;
+
+
+}
+
+class B extends A
+{	void foo()
+	{}
+
+}
