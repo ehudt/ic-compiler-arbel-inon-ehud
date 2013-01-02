@@ -82,7 +82,7 @@ public class StructureChecksVisitor implements Visitor {
 		}
 		
 		if (m.getFormals().size() != 1){
-			structureError(m.getLine(),"There should be only one argument for the main method");
+			structureError(m.getLine(),"There should be exactly one argument for the main method");
 		}
 		
 		Type ty = TypeTable.getType(ms.getMetType().getParamTypes().get(0));
