@@ -44,11 +44,41 @@ import IC.AST.While;
 import IC.SymbolTable.BlockSymbolTable;
 import IC.SymbolTable.ClassSymbolTable;
 import IC.SymbolTable.GlobalSymbolTable;
+import IC.SymbolTable.MethodSymbol;
 import IC.SymbolTable.MethodSymbolTable;
 import IC.SymbolTable.SymbolTable;
+import IC.Types.TypeTable;
+import IC.Types.MethodType;
 
 public class StructureChecksVisitor implements Visitor {
+	boolean hasMain = false;
 
+	//return true iff this is a correct main method with the correct signature
+	private boolean isMain(MethodSymbol ms, Method m){
+		
+		//check the method name
+		if (!m.getName().equals("main")) 
+			return false; 
+		
+		if (hasMain){
+			structureError(m.getLine(), "There are more than one main() method");
+		}
+		
+		MethodType mt = ms.getMetType();
+		if (mt.getReturnType() != TypeTable.getType("void"))
+			structureError(m.getLine(),"The main method return type is not void");
+		
+		if (m.getFormals().size() != 1){
+			structureError(m.getLine(),"There should be only one argument for the main method");
+		}
+		
+		if (!TypeTable.getType(ms.getMetType().getFormalsType().get(0)).equals("String[]")){
+			structureError(m.getLine(),"The argument type for the main method should be String[]");
+		}
+		
+		return true;
+	}
+	
 	private void structureError(int line, String message) {
 		System.out.println("semantic error at line " + line + ": " + message);
 		System.exit(0);
@@ -76,6 +106,9 @@ public class StructureChecksVisitor implements Visitor {
 			field.accept(this);
 		}
 		for(Method method : icClass.getMethods()){
+			MethodSymbol methodSymbol = (MethodSymbol) method.getEnclosingScope().lookup(method.getName());
+			if (isMain(methodSymbol, method))
+					hasMain = true;
 			method.accept(this);
 		}
 		return null;
