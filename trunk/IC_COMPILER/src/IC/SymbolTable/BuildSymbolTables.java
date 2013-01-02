@@ -48,7 +48,7 @@ import IC.AST.While;
 public class BuildSymbolTables implements Visitor {
 
 	private void tableError(String message) {
-		System.err.println(message);
+		System.out.println("semantic error at line " + message);
 		System.exit(0);
 	}
 	
@@ -58,6 +58,15 @@ public class BuildSymbolTables implements Visitor {
 		program.setEnclosingScope(global);
 		for(ICClass classDecl : program.getClasses()){
 			try{
+				String superClass = classDecl.getSuperClassName(); 
+				if(superClass != null){
+					ClassSymbol superClassSymbol = global.getClassSymbol(superClass);
+					if(superClassSymbol == null){
+						tableError(classDecl.getLine() + ": " + 
+									"Definition of inheriting class " + classDecl.getName() +
+									" must appear after definition of superclass " + superClass);
+					}
+				}
 				classDecl.setEnclosingScope(global);
 				global.insert(classDecl);
 				classDecl.accept(this);
@@ -74,6 +83,7 @@ public class BuildSymbolTables implements Visitor {
 				if (parent != null && child != null){
 					parent.insertChildSymbolTable(child);
 					child.setParent(parent);
+					classDecl.setEnclosingScope(parent);
 					toBeRemoved.add(child);
 				}
 			}
