@@ -42,7 +42,6 @@ public class UserType extends Type {
 	@Override
 	public boolean subTypeOf(Type otherType) {
 		// TODO Auto-generated method stub
-		
 		return otherType == this;
 	}
 
