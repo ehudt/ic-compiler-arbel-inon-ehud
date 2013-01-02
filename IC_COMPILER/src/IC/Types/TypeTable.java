@@ -11,7 +11,7 @@ import IC.DataTypes;
 import IC.SemanticError;
 import IC.AST.ICClass;
 import IC.AST.Method;
-import IC.AST.PrettyPrinter;
+//import IC.AST.PrettyPrinter;
 import IC.AST.PrimitiveType;
 import IC.AST.Type;
 
@@ -110,14 +110,7 @@ public class TypeTable {
 	
 	public static Type getType(String tName)
 	{	
-		if(!primitiveTypes.containsKey(tName))
-		{
-			return primitiveTypes.get(tName);
-		}
-		else
-		{
-			return null;
-		}
+		return primitiveTypes.get(tName);
 	}
 	
 	/*
