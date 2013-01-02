@@ -12,7 +12,7 @@ public class FieldSymbol extends Symbol{
 	//constructor
 	public FieldSymbol(Field f)
 	{
-		super(f.getName(),Kind.FIELD);
+		super(f.getName(),Kind.FIELD, f.getLine());
 		this.field=f;
 		this.type= TypeTable.getType(f.getType());
 	}
