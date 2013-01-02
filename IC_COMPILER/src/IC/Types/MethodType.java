@@ -44,4 +44,19 @@ public class MethodType {
 	public List<Type> getParamTypes(){
 		return paramTypes;
 	}
+	
+
+	@Override 
+	public boolean equals(Object o) {
+		if (!(o instanceof MethodType))
+				return false;
+		
+		MethodType m = (MethodType)o;
+		if ((this.getParamTypes().toString().equals(m.getParamTypes())) && 
+				this.getReturnType().toString().equals(m.getReturnType()))
+		{
+			return true;
+		}
+		return false;
+	}
 }
