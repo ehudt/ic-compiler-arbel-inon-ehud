@@ -1,9 +1,13 @@
 package IC.Semantic;
 
+import com.sun.org.apache.xalan.internal.xsltc.runtime.Operators;
+
+import IC.BinaryOps;
 import IC.LiteralTypes;
 import IC.SemanticError;
 import IC.AST.ArrayLocation;
 import IC.AST.Assignment;
+import IC.AST.BinaryOp;
 import IC.AST.Break;
 import IC.AST.CallStatement;
 import IC.AST.Continue;
@@ -124,7 +128,7 @@ public class TypeCheckVisitor implements Visitor {
 	@Override
 	public Object visit(Assignment assignment) {
 		
-		//type check for assignment
+	/*	//type check for assignment
 		Type variableType = (Type) assignment.getVariable().accept(this);
 		Type assignmentType = (Type) assignment.getAssignment().accept(this);
 		
@@ -134,7 +138,7 @@ public class TypeCheckVisitor implements Visitor {
 		if (!(assignmentType.subTypeOf(variableType))){
 			typeError(assignment.getLine(), "Type error: " + assignmentType);
 			
-		}
+		}*/
 		
 		assignment.getAssignment().accept(this);
 		assignment.getVariable().accept(this);
@@ -260,13 +264,38 @@ public class TypeCheckVisitor implements Visitor {
 
 	@Override
 	public Object visit(MathBinaryOp binaryOp) {
-		binaryOp.getFirstOperand().accept(this);
-		binaryOp.getSecondOperand().accept(this);
+		Type op1Type = (Type) binaryOp.getFirstOperand().accept(this);
+		Type op2Type = (Type) binaryOp.getSecondOperand().accept(this);
+		
+		if ((op1Type == null) || (op2Type == null)) return null;
+		
+		if (op1Type != op2Type)
+			typeError(binaryOp.getLine(), "Illegal "+binaryOp.getOperator().getOperatorString() + " operation. Both operands types should be the same");
+		
+		if(binaryOp.getOperator() != BinaryOps.PLUS){
+			if (!op1Type.subTypeOf(TypeTable.getType("int"))){
+				typeError(binaryOp.getLine(), binaryOp.getOperator().getOperatorString() + " operations are only for two operands of type int");
+			}
+		}else{
+		
+		if (!(op1Type.subTypeOf(TypeTable.getType("int")))&&!(op1Type.subTypeOf(TypeTable.getType("string"))))
+			typeError(binaryOp.getLine(), binaryOp.getOperator().getOperatorString() + " operation is only for int or string operands");
+		}
+		
+		/*binaryOp.getFirstOperand().accept(this);
+		binaryOp.getSecondOperand().accept(this);*/
 		return null;
 	}
 
 	@Override
 	public Object visit(LogicalBinaryOp binaryOp) {
+		Type op1Type = (Type) binaryOp.getFirstOperand().accept(this);
+		Type op2Type = (Type) binaryOp.getSecondOperand().accept(this);
+	//TODO	
+		if (!(op1Type.subTypeOf((TypeTable.getType("boolean"))))||!(op2Type.subTypeOf((TypeTable.getType("boolean")))))
+			typeError(binaryOp.getLine(), binaryOp.getOperator().getOperatorString() + " operations are only for two operands of type boolean");
+		
+		
 		binaryOp.getFirstOperand().accept(this);
 		binaryOp.getSecondOperand().accept(this);
 		return null;
@@ -288,11 +317,11 @@ public class TypeCheckVisitor implements Visitor {
 	public Object visit(Literal literal) {
 		LiteralTypes type = literal.getType(); 
 		switch (type){
-         case STRING: return TypeTable.getType("string");
-         case INTEGER: return TypeTable.getType("int");
-         case TRUE: return TypeTable.getType("boolean");
-         case FALSE: return TypeTable.getType("boolean");
-         case NULL: return TypeTable.getType("null");
+			case STRING: return TypeTable.getType("string");
+			case INTEGER: return TypeTable.getType("int");
+			case TRUE: return TypeTable.getType("boolean");
+         	case FALSE: return TypeTable.getType("boolean");
+         	case NULL: return TypeTable.getType("null");
          }
 		return null;
 	}
