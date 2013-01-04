@@ -1,6 +1,5 @@
 package IC.Semantic;
 
-import com.sun.org.apache.xalan.internal.xsltc.runtime.Operators;
 
 import IC.BinaryOps;
 import IC.LiteralTypes;
@@ -57,6 +56,10 @@ import IC.SymbolTable.SymbolTable;
 import IC.Types.TypeTable;
 
 public class TypeCheckVisitor implements Visitor {
+//TODO delete this
+	public void faPr (String x){
+		System.out.println(x);
+	}
 	
 	@Override
 	public Object visit(Program program) {
@@ -212,10 +215,17 @@ public class TypeCheckVisitor implements Visitor {
 	}
 
 	@Override
+	//check that index is of type int
 	public Object visit(ArrayLocation location) {
-		location.getArray().accept(this);
-		location.getIndex().accept(this);
-		return null;
+		Type arrayType = (Type) location.getArray().accept(this);
+		Type indexType = (Type) location.getIndex().accept(this);
+		
+		if (indexType != TypeTable.getType("int")){
+			typeError(location.getLine(), "Array index must be of type int");
+		}
+		
+		return arrayType;
+		
 	}
 
 	@Override
@@ -250,23 +260,33 @@ public class TypeCheckVisitor implements Visitor {
 	}
 
 	@Override
+	//Typecheck for newArray
 	public Object visit(NewArray newArray) {
-		newArray.getSize().accept(this);
-		newArray.getType().accept(this);
-		return null;
+		Type sizeType = (Type) newArray.getSize().accept(this);
+		Type arrayType = (Type) newArray.getType().accept(this);
+		
+		if (!sizeType.subTypeOf(TypeTable.getType("int")))
+			typeError(newArray.getLine(), "Array size must be of type int");
+		
+		
+		return arrayType;
 	}
 
 	@Override
 	public Object visit(Length length) {
-		length.getArray().accept(this);
-		return null;
+		Type arrType = (Type) length.getArray().accept(this);
+		if( arrType.getDimension() < 1 ){
+			typeError(length.getLine(), "Not of array type");
+		}
+		
+		return TypeTable.getType("int");
 	}
 
 	@Override
 	public Object visit(MathBinaryOp binaryOp) {
 		Type op1Type = (Type) binaryOp.getFirstOperand().accept(this);
 		Type op2Type = (Type) binaryOp.getSecondOperand().accept(this);
-		
+	
 		if ((op1Type == null) || (op2Type == null)) return null;
 		
 		if (op1Type != op2Type)
@@ -282,35 +302,55 @@ public class TypeCheckVisitor implements Visitor {
 			typeError(binaryOp.getLine(), binaryOp.getOperator().getOperatorString() + " operation is only for int or string operands");
 		}
 		
-		/*binaryOp.getFirstOperand().accept(this);
-		binaryOp.getSecondOperand().accept(this);*/
-		return null;
+		return TypeTable.getType(op1Type);
 	}
 
 	@Override
 	public Object visit(LogicalBinaryOp binaryOp) {
 		Type op1Type = (Type) binaryOp.getFirstOperand().accept(this);
 		Type op2Type = (Type) binaryOp.getSecondOperand().accept(this);
-	//TODO	
-		if (!(op1Type.subTypeOf((TypeTable.getType("boolean"))))||!(op2Type.subTypeOf((TypeTable.getType("boolean")))))
-			typeError(binaryOp.getLine(), binaryOp.getOperator().getOperatorString() + " operations are only for two operands of type boolean");
+		BinaryOps op = binaryOp.getOperator();
+	
+		//TODO how to handle null?
 		
-		
-		binaryOp.getFirstOperand().accept(this);
-		binaryOp.getSecondOperand().accept(this);
-		return null;
+		// Check for the || and && operators that both operands are boolean
+		if ((op == BinaryOps.LAND)|| (op == BinaryOps.LOR))
+			if ((!op1Type.subTypeOf(TypeTable.getType("boolean")))||(!op2Type.subTypeOf(TypeTable.getType("boolean")))){
+				typeError(binaryOp.getLine(), "Logical "+ op.getOperatorString() + " on non-boolean types");
+			}
+
+		//Check if one operand type is subtype of the other
+		if (!(op1Type.subTypeOf(op2Type))&&!(op2Type.subTypeOf(op1Type))){
+			if (op == BinaryOps.EQUAL || op == BinaryOps.NEQUAL){
+				typeError(binaryOp.getLine(), "Comparing forign types with the operator: " + op.getOperatorString());
+			}
+			
+			else {
+				typeError(binaryOp.getLine(), "Comparing non int values with " + op.getOperatorString());
+			}
+			
+		}
+	
+		return TypeTable.getType("boolean");
 	}
 
 	@Override
 	public Object visit(MathUnaryOp unaryOp) {
-		unaryOp.getOperand().accept(this);
-		return null;
+		Type opType = (Type) unaryOp.getOperand().accept(this);
+		if (opType != TypeTable.getType("int"))
+				typeError(unaryOp.getLine(), "Unary "+ unaryOp.getOperator().getOperatorString() + " with a non-int operand");
+		
+		return TypeTable.getType("int");
 	}
 
 	@Override
 	public Object visit(LogicalUnaryOp unaryOp) {
+		Type opType = (Type) unaryOp.getOperand().accept(this);
+		if (opType != TypeTable.getType("boolean"))
+				typeError(unaryOp.getLine(), unaryOp.getOperator().getOperatorString() + " with a non-boolean operand");
+		
 		unaryOp.getOperand().accept(this);
-		return null;
+		return TypeTable.getType("boolean");
 	}
 
 	@Override
