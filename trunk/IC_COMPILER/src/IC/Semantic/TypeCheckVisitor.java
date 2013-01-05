@@ -241,6 +241,7 @@ public class TypeCheckVisitor implements Visitor {
 		if(call.getLocation() != null){
 			call.getLocation().accept(this);
 		}
+		
 		for(Expression arg : call.getArguments()){
 			arg.accept(this);
 		}
@@ -255,8 +256,15 @@ public class TypeCheckVisitor implements Visitor {
 
 	@Override
 	public Object visit(NewClass newClass) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		ICClass classType = null;
+		try {
+			classType = (ICClass) TypeTable.getUserTypeByName(newClass.getName()).accept(this);
+		} catch (SemanticError e) {
+			 typeError(newClass.getLine(), "There is no class: " + newClass.getName());
+		}
+		
+		return classType;
 	}
 
 	@Override
