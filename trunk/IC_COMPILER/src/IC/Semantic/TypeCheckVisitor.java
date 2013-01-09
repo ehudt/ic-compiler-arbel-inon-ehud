@@ -1,7 +1,8 @@
 package IC.Semantic;
 
-
 import java.util.Iterator;
+
+import sun.org.mozilla.javascript.regexp.SubString;
 
 import IC.BinaryOps;
 import IC.LiteralTypes;
@@ -153,7 +154,7 @@ public class TypeCheckVisitor implements Visitor {
 			return null;
 		
 		if (!(assignmentType.subTypeOf(variableType))){
-			typeError(assignment.getLine(), "Type mismatch: " + assignmentType);
+			typeError(assignment.getLine(), "Type mismatch: " + assignmentType + " cannot be assigned to "+variableType);
 			
 		}
 		return null;
@@ -283,9 +284,10 @@ public class TypeCheckVisitor implements Visitor {
 			typeError(location.getLine(), arrayType + " is not an array type");
 		}
 		
-	 
-		// TODO don't return array type, but the type of an element in the array
-		return arrayType;
+		String typeName = arrayType.toString();
+		String elementType = typeName.substring(0, typeName.length()-2);
+
+		return TypeTable.getType(elementType);
 		
 	}
 
@@ -407,6 +409,7 @@ public class TypeCheckVisitor implements Visitor {
 	@Override
 	public Object visit(Length length) {
 		Type arrType = (Type) length.getArray().accept(this);
+		
 		if( arrType.getDimension() < 1 ){
 			typeError(length.getLine(), "Not of array type");
 		}
@@ -422,7 +425,7 @@ public class TypeCheckVisitor implements Visitor {
 		if ((op1Type == null) || (op2Type == null)) return null;
 		
 		if (op1Type != op2Type)
-			typeError(binaryOp.getLine(), "Illegal "+binaryOp.getOperator().getOperatorString() + " operation. Both operands' types should be the same");
+			typeError(binaryOp.getLine(), "Illegal " + binaryOp.getOperator().getOperatorString() + " operation. Both operands' types should be the same");
 		
 		if(binaryOp.getOperator() != BinaryOps.PLUS){
 			if (op1Type != TypeTable.getType("int")){
@@ -480,6 +483,7 @@ public class TypeCheckVisitor implements Visitor {
 		return TypeTable.getType("boolean");
 	}
 
+	
 	@Override
 	public Object visit(Literal literal) {
 		LiteralTypes type = literal.getType(); 
@@ -561,11 +565,13 @@ public class TypeCheckVisitor implements Visitor {
 		return null;
 	}
 	
+	//prints a typeError and exit from the program
 	private void typeError(int line, String message) {
 		System.out.println("semantic error at line " + line + ": " + message);
 		System.exit(0);
 	}
 	
+	//prints a scopeError and exit from the program 
 	private void scopeError(int line, String message) {
 		System.out.println("semantic error at line " + line + ": " + message);
 		System.exit(0);
