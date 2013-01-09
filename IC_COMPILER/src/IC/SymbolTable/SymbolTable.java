@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import IC.AST.Method;
 import IC.AST.Visitor;
 
 public abstract class SymbolTable {
@@ -67,4 +68,6 @@ public abstract class SymbolTable {
 	public ClassSymbolTable getEnclosingClassTable() {
 		return parent.getEnclosingClassTable();
 	}
+
+	public abstract String getCurrentMethodName();
 }

@@ -167,10 +167,19 @@ public class TypeCheckVisitor implements Visitor {
 	}
 
 	@Override
-	public Object visit(Return returnStatement) {	
+	public Object visit(Return returnStatement) {
+		Type returnValueType = null;
 		if (returnStatement.hasValue()){
-			//	Type returnValueType = (Type) returnStatement.getValue().accept(this);
-			//TODO
+			returnValueType = (Type)returnStatement.getValue().accept(this);
+		} else {
+			returnValueType = TypeTable.getType("void");
+		}
+		String currentMethodName = returnStatement.getEnclosingScope().getCurrentMethodName();
+		MethodSymbol currentMethodSymbol = (MethodSymbol)returnStatement.getEnclosingScope().lookup(currentMethodName);
+		MethodType currentMethodType = currentMethodSymbol.getMetType();
+		Type methodReturnType = TypeTable.getType(currentMethodType.getReturnType());
+		if(!returnValueType.subTypeOf(methodReturnType)) {
+			typeError(returnStatement.getLine(), "return value of method " + currentMethodName + " must be " + methodReturnType);
 		}
 		
 		
@@ -551,25 +560,21 @@ public class TypeCheckVisitor implements Visitor {
 
 	@Override
 	public Object visit(FieldMethodList fieldMethodList) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(EmptyStatement emptyStatement) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(ErrorMethod errorMethod) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(ErrorClass errorClass) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -583,31 +588,26 @@ public class TypeCheckVisitor implements Visitor {
 
 	@Override
 	public Object visit(GlobalSymbolTable table) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(ClassSymbolTable table) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(BlockSymbolTable table) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(MethodSymbolTable table) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(SymbolTable symbolTable) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 	

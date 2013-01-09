@@ -48,6 +48,11 @@ public class GlobalSymbolTable extends SymbolTable {
 	public Object accept(Visitor visitor) {
 		return visitor.visit(this);
 	}
+
+	@Override
+	public String getCurrentMethodName() {
+		return "";
+	}
 	
 
 }

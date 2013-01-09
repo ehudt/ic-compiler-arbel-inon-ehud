@@ -240,4 +240,8 @@ public class TypeTable {
 		
 		return str.toString();
 	}
+/*
+	public static MethodType getMethodType(String currentMethodName) {
+		return methodTypes.get(currentMethodName);
+	}*/
 }

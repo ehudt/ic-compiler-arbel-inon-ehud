@@ -74,4 +74,9 @@ public class ClassSymbolTable extends SymbolTable {
 	public ClassSymbolTable getEnclosingClassTable() {
 		return this;
 	}
+
+	@Override
+	public String getCurrentMethodName() {
+		return "";
+	}
 }
