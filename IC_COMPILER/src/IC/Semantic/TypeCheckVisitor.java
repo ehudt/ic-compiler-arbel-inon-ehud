@@ -398,8 +398,8 @@ public class TypeCheckVisitor implements Visitor {
 		return classType;
 	}
 
+	
 	@Override
-	//Typecheck for newArray
 	public Object visit(NewArray newArray) {
 		newArray.getType().accept(this);
 		Type tmpType = TypeTable.getType(newArray.getType(), false);
@@ -413,6 +413,12 @@ public class TypeCheckVisitor implements Visitor {
 		return arrayType;
 	}
 
+	/**
+	 * 
+	 * visitor for array.length
+	 * Checks that it's an array type and returns int
+	 * 
+	 */
 	@Override
 	public Object visit(Length length) {
 		Type arrType = (Type) length.getArray().accept(this);
@@ -424,6 +430,14 @@ public class TypeCheckVisitor implements Visitor {
 		return TypeTable.getType("int");
 	}
 
+	/**
+	 * 
+	 * Checks for types in math binary operations.
+	 * for + operation: gets either 2 ints or 2 strings. Return int or string respectably. 
+	 * for {/,*,-} operations, gets 2 ints and return int. 
+	 * Send an error otherwise
+	 * 
+	 */
 	@Override
 	public Object visit(MathBinaryOp binaryOp) {
 		Type op1Type = (Type) binaryOp.getFirstOperand().accept(this);
@@ -445,13 +459,22 @@ public class TypeCheckVisitor implements Visitor {
 		return TypeTable.getType(op1Type, false);
 	}
 
+	/**
+	 * 
+	 * Checks for types in logical binary operations. Returns boolean.
+	 * Different operands types for different operations:
+	 * just booleans for &&, ||. 
+	 * ints for: >,<,>=,<=
+	 * subtypes for ==,!=
+	 * Send an error otherwise
+	 *  
+	 */
 	@Override
 	public Object visit(LogicalBinaryOp binaryOp) {
 		Type op1Type = (Type) binaryOp.getFirstOperand().accept(this);
 		Type op2Type = (Type) binaryOp.getSecondOperand().accept(this);
 		BinaryOps op = binaryOp.getOperator();
 	
-		//TODO how to handle null?
 		
 		// Check for the || and && operators that both operands are boolean
 		if ((op == BinaryOps.LAND)|| (op == BinaryOps.LOR)) {
@@ -474,6 +497,12 @@ public class TypeCheckVisitor implements Visitor {
 		return TypeTable.getType("boolean");
 	}
 
+	/**
+	 * 
+	 * Check the unary math operation: -
+	 * operand should be of type int and returns int. Otherwise: Send a type error.
+	 * 
+	 */
 	@Override	
 	public Object visit(MathUnaryOp unaryOp) {
 		Type opType = (Type) unaryOp.getOperand().accept(this);
@@ -482,6 +511,12 @@ public class TypeCheckVisitor implements Visitor {
 		return TypeTable.getType("int");
 	}
 
+	/**
+	 * 
+	 * Checks for the unary logical operation: !
+	 * checks that unaryOp is of type boolean, and returns boolean. Otherwise send a type error. 
+	 * 
+	 */
 	@Override
 	public Object visit(LogicalUnaryOp unaryOp) {
 		Type opType = (Type) unaryOp.getOperand().accept(this);
@@ -490,7 +525,11 @@ public class TypeCheckVisitor implements Visitor {
 		return TypeTable.getType("boolean");
 	}
 
-	
+	/**
+	 *
+	 * return the type of the literal
+	 * 
+	 */
 	@Override
 	public Object visit(Literal literal) {
 		LiteralTypes type = literal.getType(); 
