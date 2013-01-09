@@ -141,6 +141,11 @@ public class TypeCheckVisitor implements Visitor {
 		return TypeTable.getType(type);
 	}
 
+	/**
+	 * Checks that:
+	 * The assignment type is subtype of the variable to be assigned in.
+	 * Returns null, or an error of there is one. 
+	 */
 	@Override
 	public Object visit(Assignment assignment) {
 		
@@ -166,6 +171,9 @@ public class TypeCheckVisitor implements Visitor {
 		return null;
 	}
 
+	/**
+	 * Checks that the return value code is a subtype of the method type
+	 */
 	@Override
 	public Object visit(Return returnStatement) {
 		Type returnValueType = null;
@@ -186,6 +194,11 @@ public class TypeCheckVisitor implements Visitor {
 		return null;
 	}
 
+	/**
+	 * Checks types in an If/Else statement.
+	 * Makes sure that the if condition is of type boolean.
+	 * Returns null, or sends an error if there is one.
+	 */
 	@Override
 	public Object visit(If ifStatement) {
 		Type conditionType = (Type) ifStatement.getCondition().accept(this);
@@ -203,6 +216,10 @@ public class TypeCheckVisitor implements Visitor {
 		return null;
 	}
 	
+	/**
+	 * Checks in a while statement that the condition is of type boolean.
+	 * Retruns null or an Error.  
+	 */
 	@Override
 	public Object visit(While whileStatement) {
 		Type conditionType = (Type)whileStatement.getCondition().accept(this);
@@ -233,6 +250,9 @@ public class TypeCheckVisitor implements Visitor {
 		return null;
 	}
 
+	/**
+	 * checks that the variable type is a subtype of the local variables type
+	 */
 	@Override
 	public Object visit(LocalVariable localVariable) {
 		localVariable.getType().accept(this);
@@ -247,6 +267,11 @@ public class TypeCheckVisitor implements Visitor {
 		return null;
 	}
 
+	/**
+	 * Returns the location type, or error if found one.
+	 * Implements the checks for the bonus: Checks if the variable was declared before 
+	 * it is being used, and send an error otherwise.
+	 */
 	@Override
 	public Object visit(VariableLocation location) {
 		Type expressionType = null;
@@ -285,6 +310,10 @@ public class TypeCheckVisitor implements Visitor {
 		return expressionType;
 	}
 
+	/** 
+	 * ArrayLocation: check that the index is of type int. Return element type, or send 
+	 * an error if there is one.
+	 */
 	@Override
 	//check that index is of type int
 	public Object visit(ArrayLocation location) {
@@ -306,6 +335,11 @@ public class TypeCheckVisitor implements Visitor {
 		
 	}
 
+	/**
+	 * check types of arguments, check that the method is defined in the correct class
+	 * Check that all arguments correspond to the method's arguments types
+	 * send an error if there is one, return the method return value otherwise.
+	 */
 	@Override
 	public Object visit(StaticCall call) {
 		String className = call.getClassName();
@@ -338,7 +372,14 @@ public class TypeCheckVisitor implements Visitor {
 		}
 		return TypeTable.getType(methodType.getReturnType(), false);
 	}
-
+	
+	 /**
+	   * 
+	   * Check that the method is defined in the relevant class
+       * Check that all arguments correspond to the method's arguments types
+       * Return the method return value, or error if found one.
+       * 
+       */
 	@Override
 	public Object visit(VirtualCall call) {
 		ICClass instanceClass = null;
@@ -399,6 +440,10 @@ public class TypeCheckVisitor implements Visitor {
 		return TypeTable.getType(new UserType(thisExpression.getLine(), thisExpression.getEnclosingClassTable().getName()));
 	}
 
+	/**
+	 * Checks new class expression:
+	 * Checks that the class type is legal and exists.
+	 */
 	@Override
 	public Object visit(NewClass newClass) {
 		String className = newClass.getName();
@@ -407,7 +452,11 @@ public class TypeCheckVisitor implements Visitor {
 		return classType;
 	}
 
-	
+	/**
+	 *Checks new array expression:
+	 *Checks that element type is a legal type and that the size is of type int.
+	 * Returns the array type.
+	 */
 	@Override
 	public Object visit(NewArray newArray) {
 		newArray.getType().accept(this);
