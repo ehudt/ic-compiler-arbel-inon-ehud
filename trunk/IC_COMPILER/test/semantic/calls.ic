@@ -3,15 +3,19 @@ class A {
 	static void main(string[] args) {
 		int[] x = new int[5];
 		int y = 5;
-		x[0] = 5;
+		x[9] = 5;
 		A a = new A();
-		a.setId(x);
+		A[] aa = new A[5];
+		A[][] bb = new A[][6];
+		A[] cc;
+		a.setId(x[0]);
 		getNumber(x, "wtf");
+		return;
 	}
 	static int getNumber(int[] what, string nothing){
 		int y;
 		y = 7;
-		return 5;
+		return 8;
 	}
 	void setId(int newId) {
 		this.id = newId;

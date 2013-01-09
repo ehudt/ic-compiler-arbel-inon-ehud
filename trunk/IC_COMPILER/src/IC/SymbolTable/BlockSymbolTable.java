@@ -8,6 +8,7 @@ import java.util.Map;
 
 import IC.SemanticError;
 import IC.AST.LocalVariable;
+import IC.AST.Method;
 import IC.AST.Visitor;
 
 
@@ -54,6 +55,11 @@ public class BlockSymbolTable extends SymbolTable {
 	
 	public Object accept(Visitor visitor) {
 		return visitor.visit(this);
+	}
+
+	@Override
+	public String getCurrentMethodName() {
+		return parent.getCurrentMethodName();
 	}
 
 }
