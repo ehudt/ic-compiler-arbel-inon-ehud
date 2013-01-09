@@ -1,8 +1,9 @@
 class A {
 	int id;
 	static void main(string[] args) {
-		int[] x = new boolean[5];
-		x = 5;
+		int[] x = new int[5];
+		int y = 5;
+		x[0] = 5;
 		A a = new A();
 		a.setId(x);
 		getNumber(x, "wtf");

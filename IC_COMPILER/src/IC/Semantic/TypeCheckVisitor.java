@@ -227,8 +227,14 @@ public class TypeCheckVisitor implements Visitor {
 	@Override
 	public Object visit(LocalVariable localVariable) {
 		localVariable.getType().accept(this);
-		if(localVariable.getInitValue() == null) return null;
-		localVariable.getInitValue().accept(this);
+		Type varType = TypeTable.getType(localVariable.getType(), false);
+		if(localVariable.getInitValue() != null) {
+			Type initValueType = (Type)localVariable.getInitValue().accept(this);
+			if (!initValueType.subTypeOf(varType)){
+				typeError(localVariable.getLine(), "type mismatch: expected " + varType + " and got " + initValueType);
+			}
+		}
+		
 		return null;
 	}
 
@@ -395,13 +401,14 @@ public class TypeCheckVisitor implements Visitor {
 	@Override
 	//Typecheck for newArray
 	public Object visit(NewArray newArray) {
-		Type sizeType = (Type) newArray.getSize().accept(this);
-		// TODO must check that array size is positive
-		Type arrayType = (Type) newArray.getType().accept(this);
+		newArray.getType().accept(this);
+		Type tmpType = TypeTable.getType(newArray.getType(), false);
+		Type arrayType = TypeTable.getType(tmpType.clone(tmpType.getDimension() + 1));
 		
-		if (sizeType != TypeTable.getType("int"))
+		Type sizeType = (Type) newArray.getSize().accept(this);	
+		if (sizeType != TypeTable.getType("int")) {
 			typeError(newArray.getLine(), "Array size must be of type int");
-		
+		}
 		
 		return arrayType;
 	}
