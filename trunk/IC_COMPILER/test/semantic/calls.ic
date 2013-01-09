@@ -12,12 +12,12 @@ class A {
 		A[][] bb = new A[][6];
 		A[] cc;
 		a.setId(x[0]);
-		getNumber(new A(), null);
+		getNumber(null, "r");
 		return;
 	}
 	static int getNumber(A what, string nothing){
 		int y;
-		int z = null;
+		int z = 4;
 		y = 7;
 		return 8;
 	}
@@ -26,5 +26,11 @@ class A {
 	}
 }
  class B extends A {
+	int id;
+	int setId(int newId) {
+		this.id = 6;
+	}
 }
-class C extends B{}
+class C extends B{
+}
+
