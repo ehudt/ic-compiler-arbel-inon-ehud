@@ -413,13 +413,17 @@ public class StructureChecksVisitor implements Visitor {
 
 	@Override
 	public Object visit(ClassSymbolTable table) {
+		
+		
+		//Check that fields are not getting overridden
 		for (FieldSymbol field : table.getFieldSymbols()){
 			Symbol parentField = table.getParent().lookup(field.getID());
 			if (!(parentField == null)){
 				structureError(field.getLine(), "Illegal structure. Field: "+ field.getID()+ " is already used!");
 			}
 		}
-		
+
+		//Check that medhods are not getting overridden incorrectly 
 		for (MethodSymbol method : table.getMethodSymbols()){
 			Symbol parentField = table.getParent().lookup(method.getID());
 			if (!(parentField == null)){
@@ -431,10 +435,15 @@ public class StructureChecksVisitor implements Visitor {
 				MethodSymbol parentMethod = (MethodSymbol)parentField;
 				MethodType parentType = parentMethod.getMetType();
 				
+				if (!(methodType.getReturnType().getName().equals(parentType.getReturnType().getName()))){
+					structureError(method.getLine(), "Illegal structure: "+ method.getID() + " is already used!");
+				}
+				
 				if (methodType.equals(parentType)){
 					structureError(method.getLine(), "Illegal structure: "+ method.getID() + " is already used!");
 				}
 			}}
+		
 		for(SymbolTable child : table.getSymbolTables()){
 		child.accept(this);		}
 	return null;
