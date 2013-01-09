@@ -137,21 +137,19 @@ public class TypeCheckVisitor implements Visitor {
 	@Override
 	public Object visit(Assignment assignment) {
 		
-	/*	//type check for assignment
+	//type check for assignment
 		Type variableType = (Type) assignment.getVariable().accept(this);
-		Type assignmentType = (Type) assignment.getAssignment().accept(this);
+		if (variableType == null) 
+			return null;
 		
+		Type assignmentType = (Type) assignment.getAssignment().accept(this);
 		if (assignmentType == null) 
 			return null;
 		
 		if (!(assignmentType.subTypeOf(variableType))){
-			typeError(assignment.getLine(), "Type error: " + assignmentType);
+			typeError(assignment.getLine(), "Type mismatch: " + assignmentType);
 			
-		}*/
-		
-		assignment.getAssignment().accept(this);
-		assignment.getVariable().accept(this);
-		
+		}
 		return null;
 	}
 
@@ -170,11 +168,21 @@ public class TypeCheckVisitor implements Visitor {
 
 	@Override
 	public Object visit(If ifStatement) {
-		ifStatement.getCondition().accept(this);
-		ifStatement.getOperation().accept(this);
+		Type conditionType = (Type) ifStatement.getCondition().accept(this);
+			if (conditionType != TypeTable.getType("boolean")){
+				typeError(ifStatement.getLine(), "If condition must be of type boolean");
+			}
+			
+		Type operationType = (Type) ifStatement.getOperation().accept(this);
+		if (operationType == null)
+			return null;
+		
 		if(ifStatement.hasElse()){
-			ifStatement.getElseOperation().accept(this);
+			Type elseOperationType = (Type) ifStatement.getElseOperation().accept(this);
+			if (elseOperationType == null)
+				return null;
 		}
+		
 		return null;
 	}
 	
@@ -277,8 +285,9 @@ public class TypeCheckVisitor implements Visitor {
 
 	@Override
 	public Object visit(VirtualCall call) {
-		if(call.getLocation() != null){
-			call.getLocation().accept(this);
+		if(call.isExternal()){
+			Type callType = (Type) call.getLocation().accept(this);
+			
 		}
 		
 		for(Expression arg : call.getArguments()){
