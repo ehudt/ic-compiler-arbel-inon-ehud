@@ -1,5 +1,7 @@
 package IC.Semantic;
 
+import java.util.List;
+
 import IC.LiteralTypes;
 import IC.AST.ArrayLocation;
 import IC.AST.Assignment;
@@ -426,6 +428,7 @@ public class StructureChecksVisitor implements Visitor {
 		//Check that medhods are not getting overridden incorrectly 
 		for (MethodSymbol method : table.getMethodSymbols()){
 			Symbol parentField = table.getParent().lookup(method.getID());
+			
 			if (!(parentField == null)){
 				if (!parentField.getKind().equals(Kind.METHOD)){
 					structureError(method.getLine(), "Illegal structure: "+ method.getID() + " is already used!");
@@ -433,16 +436,15 @@ public class StructureChecksVisitor implements Visitor {
 				
 				MethodType methodType = method.getMetType();
 				MethodSymbol parentMethod = (MethodSymbol)parentField;
-				MethodType parentType = parentMethod.getMetType();
-				
-				if (!(methodType.getReturnType().getName().equals(parentType.getReturnType().getName()))){
-					structureError(method.getLine(), "Illegal structure: "+ method.getID() + " is already used!");
+				MethodType parentType = parentMethod.getMetType();		
+				if (!methodType.equals(parentType)){
+					structureError(method.getLine(), "Illegal structure: "+ method.getID() + " is already used");
 				}
 				
-				if (methodType.equals(parentType)){
-					structureError(method.getLine(), "Illegal structure: "+ method.getID() + " is already used!");
-				}
-			}}
+			}
+		}
+	
+		
 		
 		for(SymbolTable child : table.getSymbolTables()){
 		child.accept(this);		}
