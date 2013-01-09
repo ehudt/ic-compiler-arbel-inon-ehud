@@ -138,10 +138,10 @@ public class TypeTable {
 		}
 		else
 		{
-			if (primitiveTypes.containsKey(atArr.getName())) {
-				return primitiveTypes.get(atArr.getName());
-			} else if(userTypes.containsKey(atArr.getName())){
-				return userTypes.get(atArr.getName());
+			if (primitiveTypes.containsKey(atArr.toString())) {
+				return primitiveTypes.get(atArr.toString());
+			} else if(userTypes.containsKey(atArr.toString())){
+				return userTypes.get(atArr.toString());
 			} else {
 				return null;
 			}
