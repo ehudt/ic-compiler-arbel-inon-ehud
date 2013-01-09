@@ -53,10 +53,15 @@ import IC.SymbolTable.Kind;
 import IC.SymbolTable.MethodSymbolTable;
 import IC.SymbolTable.Symbol;
 import IC.SymbolTable.SymbolTable;
+import IC.SymbolTable.VarSymbol;
+import IC.SymbolTable.FieldSymbol;
 import IC.Types.TypeTable;
 
 public class TypeCheckVisitor implements Visitor {
-//TODO delete this
+	private boolean inLoopContext = false;
+	private boolean inVirtualMethodContext = false;
+		
+	//TODO delete this
 	public void faPr (String x){
 		System.out.println(x);
 	}
@@ -82,15 +87,16 @@ public class TypeCheckVisitor implements Visitor {
 
 	@Override
 	public Object visit(Field field) {
-		// TODO Auto-generated method stub
-		return null;
+		return field.getType();
 	}
 
 	@Override
 	public Object visit(VirtualMethod method) {
+		inVirtualMethodContext = true;
 		for(Statement stmt : method.getStatements()){
 			stmt.accept(this);
 		}
+		inVirtualMethodContext = false;
 		return null;
 	}
 
@@ -209,11 +215,36 @@ public class TypeCheckVisitor implements Visitor {
 
 	@Override
 	public Object visit(VariableLocation location) {
-		if(location.getLocation() == null) return null;
-		//TODO
-		Type var = (Type)location.getLocation().accept(this);
-		
-		return var;
+		Type expressionType = null;
+		if(location.getLocation() == null) {
+			Symbol varSymbol = location.getEnclosingScope().lookup(location.getName());
+			if (varSymbol == null) {
+				scopeError(location.getLine(), "undeclared identifier: " + location.getName());
+			}
+			if (varSymbol.getKind() == Kind.VARIABLE) {
+				expressionType = ((VarSymbol)varSymbol).getType();
+			} else if (varSymbol.getKind() == Kind.FIELD) {
+				expressionType = ((FieldSymbol)varSymbol).getType();
+			} else {
+				typeError(location.getLine(), "illegal reference: " + location.getName());
+			}			
+		} else {
+			Type classType = (Type)location.getLocation().accept(this);
+			FieldSymbol fieldSymbol = null;
+			try {
+				fieldSymbol = (FieldSymbol)TypeTable.getUserTypeByName(classType.getName()).getEnclosingClassTable().lookup(location.getName());
+			} catch (SemanticError semantic) {
+				scopeError(location.getLine(), "no such class");
+			}
+			if (fieldSymbol == null) {
+				scopeError(location.getLine(), "undeclared identifier: " + location.getName());
+			}
+			if (fieldSymbol.getKind() != Kind.FIELD) {
+				typeError(location.getLine(), "illegal reference: " + location.getName());
+			}
+			expressionType = fieldSymbol.getType();
+		}
+		return expressionType;
 	}
 
 	@Override
@@ -445,6 +476,11 @@ public class TypeCheckVisitor implements Visitor {
 	}
 	
 	private void typeError(int line, String message) {
+		System.out.println("semantic error at line " + line + ": " + message);
+		System.exit(0);
+	}
+	
+	private void scopeError(int line, String message) {
 		System.out.println("semantic error at line " + line + ": " + message);
 		System.exit(0);
 	}
