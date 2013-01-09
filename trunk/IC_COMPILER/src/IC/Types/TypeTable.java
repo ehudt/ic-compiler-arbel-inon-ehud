@@ -143,6 +143,7 @@ public class TypeTable {
 			} else if(userTypes.containsKey(atArr.toString())){
 				return userTypes.get(atArr.toString());
 			} else {
+				typeError(atArr.getLine(), "no such type: " + atArr);
 				return null;
 			}
 			
