@@ -15,10 +15,10 @@ import IC.AST.Type;
 
 public class TypeTable {
 	
-	private static Map<String, ICClass> UserTypes=new HashMap<String, ICClass>();
-	private static Map<String,Type> primitiveTypes=new HashMap<String, Type>();
-	private static Map<String,MethodType> methodTypes=new HashMap<String, MethodType>();
-	private static Map<String, Type> arrayTypes=new HashMap<String,Type>();
+	private static Map<String, ICClass> 	UserTypes=new HashMap<String, ICClass>();
+	private static Map<String, Type> 		primitiveTypes=new HashMap<String, Type>();
+	private static Map<String,MethodType> 	methodTypes=new HashMap<String, MethodType>();
+	private static Map<String, Type> 		arrayTypes=new HashMap<String,Type>();
 	
 	private static String filename = null;
 	private static int counter= 1;
@@ -78,15 +78,23 @@ public class TypeTable {
 		}
 	}
 	
-	public static MethodType getType(Method m)
+	public static MethodType getType(Method m) {
+		return getType(m, true);
+	}
+	
+	public static MethodType getType(Method m, boolean insert)
 	{
 		MethodType metType=new MethodType(m,TypeTable.counter);
 		
 		if(!methodTypes.containsKey(metType.toString()))
 		{
-			methodTypes.put(metType.toString(), metType);
-			TypeTable.counter++;
-			return metType;
+			if (insert) {
+				methodTypes.put(metType.toString(), metType);
+				TypeTable.counter++;
+				return metType;
+			} else {
+				return null;
+			}
 		}
 		else
 		{
@@ -94,7 +102,11 @@ public class TypeTable {
 		}
 	}
 	
-	public static Type getType(Type atArr)
+	public static Type getType(Type atArr) {
+		return getType(atArr, true);
+	}
+	
+	public static Type getType(Type atArr, boolean insert)
 	{
 		if (atArr.getDimension()>0)
 		{
@@ -106,10 +118,14 @@ public class TypeTable {
 				atName+="[]";
 				if(!arrayTypes.containsKey(atName))
 				{
-					Type cloned = atArr.clone(i);
-					cloned.setTypeTableID(counter);
-					arrayTypes.put(atName, cloned);
-					TypeTable.counter++;
+					if (insert) {
+						Type cloned = atArr.clone(i);
+						cloned.setTypeTableID(counter);
+						arrayTypes.put(atName, cloned);
+						TypeTable.counter++;
+					} else {
+						return null;
+					}
 				}
 			}
 			return arrayTypes.get(atName);

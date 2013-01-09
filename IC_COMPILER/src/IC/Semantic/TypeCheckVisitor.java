@@ -50,11 +50,13 @@ import IC.SymbolTable.BlockSymbolTable;
 import IC.SymbolTable.ClassSymbolTable;
 import IC.SymbolTable.GlobalSymbolTable;
 import IC.SymbolTable.Kind;
+import IC.SymbolTable.MethodSymbol;
 import IC.SymbolTable.MethodSymbolTable;
 import IC.SymbolTable.Symbol;
 import IC.SymbolTable.SymbolTable;
 import IC.SymbolTable.VarSymbol;
 import IC.SymbolTable.FieldSymbol;
+import IC.Types.MethodType;
 import IC.Types.TypeTable;
 
 public class TypeCheckVisitor implements Visitor {
@@ -87,7 +89,7 @@ public class TypeCheckVisitor implements Visitor {
 
 	@Override
 	public Object visit(Field field) {
-		return field.getType();
+		return TypeTable.getType(field.getType(), false);
 	}
 
 	@Override
@@ -118,20 +120,22 @@ public class TypeCheckVisitor implements Visitor {
 
 	@Override
 	public Object visit(Formal formal) {
-		// TODO Auto-generated method stub
-		return null;
+		return TypeTable.getType(formal.getType(), false);
 	}
 
 	@Override
 	public Object visit(PrimitiveType type) {
-		// TODO Auto-generated method stub
-		return null;
+		return TypeTable.getType(type, false);
 	}
 
 	@Override
 	public Object visit(UserType type) {
-		// TODO
-		return null;
+		try {
+			TypeTable.getUserTypeByName(type.getName());				
+		} catch (SemanticError semantic) {
+			scopeError(semantic.line, semantic.getMessage());
+		}
+		return TypeTable.getType(type, false);
 	}
 
 	@Override
@@ -234,9 +238,9 @@ public class TypeCheckVisitor implements Visitor {
 				scopeError(location.getLine(), "undeclared identifier: " + location.getName());
 			}
 			if (varSymbol.getKind() == Kind.VARIABLE) {
-				expressionType = ((VarSymbol)varSymbol).getType();
+				expressionType = TypeTable.getType(((VarSymbol)varSymbol).getType(), false);
 			} else if (varSymbol.getKind() == Kind.FIELD) {
-				expressionType = ((FieldSymbol)varSymbol).getType();
+				expressionType = TypeTable.getType(((FieldSymbol)varSymbol).getType(), false);
 			} else {
 				typeError(location.getLine(), "illegal reference: " + location.getName());
 			}			
@@ -254,7 +258,7 @@ public class TypeCheckVisitor implements Visitor {
 			if (fieldSymbol.getKind() != Kind.FIELD) {
 				typeError(location.getLine(), "illegal reference: " + location.getName());
 			}
-			expressionType = fieldSymbol.getType();
+			expressionType = TypeTable.getType(fieldSymbol.getType(), false);
 		}
 		return expressionType;
 	}
@@ -281,8 +285,26 @@ public class TypeCheckVisitor implements Visitor {
 
 	@Override
 	public Object visit(StaticCall call) {
+		String className = call.getClassName();
+		ICClass classInstance = null;
+		try {
+			classInstance = TypeTable.getUserTypeByName(className);
+		} catch (SemanticError e) {
+			scopeError(call.getLine(), className + ": no such class");
+		}
+		// query the class' scope for the static method
+		SymbolTable classScope = classInstance.getEnclosingScope().getSymbolTable(className);
+		String staticMethodName = call.getName();
+		Symbol methodSymbol = classScope.staticLookup(staticMethodName);
+		if(methodSymbol == null || methodSymbol.getKind() != Kind.METHOD ||
+				!((MethodSymbol)methodSymbol).isStatic()){
+			scopeError(call.getLine(), staticMethodName + ": no such static method in " + className);	
+		}
+		MethodType methodType = ((MethodSymbol)methodSymbol).getMetType();
+		
 		for(Expression arg : call.getArguments()){
-			arg.accept(this);
+			Type argType = (Type)arg.accept(this);
+			
 		}
 		return null;
 	}
@@ -359,7 +381,7 @@ public class TypeCheckVisitor implements Visitor {
 			if (op1Type != TypeTable.getType("int") && op1Type != TypeTable.getType("string"))
 				typeError(binaryOp.getLine(), binaryOp.getOperator().getOperatorString() + " operation is only for int or string operands");
 		}
-		return TypeTable.getType(op1Type);
+		return TypeTable.getType(op1Type, false);
 	}
 
 	@Override
