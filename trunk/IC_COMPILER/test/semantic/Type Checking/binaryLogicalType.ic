@@ -1,0 +1,9 @@
+class A{
+	static void main(string[] args){
+		boolean x;
+		boolean y;
+		y = 7<3;
+		x = "s"=="s";
+		y = x&&y;
+		x = "s"<5;
+}}

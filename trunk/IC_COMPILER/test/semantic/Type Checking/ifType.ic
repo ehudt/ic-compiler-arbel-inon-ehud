@@ -1,0 +1,15 @@
+class A{
+	static void main(string[] args){
+		int x;
+		if (true){
+		return true;
+		}
+		else{
+		return x;
+		}
+
+		if (x){
+		return 3;
+		}
+	}
+}
