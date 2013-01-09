@@ -1,0 +1,34 @@
+class B{
+	int z;
+	
+	int getint(int a,int b)
+	{
+		return a+b;
+	}
+	
+	void get2(B a,int b)
+	{
+	}
+	
+	int get3()
+	{
+	}
+}
+
+class C extends B{
+	int u;
+		
+	int get4()
+	{
+	}
+}
+class A{
+	static void main(string[] args){
+	B[][] x;
+	B y=new B();
+	C z=new C();
+	x.get3();
+	x.get2(z,2);
+
+}}
+
