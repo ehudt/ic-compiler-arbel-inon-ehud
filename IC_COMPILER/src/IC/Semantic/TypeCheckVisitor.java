@@ -173,14 +173,11 @@ public class TypeCheckVisitor implements Visitor {
 				typeError(ifStatement.getLine(), "If condition must be of type boolean");
 			}
 			
-		Type operationType = (Type) ifStatement.getOperation().accept(this);
-		if (operationType == null)
-			return null;
+		ifStatement.getOperation().accept(this);
+		
 		
 		if(ifStatement.hasElse()){
-			Type elseOperationType = (Type) ifStatement.getElseOperation().accept(this);
-			if (elseOperationType == null)
-				return null;
+			ifStatement.getElseOperation().accept(this);
 		}
 		
 		return null;
@@ -188,8 +185,13 @@ public class TypeCheckVisitor implements Visitor {
 	
 	@Override
 	public Object visit(While whileStatement) {
-		whileStatement.getCondition().accept(this);
+		Type conditionType = (Type)whileStatement.getCondition().accept(this);
+		if (conditionType != TypeTable.getType("boolen")){
+			typeError(whileStatement.getLine(), "While condition must be of type boolean");
+		}
+		
 		whileStatement.getOperation().accept(this);
+		
 		return null;
 	}
 
