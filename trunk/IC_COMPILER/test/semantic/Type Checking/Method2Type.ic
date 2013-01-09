@@ -1,0 +1,28 @@
+class B{
+	int z;
+	
+	int getint(int a,String b)
+	{
+		return a+b;
+	}
+	
+	void get2(int a)
+	{
+	}
+	
+	int get3()
+	{
+	}
+}
+
+class A{
+	static void main(string[] args){
+	B[][] x;
+	B[] y;
+	int z;
+	x[6]=y;
+	x[z]=y;
+	x.get3();
+
+}}
+
