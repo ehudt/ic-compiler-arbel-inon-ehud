@@ -210,8 +210,10 @@ public class TypeCheckVisitor implements Visitor {
 	@Override
 	public Object visit(VariableLocation location) {
 		if(location.getLocation() == null) return null;
-		location.getLocation().accept(this);
-		return null;
+		//TODO
+		Type var = (Type)location.getLocation().accept(this);
+		
+		return var;
 	}
 
 	@Override
