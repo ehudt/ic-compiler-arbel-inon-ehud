@@ -57,23 +57,24 @@ public class BuildSymbolTables implements Visitor {
 		GlobalSymbolTable global = new GlobalSymbolTable(null);
 		program.setEnclosingScope(global);
 		for(ICClass classDecl : program.getClasses()){
-			try{
-				String superClass = classDecl.getSuperClassName(); 
-				if(superClass != null){
-					ClassSymbol superClassSymbol = global.getClassSymbol(superClass);
-					if(superClassSymbol == null){
-						tableError(classDecl.getLine(), 
-									"Definition of inheriting class " + classDecl.getName() +
-									" must appear after definition of superclass " + superClass);
-					}
-				}
-				classDecl.setEnclosingScope(global);
+			try {
 				global.insert(classDecl);
-				classDecl.accept(this);
-			}
-			catch (SemanticError semantic){
+			} catch (SemanticError semantic){
 				tableError(classDecl.getLine(), semantic.getMessage());
 			}
+		}
+		for(ICClass classDecl : program.getClasses()){
+			String superClass = classDecl.getSuperClassName(); 
+			if(superClass != null){
+				ClassSymbol superClassSymbol = global.getClassSymbol(superClass);
+				if(superClassSymbol == null){
+					tableError(classDecl.getLine(), 
+								"Definition of inheriting class " + classDecl.getName() +
+								" must appear after definition of superclass " + superClass);
+				}
+			}
+			classDecl.setEnclosingScope(global);
+			classDecl.accept(this);
 		}
 		List<SymbolTable> toBeRemoved = new ArrayList<SymbolTable>();
 		for(ICClass classDecl : program.getClasses()){
