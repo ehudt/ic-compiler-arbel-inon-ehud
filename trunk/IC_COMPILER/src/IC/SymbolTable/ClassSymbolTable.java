@@ -69,5 +69,8 @@ public class ClassSymbolTable extends SymbolTable {
 	public Object accept(Visitor visitor) {
 		return visitor.visit(this);
 	}
-
+	@Override
+	public ClassSymbolTable getEnclosingClassTable() {
+		return this;
+	}
 }

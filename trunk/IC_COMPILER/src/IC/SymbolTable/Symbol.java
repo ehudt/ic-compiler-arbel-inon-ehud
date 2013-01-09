@@ -5,12 +5,12 @@ public abstract class Symbol {
 	//protected Type type;
 	protected int line;
 	protected Kind kind;
-	
+	/*
 	public Symbol(String id,Kind kind)
 	{
 		this.id=id;
 		this.kind=kind;
-	}
+	}*/
 	
 	public Symbol(String id,Kind kind,int line)
 	{
