@@ -240,6 +240,9 @@ public class TypeCheckVisitor implements Visitor {
 				scopeError(location.getLine(), "undeclared identifier: " + location.getName());
 			}
 			if (varSymbol.getKind() == Kind.VARIABLE) {
+				if (varSymbol.getLine() > location.getLine()) {
+					scopeError(location.getLine(), "variable " + location.getName() + " is used before declaration");
+				}
 				expressionType = TypeTable.getType(((VarSymbol)varSymbol).getType(), false);
 			} else if (varSymbol.getKind() == Kind.FIELD) {
 				expressionType = TypeTable.getType(((FieldSymbol)varSymbol).getType(), false);
@@ -248,9 +251,10 @@ public class TypeCheckVisitor implements Visitor {
 			}			
 		} else {
 			Type classType = (Type)location.getLocation().accept(this);
-			FieldSymbol fieldSymbol = null;
+			Symbol fieldSymbol = null;
 			try {
-				fieldSymbol = (FieldSymbol)TypeTable.getUserTypeByName(classType.getName()).getEnclosingClassTable().lookup(location.getName());
+				SymbolTable classSymbolTable = TypeTable.getUserTypeByName(classType.getName()).getEnclosingScope().getSymbolTable(classType.getName());
+				fieldSymbol = classSymbolTable.lookup(location.getName());
 			} catch (SemanticError semantic) {
 				scopeError(location.getLine(), "no such class");
 			}
@@ -260,7 +264,7 @@ public class TypeCheckVisitor implements Visitor {
 			if (fieldSymbol.getKind() != Kind.FIELD) {
 				typeError(location.getLine(), "illegal reference: " + location.getName());
 			}
-			expressionType = TypeTable.getType(fieldSymbol.getType(), false);
+			expressionType = TypeTable.getType(((FieldSymbol)fieldSymbol).getType(), false);
 		}
 		return expressionType;
 	}
@@ -276,7 +280,7 @@ public class TypeCheckVisitor implements Visitor {
 		}
 		
 		if (arrayType.getDimension() < 1) {
-			typeError(location.getLine(), arrayType.getName() + " is not an array type");
+			typeError(location.getLine(), arrayType + " is not an array type");
 		}
 		
 	 
@@ -312,7 +316,7 @@ public class TypeCheckVisitor implements Visitor {
 			Type argType = (Type)arg.accept(this);
 			if (argType.subTypeOf(paramType)) {
 				typeError(call.getLine(), "argument and parameter type mismatch in call to " + staticMethodName +
-						". Expected " + paramType.getName() + " and got " + argType.getName());
+						". Expected " + paramType + " and got " + argType);
 			}
 		}
 		return TypeTable.getType(methodType.getReturnType(), false);
@@ -365,9 +369,9 @@ public class TypeCheckVisitor implements Visitor {
 		for(Expression arg : call.getArguments()){
 			Type paramType = TypeTable.getType(methodParams.next(), false);
 			Type argType = (Type)arg.accept(this);
-			if (argType.subTypeOf(paramType)) {
+			if (!argType.subTypeOf(paramType)) {
 				typeError(call.getLine(), "argument and parameter type mismatch in call to " + methodName +
-						". Expected " + paramType.getName() + " and got " + argType.getName());
+						". Expected " + paramType + " and got " + argType);
 			}
 		}
 		return TypeTable.getType(methodType.getReturnType(), false);
