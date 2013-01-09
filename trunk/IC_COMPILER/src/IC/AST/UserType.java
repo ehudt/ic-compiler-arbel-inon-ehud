@@ -1,5 +1,8 @@
 package IC.AST;
 
+import IC.SemanticError;
+import IC.Types.TypeTable;
+
 /**
  * User-defined data type AST node.
  * 
@@ -41,8 +44,11 @@ public class UserType extends Type {
 
 	@Override
 	public boolean subTypeOf(Type otherType) {
-		// TODO Auto-generated method stub
-		return otherType == this;
+		boolean returnVal = false;
+		try {
+			returnVal = TypeTable.getUserTypeByName(this.getName()).subTypeOf(TypeTable.getUserTypeByName(otherType.getName()));
+		} catch (SemanticError e) {	}
+		return returnVal;
 	}
 
 }
