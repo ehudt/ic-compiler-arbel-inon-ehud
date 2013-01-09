@@ -10,24 +10,31 @@ class A {
 		}
 		A[] aa = new A[5];
 		A[][] bb = new A[][6];
-		A[] cc;
-		a.setId(x[0]);
-		getNumber(null, "r");
+		A[] bx = new A[6];
+		B[][] yu = null;
+		string[] cc;
+		a.setId(aa[0]);
+		getNumber(bx, "r");
 		return;
 	}
-	static int getNumber(A what, string nothing){
+	static int getNumber(A[] what, string nothing){
 		int y;
 		int z = 4;
 		y = 7;
 		return 8;
 	}
-	void setId(int newId) {
-		this.id = newId;
+	int setId(A newId) {
+		this.id = 88;
+	}
+	static int getNum() {
+		return 7;
 	}
 }
  class B extends A {
-	int id;
-	int setId(int newId) {
+	int gid() {
+		return this.id;
+	}
+	int setId(string newId, string name) {
 		this.id = 6;
 	}
 }

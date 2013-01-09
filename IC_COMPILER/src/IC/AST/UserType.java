@@ -45,6 +45,9 @@ public class UserType extends Type {
 	@Override
 	public boolean subTypeOf(Type otherType) {
 		boolean returnVal = false;
+		if (this.getDimension() > 0 || otherType.getDimension() > 0) {
+			return this == otherType;
+		}
 		if (otherType instanceof UserType) {
 			try {
 				returnVal = TypeTable.getUserTypeByName(this.getName()).subTypeOf(TypeTable.getUserTypeByName(otherType.getName()));

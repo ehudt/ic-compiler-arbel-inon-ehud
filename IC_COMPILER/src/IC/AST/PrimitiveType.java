@@ -43,7 +43,7 @@ public class PrimitiveType extends Type {
 
 	@Override
 	public boolean subTypeOf(Type otherType) {
-		if (this.type == DataTypes.NULL && otherType instanceof UserType) {
+		if (this.type == DataTypes.NULL && (otherType instanceof UserType || otherType.getDimension() > 0)) {
 			return true;
 		}
 		
