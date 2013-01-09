@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,13 +13,15 @@ import IC.AST.ICClass;
 import IC.AST.Method;
 import IC.AST.PrimitiveType;
 import IC.AST.Type;
+import IC.AST.UserType;
 
 public class TypeTable {
 	
-	private static Map<String, ICClass> 	UserTypes=new HashMap<String, ICClass>();
-	private static Map<String, Type> 		primitiveTypes=new HashMap<String, Type>();
-	private static Map<String,MethodType> 	methodTypes=new HashMap<String, MethodType>();
-	private static Map<String, Type> 		arrayTypes=new HashMap<String,Type>();
+	private static Map<String, ICClass> 	userTypeClasses=new LinkedHashMap<String, ICClass>();
+	private static Map<String, UserType>	userTypes = new LinkedHashMap<String, UserType>();
+	private static Map<String, Type> 		primitiveTypes=new LinkedHashMap<String, Type>();
+	private static Map<String, MethodType> 	methodTypes=new LinkedHashMap<String, MethodType>();
+	private static Map<String, Type> 		arrayTypes=new LinkedHashMap<String,Type>();
 	
 	private static String filename = null;
 	private static int counter= 1;
@@ -49,26 +52,27 @@ public class TypeTable {
 	public static void addUserType(ICClass c) throws SemanticError
 	{
 		//TODO: fix error messages
-		if(UserTypes.containsKey(c.getName()))
+		if(userTypeClasses.containsKey(c.getName()))
 		{
 			throw new SemanticError(c.getLine(), "A class with the name "+c.getName()+" already exists");
 		}
 		if(c.hasSuperClass())
 		{
-			if(!UserTypes.containsKey(c.getSuperClassName()))
+			if(!userTypeClasses.containsKey(c.getSuperClassName()))
 			{
 				throw new SemanticError(c.getLine(), "super class " + c.getSuperClassName() + " for this class wasn't defined");
 			}
 		}
 		c.setTypeTableID(TypeTable.counter);
 		TypeTable.counter++;
-		UserTypes.put(c.getName(), c);
+		userTypeClasses.put(c.getName(), c);
+		userTypes.put(c.getName(), new UserType(c.getLine(), c.getName()));
 	}
 	
 	public static ICClass getUserTypeByName(String className) throws SemanticError
 	{
 		ICClass cl;
-		if ((cl= UserTypes.get(className))==null)
+		if ((cl= userTypeClasses.get(className))==null)
 		{
 			throw new SemanticError("requested class(" + className + ") does not exist");
 		}
@@ -134,7 +138,14 @@ public class TypeTable {
 		}
 		else
 		{
-			return primitiveTypes.get(atArr.getName());
+			if (primitiveTypes.containsKey(atArr.getName())) {
+				return primitiveTypes.get(atArr.getName());
+			} else if(userTypes.containsKey(atArr.getName())){
+				return userTypes.get(atArr.getName());
+			} else {
+				return null;
+			}
+			
 		}
 	}
 	
@@ -169,7 +180,7 @@ public class TypeTable {
 			str.append("\n");
 		}
 		
-		List<ICClass> classlist=new ArrayList<ICClass>(TypeTable.UserTypes.values());
+		List<ICClass> classlist=new ArrayList<ICClass>(TypeTable.userTypeClasses.values());
 		Collections.sort(classlist,
 				new Comparator<ICClass>(){
 	        	public int compare(ICClass c1, ICClass c2) {
@@ -182,7 +193,7 @@ public class TypeTable {
 			str.append(c.getTypeTableID()+": Class: "+ c.getName());
 			if(c.hasSuperClass())
 			{
-				str.append(", Superclass ID: "+ TypeTable.UserTypes.get(c.getSuperClassName()).getTypeTableID());
+				str.append(", Superclass ID: "+ TypeTable.userTypeClasses.get(c.getSuperClassName()).getTypeTableID());
 			}
 			str.append("\n");
 		}

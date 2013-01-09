@@ -2,6 +2,7 @@ package IC.SymbolTable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,7 +13,7 @@ import IC.AST.Visitor;
 
 public class BlockSymbolTable extends SymbolTable {
 	private static Integer enumerateIds = 0;
-	protected Map<String, VarSymbol> locals = new HashMap<String, VarSymbol>();
+	protected Map<String, VarSymbol> locals = new LinkedHashMap<String, VarSymbol>();
 	
 	public BlockSymbolTable(SymbolTable parent){
 		this(parent, "block" + enumerateIds.toString());

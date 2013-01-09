@@ -137,7 +137,7 @@ public class TypeCheckVisitor implements Visitor {
 		} catch (SemanticError semantic) {
 			scopeError(semantic.line, semantic.getMessage());
 		}
-		return type;
+		return TypeTable.getType(type);
 	}
 
 	@Override
@@ -333,7 +333,7 @@ public class TypeCheckVisitor implements Visitor {
 			} catch (SemanticError e) {
 				typeError(call.getLine(), e.getMessage());
 			}
-			classScope = instanceClass.getEnclosingClassTable().getSymbolTable(instanceClassName);
+			classScope = instanceClass.getEnclosingScope().getSymbolTable(instanceClassName);
 		} else {
 			try {
 				classScope = call.getEnclosingClassTable();
@@ -375,23 +375,14 @@ public class TypeCheckVisitor implements Visitor {
 
 	@Override
 	public Object visit(This thisExpression) {
-		try {
-			return TypeTable.getUserTypeByName(thisExpression.getEnclosingClassTable().getName());
-		} catch (SemanticError e) {
-			typeError(thisExpression.getLine(), e.getMessage());
-			return null;
-		}
+		return TypeTable.getType(new UserType(thisExpression.getLine(), thisExpression.getEnclosingClassTable().getName()));
 	}
 
 	@Override
 	public Object visit(NewClass newClass) {
 		String className = newClass.getName();
-		ICClass classType = null;
-		try {
-			classType = TypeTable.getUserTypeByName(className);
-		} catch (SemanticError semantic) {
-			scopeError(newClass.getLine(), "no such class " + className);
-		}
+		Type classType = null;
+		classType = TypeTable.getType(new UserType(newClass.getLine(), className));
 		return classType;
 	}
 
