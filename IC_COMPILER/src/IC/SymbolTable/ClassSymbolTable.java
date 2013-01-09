@@ -2,6 +2,7 @@ package IC.SymbolTable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,8 +13,8 @@ import IC.AST.Visitor;
 
 public class ClassSymbolTable extends SymbolTable {
 
-	private Map<String, FieldSymbol> classFieldTable = new HashMap<String, FieldSymbol>();
-	private Map<String, MethodSymbol> classMethodTable = new HashMap<String, MethodSymbol>();
+	private Map<String, FieldSymbol> classFieldTable = new LinkedHashMap<String, FieldSymbol>();
+	private Map<String, MethodSymbol> classMethodTable = new LinkedHashMap<String, MethodSymbol>();
 	
 	public List<MethodSymbol> getMethodSymbols(){
 		return new ArrayList<MethodSymbol>(classMethodTable.values());

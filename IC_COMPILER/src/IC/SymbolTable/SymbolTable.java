@@ -2,6 +2,7 @@ package IC.SymbolTable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -10,7 +11,7 @@ import IC.AST.Visitor;
 public abstract class SymbolTable {
 	protected SymbolTable parent;
 	protected String name;
-	protected Map<String, SymbolTable> childrenSymbolTables = new HashMap<String, SymbolTable>();
+	protected Map<String, SymbolTable> childrenSymbolTables = new LinkedHashMap<String, SymbolTable>();
 	
 	public SymbolTable(SymbolTable parent){
 		this(parent, "");

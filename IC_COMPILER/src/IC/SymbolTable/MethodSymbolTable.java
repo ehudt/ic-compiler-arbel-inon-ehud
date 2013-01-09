@@ -2,6 +2,7 @@ package IC.SymbolTable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,7 +13,7 @@ import IC.AST.Visitor;
 
 public class MethodSymbolTable extends BlockSymbolTable {
 	private boolean isStatic;
-	private Map<String, VarSymbol> parameters = new HashMap<String, VarSymbol>();
+	private Map<String, VarSymbol> parameters = new LinkedHashMap<String, VarSymbol>();
 	
 	public MethodSymbolTable(SymbolTable parent, String name, boolean isStatic) {
 		super(parent, name);
