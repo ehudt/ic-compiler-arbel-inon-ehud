@@ -1,6 +1,7 @@
 package IC.AST;
 
 import IC.SemanticError;
+import IC.SymbolTable.ClassSymbolTable;
 import IC.SymbolTable.SymbolTable;
 
 /**
@@ -41,6 +42,10 @@ public abstract class ASTNode {
 	
 	public SymbolTable getEnclosingScope() {
 		return enclosingScope;
+	}
+	
+	public ClassSymbolTable getEnclosingClassTable() {
+		return getEnclosingScope().getEnclosingClassTable();
 	}
 
 	public void setEnclosingScope(SymbolTable enclosingScope) {
