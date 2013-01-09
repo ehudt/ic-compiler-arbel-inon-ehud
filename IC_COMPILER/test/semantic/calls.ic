@@ -9,10 +9,10 @@ class A {
 		A[][] bb = new A[][6];
 		A[] cc;
 		a.setId(x[0]);
-		getNumber(x, "wtf");
+		getNumber(new B(), "wtf");
 		return;
 	}
-	static int getNumber(int[] what, string nothing){
+	static int getNumber(A what, string nothing){
 		int y;
 		y = 7;
 		return 8;
@@ -20,4 +20,6 @@ class A {
 	void setId(int newId) {
 		this.id = newId;
 	}
+}
+ class B extends A {
 }
