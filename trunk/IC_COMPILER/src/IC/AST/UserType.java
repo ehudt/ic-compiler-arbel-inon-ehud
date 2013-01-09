@@ -45,9 +45,11 @@ public class UserType extends Type {
 	@Override
 	public boolean subTypeOf(Type otherType) {
 		boolean returnVal = false;
-		try {
-			returnVal = TypeTable.getUserTypeByName(this.getName()).subTypeOf(TypeTable.getUserTypeByName(otherType.getName()));
-		} catch (SemanticError e) {	}
+		if (otherType instanceof UserType) {
+			try {
+				returnVal = TypeTable.getUserTypeByName(this.getName()).subTypeOf(TypeTable.getUserTypeByName(otherType.getName()));
+			} catch (SemanticError e) {	}
+		}
 		return returnVal;
 	}
 
