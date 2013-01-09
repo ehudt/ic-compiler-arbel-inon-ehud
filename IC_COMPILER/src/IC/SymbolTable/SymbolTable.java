@@ -62,4 +62,8 @@ public abstract class SymbolTable {
 			return childrenSymbolTables.remove(tableName);
 		} else return null;
 	}
+
+	public ClassSymbolTable getEnclosingClassTable() {
+		return parent.getEnclosingClassTable();
+	}
 }
