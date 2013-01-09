@@ -1,0 +1,39 @@
+class B{
+	int z;
+	
+	int getint(int a,int b)
+	{
+		return a+b;
+	}
+	
+	void get2(B a,int b)
+	{
+	}
+	
+	int get3()
+	{
+	}
+}
+
+class C extends B{
+	int u;
+		
+	int get4()
+	{
+	}
+}
+
+class A{
+	static void main(string[] args){
+	boolean b;
+	b=true;
+	if(!b)
+	{
+	}
+	else
+	{
+	}
+	
+
+}}
+
