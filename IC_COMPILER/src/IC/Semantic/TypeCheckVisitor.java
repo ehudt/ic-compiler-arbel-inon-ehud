@@ -160,9 +160,13 @@ public class TypeCheckVisitor implements Visitor {
 	}
 
 	@Override
-	public Object visit(Return returnStatement) {
-		if (returnStatement.getValue() == null) return null;
-		returnStatement.getValue().accept(this);
+	public Object visit(Return returnStatement) {	
+		if (returnStatement.hasValue()){
+			//	Type returnValueType = (Type) returnStatement.getValue().accept(this);
+			//TODO
+		}
+		
+		
 		return null;
 	}
 
@@ -186,7 +190,7 @@ public class TypeCheckVisitor implements Visitor {
 	@Override
 	public Object visit(While whileStatement) {
 		Type conditionType = (Type)whileStatement.getCondition().accept(this);
-		if (conditionType != TypeTable.getType("boolen")){
+		if (conditionType != TypeTable.getType("boolean")){
 			typeError(whileStatement.getLine(), "While condition must be of type boolean");
 		}
 		
@@ -197,13 +201,11 @@ public class TypeCheckVisitor implements Visitor {
 
 	@Override
 	public Object visit(Break breakStatement) {
-		// TODO
 		return null;
 	}
 
 	@Override
 	public Object visit(Continue continueStatement) {
-		// TODO
 		return null;
 	}
 
