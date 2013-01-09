@@ -239,9 +239,11 @@ public class ScopeCheckVisitor implements Visitor {
 
 	@Override
 	public Object visit(VirtualCall call) {
+		String functionName = call.getName();
 		if(call.getLocation() != null){
 			call.getLocation().accept(this);
 		}
+		// TODO lookup the function in the current / instance scope
 		for(Expression arg : call.getArguments()){
 			arg.accept(this);
 		}
@@ -250,18 +252,23 @@ public class ScopeCheckVisitor implements Visitor {
 
 	@Override
 	public Object visit(This thisExpression) {
-		// TODO
 		return null;
 	}
 
 	@Override
 	public Object visit(NewClass newClass) {
-		// TODO Auto-generated method stub
+		String className = newClass.getName();
+		try {
+			TypeTable.getUserTypeByName(className);
+		} catch (SemanticError semantic) {
+			scopeError(newClass.getLine(), "no such class " + className);
+		}
 		return null;
 	}
 
 	@Override
 	public Object visit(NewArray newArray) {
+		// TODO
 		newArray.getSize().accept(this);
 		newArray.getType().accept(this);
 		return null;
