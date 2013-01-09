@@ -325,7 +325,8 @@ public class TypeCheckVisitor implements Visitor {
 		SymbolTable classScope = null;
 		String instanceClassName = null;
 		if(call.isExternal()){
-			instanceType = (Type)call.getLocation().accept(this);
+			Expression location = call.getLocation();
+			instanceType = (Type)location.accept(this);
 			instanceClassName = instanceType.getName();
 			try {
 				instanceClass = TypeTable.getUserTypeByName(instanceClassName);

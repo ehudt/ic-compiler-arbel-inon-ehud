@@ -1,0 +1,12 @@
+class A {
+	int id;
+	static void main(string[] args) {
+		int x;
+		x = 5;
+		A a = new A();
+		a.setId(x);
+	}
+	void setId(int newId) {
+		this.id = newId;
+	}
+}

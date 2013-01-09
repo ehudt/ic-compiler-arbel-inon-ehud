@@ -25,7 +25,7 @@ public class VarSymbol extends Symbol{
 		this.isParam=true;
 		this.type = TypeTable.getType(f.getType());
 	}
-	//geters
+	//getters
 	
 	public boolean isParam()
 	{
