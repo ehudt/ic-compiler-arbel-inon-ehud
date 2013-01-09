@@ -1,10 +1,16 @@
 class A {
 	int id;
 	static void main(string[] args) {
-		int x;
+		int[] x = new boolean[5];
 		x = 5;
 		A a = new A();
 		a.setId(x);
+		getNumber(x, "wtf");
+	}
+	static int getNumber(int[] what, string nothing){
+		int y;
+		y = 7;
+		return 5;
 	}
 	void setId(int newId) {
 		this.id = newId;

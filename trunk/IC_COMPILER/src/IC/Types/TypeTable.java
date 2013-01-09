@@ -156,7 +156,13 @@ public class TypeTable {
 
 	public static Type getType(String tName)
 	{	
-		return primitiveTypes.get(tName);
+		if (primitiveTypes.containsKey(tName)) {
+			return primitiveTypes.get(tName);
+		} else if (arrayTypes.containsKey(tName)) {
+			return arrayTypes.get(tName);
+		} else if (userTypes.containsKey(tName)) {
+			return userTypes.get(tName);
+		} else return null;
 	}
 	
 	public static String toTypeTableString()
