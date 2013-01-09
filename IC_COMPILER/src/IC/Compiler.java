@@ -115,6 +115,7 @@ public class Compiler
     		// perform semantic checks
     		StructureChecksVisitor checkStructure = new StructureChecksVisitor();
     		programRoot.accept(checkStructure);
+    		globalSymbolTable.accept(checkStructure);
     		TypeCheckVisitor typeChecker = new TypeCheckVisitor();
     		programRoot.accept(typeChecker);
     		//System.out.println("globalSymbolTable is " + globalSymbolTable);
