@@ -1,0 +1,17 @@
+class A{
+	static void main(string[] args){
+	B x = new B();
+	int y;
+	y=x.getint(1,2);
+	
+
+}}
+
+class B{
+	int x;
+	
+	int getint(int a,String b)
+	{
+		return a+b;
+	}
+}
