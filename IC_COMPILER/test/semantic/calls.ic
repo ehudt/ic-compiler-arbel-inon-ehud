@@ -5,15 +5,19 @@ class A {
 		int y = 5;
 		x[9] = 5;
 		A a = new A();
+		{
+			boolean z;
+		}
 		A[] aa = new A[5];
 		A[][] bb = new A[][6];
 		A[] cc;
 		a.setId(x[0]);
-		getNumber(new B(), "wtf");
+		getNumber(new A(), null);
 		return;
 	}
 	static int getNumber(A what, string nothing){
 		int y;
+		int z = null;
 		y = 7;
 		return 8;
 	}
@@ -23,3 +27,4 @@ class A {
 }
  class B extends A {
 }
+class C extends B{}

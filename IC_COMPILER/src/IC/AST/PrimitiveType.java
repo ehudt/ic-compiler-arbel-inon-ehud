@@ -43,8 +43,9 @@ public class PrimitiveType extends Type {
 
 	@Override
 	public boolean subTypeOf(Type otherType) {
-		if (this.type == DataTypes.NULL) //Case null<=A
+		if (this.type == DataTypes.NULL && otherType instanceof UserType) {
 			return true;
+		}
 		
 		return this == otherType;
 	}
