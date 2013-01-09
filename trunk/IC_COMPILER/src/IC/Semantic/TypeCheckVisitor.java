@@ -1,6 +1,8 @@
 package IC.Semantic;
 
 
+import java.util.Iterator;
+
 import IC.BinaryOps;
 import IC.LiteralTypes;
 import IC.SemanticError;
@@ -135,7 +137,7 @@ public class TypeCheckVisitor implements Visitor {
 		} catch (SemanticError semantic) {
 			scopeError(semantic.line, semantic.getMessage());
 		}
-		return TypeTable.getType(type, false);
+		return type;
 	}
 
 	@Override
@@ -301,40 +303,93 @@ public class TypeCheckVisitor implements Visitor {
 			scopeError(call.getLine(), staticMethodName + ": no such static method in " + className);	
 		}
 		MethodType methodType = ((MethodSymbol)methodSymbol).getMetType();
-		
-		for(Expression arg : call.getArguments()){
-			Type argType = (Type)arg.accept(this);
-			
+		if (call.getArguments().size() != methodType.getParamTypes().size()) {
+			typeError(call.getLine(), "invalid amount of arguments passed to " + staticMethodName);
 		}
-		return null;
+		Iterator<Type> methodParams = methodType.getParamTypes().iterator();
+		for(Expression arg : call.getArguments()){
+			Type paramType = TypeTable.getType(methodParams.next(), false);
+			Type argType = (Type)arg.accept(this);
+			if (argType.subTypeOf(paramType)) {
+				typeError(call.getLine(), "argument and parameter type mismatch in call to " + staticMethodName +
+						". Expected " + paramType.getName() + " and got " + argType.getName());
+			}
+		}
+		return TypeTable.getType(methodType.getReturnType(), false);
 	}
 
 	@Override
 	public Object visit(VirtualCall call) {
+		ICClass instanceClass = null;
+		Type instanceType = null;
+		SymbolTable classScope = null;
+		String instanceClassName = null;
 		if(call.isExternal()){
-			Type callType = (Type) call.getLocation().accept(this);
-			
+			instanceType = (Type)call.getLocation().accept(this);
+			instanceClassName = instanceType.getName();
+			try {
+				instanceClass = TypeTable.getUserTypeByName(instanceClassName);
+			} catch (SemanticError e) {
+				typeError(call.getLine(), e.getMessage());
+			}
+			classScope = instanceClass.getEnclosingClassTable().getSymbolTable(instanceClassName);
+		} else {
+			try {
+				classScope = call.getEnclosingClassTable();
+				instanceClass = TypeTable.getUserTypeByName(classScope.getName());
+				instanceClassName = instanceClass.getName();
+			} catch (SemanticError e) {
+				typeError(call.getLine(), e.getMessage());
+			}
 		}
-		
+		String methodName = call.getName();
+		Symbol methodSymbol = null;
+		if (!call.isExternal()) {
+			methodSymbol = classScope.staticLookup(methodName);
+		}
+		if (methodSymbol == null) {
+			methodSymbol = classScope.lookup(methodName);
+			if (methodSymbol != null && methodSymbol.getKind() == Kind.METHOD && ((MethodSymbol)methodSymbol).isStatic()) {
+				methodSymbol = null;
+			}
+		}
+		if(methodSymbol == null || methodSymbol.getKind() != Kind.METHOD){
+			scopeError(call.getLine(), methodName + ": no such method in " + instanceClassName);	
+		}
+		MethodType methodType = ((MethodSymbol)methodSymbol).getMetType();
+		if (call.getArguments().size() != methodType.getParamTypes().size()) {
+			typeError(call.getLine(), "invalid amount of arguments passed to " + methodName);
+		}
+		Iterator<Type> methodParams = methodType.getParamTypes().iterator();
 		for(Expression arg : call.getArguments()){
-			arg.accept(this);
+			Type paramType = TypeTable.getType(methodParams.next(), false);
+			Type argType = (Type)arg.accept(this);
+			if (argType.subTypeOf(paramType)) {
+				typeError(call.getLine(), "argument and parameter type mismatch in call to " + methodName +
+						". Expected " + paramType.getName() + " and got " + argType.getName());
+			}
 		}
-		return null;
+		return TypeTable.getType(methodType.getReturnType(), false);
 	}
 
 	@Override
 	public Object visit(This thisExpression) {
-		// TODO
-		return null;
+		try {
+			return TypeTable.getUserTypeByName(thisExpression.getEnclosingClassTable().getName());
+		} catch (SemanticError e) {
+			typeError(thisExpression.getLine(), e.getMessage());
+			return null;
+		}
 	}
 
 	@Override
 	public Object visit(NewClass newClass) {
+		String className = newClass.getName();
 		ICClass classType = null;
 		try {
-			classType = (ICClass) TypeTable.getUserTypeByName(newClass.getName()).accept(this);
-		} catch (SemanticError e) {
-			 typeError(newClass.getLine(), "There is no class: " + newClass.getName());
+			classType = TypeTable.getUserTypeByName(className);
+		} catch (SemanticError semantic) {
+			scopeError(newClass.getLine(), "no such class " + className);
 		}
 		return classType;
 	}
