@@ -93,6 +93,7 @@ public class TypeTable {
 				TypeTable.counter++;
 				return metType;
 			} else {
+				typeError(m.getLine(), "no such type: " + m.getName());
 				return null;
 			}
 		}
@@ -124,7 +125,8 @@ public class TypeTable {
 						arrayTypes.put(atName, cloned);
 						TypeTable.counter++;
 					} else {
-						return null;
+						typeError(atArr.getLine(), "no such type: " + atName);
+						//return null;
 					}
 				}
 			}
@@ -136,6 +138,11 @@ public class TypeTable {
 		}
 	}
 	
+	private static void typeError(int line, String message) {
+		System.out.println("semantic error at line " + line + ": " + message);
+		System.exit(0);		
+	}
+
 	public static Type getType(String tName)
 	{	
 		return primitiveTypes.get(tName);
