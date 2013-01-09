@@ -1,0 +1,10 @@
+class A{
+	static void main(string[] args){
+	int[] x = new int[3];
+	int[] y = new int["s"];	
+
+}}
+
+class B extends A{
+	
+}

@@ -1,0 +1,8 @@
+class A{
+	static void main(string[] args){
+		int x;
+		string y;
+		x = 2+3;
+		y = "a"+2;
+		y = "s";
+}}
