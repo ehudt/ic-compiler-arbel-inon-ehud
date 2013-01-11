@@ -122,7 +122,7 @@ public class Compiler
     		programRoot.accept(typeChecker);
     		ReturnStatementVisitor returnChecker = new ReturnStatementVisitor();
     		programRoot.accept(returnChecker);
-    		VariableInitializeVisitor varInitCheck = new VariableInitializeVisitor();
+    		VariableInitializeVisitor varInitCheck = new VariableInitializeVisitor(globalSymbolTable);
     		programRoot.accept(varInitCheck);
     		//System.out.println("globalSymbolTable is " + globalSymbolTable);
     		if(printSymTab){

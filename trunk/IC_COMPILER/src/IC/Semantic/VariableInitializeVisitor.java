@@ -70,16 +70,24 @@ public class VariableInitializeVisitor implements Visitor {
 	
 	private int step = 0;
 	private boolean assignmentLValueContext = false;
+	private GlobalSymbolTable globalScope;
+	private ClassSymbolTable currentClassScope;
+	private MethodSymbolTable currentMethodScope;
 	
 	private void initError(int line, String message) {
 		System.out.println("semantic error at line " + line + ": " + message);
 		System.exit(0);
+	}
+	
+	public VariableInitializeVisitor(GlobalSymbolTable globalScope) {
+		this.globalScope = globalScope; 
 	}
 
 	@Override
 	public Object visit(Program program) {
 		for(ICClass icClass : program.getClasses()){
 			step++;
+			currentClassScope = (ClassSymbolTable)globalScope.getSymbolTable(icClass.getName());
 			icClass.accept(this);
 		}
 		return null;
@@ -90,6 +98,7 @@ public class VariableInitializeVisitor implements Visitor {
 		if(icClass.getName().equals("Library")) return null;
 		for(Method method : icClass.getMethods()){
 			step++;
+			currentMethodScope = (MethodSymbolTable)currentClassScope.getSymbolTable(method.getName());
 			method.accept(this);
 		}
 		return null;
@@ -168,6 +177,25 @@ public class VariableInitializeVisitor implements Visitor {
 		returnStatement.getValue().accept(this);
 		return null;
 	}
+	
+	private Set<VarSymbol> getInitiatedSince(int step) {
+		return getInitiatedSince(step, currentMethodScope);
+	}
+	
+	private Set<VarSymbol> getInitiatedSince(int step, BlockSymbolTable symbolTable) {
+		Set<VarSymbol> returnSet = new HashSet<VarSymbol>();
+		for(VarSymbol symbol : symbolTable.getLocalSymbols()) {
+			if(symbol.isParam()) continue;
+			if(symbol.getInitStep() != Integer.MAX_VALUE && symbol.getInitStep() > step) {
+				returnSet.add(symbol);
+			}
+		}
+		for(SymbolTable table : symbolTable.getSymbolTables()) {
+			BlockSymbolTable childScope = (BlockSymbolTable)table;
+			returnSet.addAll(getInitiatedSince(step, childScope));
+		}
+		return returnSet;
+	}
 
 	@Override
 	public Object visit(If ifStatement) {
@@ -180,7 +208,7 @@ public class VariableInitializeVisitor implements Visitor {
 		// list all variables that were initiated during the if operation
 		Set<VarSymbol> initiatedSymbols = new HashSet<VarSymbol>();
 		SymbolTable scope = ifStatement.getEnclosingScope();
-		for (VarSymbol local : ((BlockSymbolTable)scope).getLocalSymbols()) {
+		for (VarSymbol local : getInitiatedSince(operationInitialStep)) {
 			if(local.getInitStep() != Integer.MAX_VALUE && local.getInitStep() > operationInitialStep) {
 				initiatedSymbols.add(local);
 				local.setInitStep(Integer.MAX_VALUE);
