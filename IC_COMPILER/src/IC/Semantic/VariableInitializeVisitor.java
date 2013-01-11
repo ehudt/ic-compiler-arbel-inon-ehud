@@ -163,26 +163,28 @@ public class VariableInitializeVisitor implements Visitor {
 	public Object visit(If ifStatement) {
 		step++;
 		ifStatement.getCondition().accept(this);
+		step++;
 		int operationInitialStep = step;
 		step++;
 		ifStatement.getOperation().accept(this);
 		// list all variables that were initiated during the if operation
-		Set<VarSymbol> initiatedSymbol = new HashSet<VarSymbol>();
+		List<VarSymbol> initiatedSymbols = new ArrayList<VarSymbol>();
 		SymbolTable scope = ifStatement.getEnclosingScope();
 		for (VarSymbol local : ((BlockSymbolTable)scope).getLocalSymbols()) {
 			if(local.getInitStep() > operationInitialStep) {
-				initiatedSymbol.add(local);
+				initiatedSymbols.add(local);
 				local.setInitStep(Integer.MAX_VALUE);
 			}
 		}
 		if(ifStatement.hasElse()){
+			step++;
 			int elseInitialStep = step;
 			step++;
 			ifStatement.getElseOperation().accept(this);
 			
 			for (VarSymbol local : ((BlockSymbolTable)scope).getLocalSymbols()) {
 				if(local.getInitStep() > elseInitialStep) {
-					if(!initiatedSymbol.contains(local)) {
+					if(!initiatedSymbols.contains(local)) {
 						local.setInitStep(Integer.MAX_VALUE);
 					}
 				}
@@ -221,16 +223,10 @@ public class VariableInitializeVisitor implements Visitor {
 
 	@Override
 	public Object visit(StatementsBlock statementsBlock) {
-		int initialStep = step;
+		step++;
 		for(Statement stmt : statementsBlock.getStatements()){
 			step++;
 			stmt.accept(this);
-		}
-		SymbolTable scope = statementsBlock.getEnclosingScope();
-		for (VarSymbol local : ((BlockSymbolTable)scope).getLocalSymbols()) {
-			if(local.getInitStep() > initialStep) {
-				local.setInitStep(Integer.MAX_VALUE);
-			}
 		}
 		return null;
 	}
