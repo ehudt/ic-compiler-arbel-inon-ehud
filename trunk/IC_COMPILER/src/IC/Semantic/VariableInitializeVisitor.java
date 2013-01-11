@@ -57,6 +57,15 @@ import IC.SymbolTable.SymbolTable;
 import IC.SymbolTable.VarSymbol;
 import IC.Types.TypeTable;
 
+ 
+/**
+ * This visitor is in charge of checking bonus 1: a local variable is used only after it has 
+ * been initialized * 
+ * @author arbel
+ *
+ */
+
+
 public class VariableInitializeVisitor implements Visitor {
 	
 	private int step = 0;
