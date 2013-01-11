@@ -79,9 +79,12 @@ public class TypeTable {
 		}
 		if(c.hasSuperClass())
 		{
+			if(c.getName().equals(c.getSuperClassName())) {
+				throw new SemanticError(c.getLine(), "illegal class definition: class " + c.getName() + " cannot extend itself");
+			}
 			if(!userTypeClasses.containsKey(c.getSuperClassName()))
 			{
-				throw new SemanticError(c.getLine(), "definition of superclass " + c.getSuperClassName() + " must appear before definition of inheriting class");
+				throw new SemanticError(c.getLine(), "definition of superclass " + c.getSuperClassName() + " must appear before definition of inheriting class " + c.getName());
 			}
 		}
 		c.setTypeTableID(TypeTable.counter);
