@@ -51,6 +51,12 @@ import IC.SymbolTable.Symbol;
 import IC.SymbolTable.SymbolTable;
 import IC.Types.TypeTable;
 
+/**
+ * This visitor is in charge of checking bonus 2: Any non-void method returns the right type in any 
+ * path.
+ * @author arbel
+ *
+ */
 public class ReturnStatementVisitor implements Visitor {
 	
 	private void returnError(int line, String message) {
