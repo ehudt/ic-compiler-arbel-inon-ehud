@@ -66,7 +66,7 @@ import IC.Types.TypeTable;
  *	This class is in charge with the type and scope checks.
  *	This visitor recursively go over the expressions and statements in the program and see that all
  *	the types are correct according to IC spec.  
- * @author arbel
+ * 	@author arbel
  *
  */
 
