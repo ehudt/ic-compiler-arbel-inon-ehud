@@ -1,5 +1,9 @@
 package IC;
 
+/** 
+ * Report a semantic error during semantic analysis of a source file. 
+ * The error includes the line in which the token appeared and a specific error message.
+ */
 public class SemanticError extends Exception {
 
 	public int line;
