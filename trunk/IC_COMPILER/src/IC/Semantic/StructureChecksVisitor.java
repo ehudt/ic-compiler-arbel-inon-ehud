@@ -10,8 +10,6 @@ package IC.Semantic;
  *
  */
 
-import java.util.List;
-
 import IC.LiteralTypes;
 import IC.AST.ArrayLocation;
 import IC.AST.Assignment;
