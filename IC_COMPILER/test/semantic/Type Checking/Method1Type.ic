@@ -3,9 +3,8 @@ class A{
 	static void main(string[] args){
 	B x = new B();
 	int y;
-	y=x.getint(1,"s");
+	y=x.getint(1,2);
 	
-
 }}
 
 class B{
@@ -13,6 +12,7 @@ class B{
 	
 	int getint(int a,int b)
 	{
-		return a+b;
+		return a;
+		return b;
 	}
 }
