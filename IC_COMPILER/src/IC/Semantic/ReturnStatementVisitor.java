@@ -68,6 +68,7 @@ public class ReturnStatementVisitor implements Visitor {
 
 	@Override
 	public Object visit(ICClass icClass) {
+		if(icClass.getName().equals("Library")) return true;
 		for(Method method : icClass.getMethods()){
 			Type methodReturn = TypeTable.getType(TypeTable.getType(method).getReturnType());
 			if(methodReturn == TypeTable.getType("void")) continue;
