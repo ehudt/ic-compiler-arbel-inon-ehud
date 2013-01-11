@@ -181,7 +181,7 @@ public class TypeTable {
 		
 		for(Type t : primitiveTypeslist)
 		{
-			str.append("\t");
+			str.append("    ");
 			str.append(t.getTypeTableID()+": Primitive type: "+ t.getName());
 			str.append("\n");
 		}
@@ -195,7 +195,7 @@ public class TypeTable {
 		
 		for(ICClass c : classlist)
 		{
-			str.append("\t");
+			str.append("    ");
 			str.append(c.getTypeTableID()+": Class: "+ c.getName());
 			if(c.hasSuperClass())
 			{
@@ -219,7 +219,7 @@ public class TypeTable {
 			{
 				brackets+="[]";
 			}
-			str.append("\t");
+			str.append("    ");
 			str.append(at.getTypeTableID()+": Array type: "+ at.getName()+brackets);
 			str.append("\n");
 		}
@@ -233,7 +233,7 @@ public class TypeTable {
 		
 		for(MethodType mt : TypeTable.methodTypes.values())
 		{
-			str.append("\t");
+			str.append("    ");
 			str.append(mt.getTypeTableID()+": Method type: "+ mt.toString());
 			str.append("\n");
 		}
