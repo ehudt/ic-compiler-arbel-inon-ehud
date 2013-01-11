@@ -365,7 +365,7 @@ public class TypeCheckVisitor implements Visitor {
 		for(Expression arg : call.getArguments()){
 			Type paramType = TypeTable.getType(methodParams.next(), false);
 			Type argType = (Type)arg.accept(this);
-			if (argType.subTypeOf(paramType)) {
+			if (!argType.subTypeOf(paramType)) {
 				typeError(call.getLine(), "argument and parameter type mismatch in call to " + staticMethodName +
 						". Expected " + paramType + " and got " + argType);
 			}
