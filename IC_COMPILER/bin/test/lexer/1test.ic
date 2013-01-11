@@ -1,0 +1,31 @@
+  
+ 
+ class Test1 extends Object
+ 	0
+ 	8abc
+ 	static void int x = 1;
+ 	boolean y = true;
+ 	string z = "This is a string";
+ 	//return x
+ 	return x;
+ 	
+ 	if (x > 2)
+ 	print(x);
+ 	else print(y);
+ 	
+ 	while (x < 7) break;
+ 	continue this new int;
+ 	length(z);
+ 	false
+ 	null
+ 	//0023
+ 	z = null
+ 	890421(){}[].,"arbel"
+ 	x==z
+ 	x=z><
+ 	>=
+ 	<=
+ 	x!=z
+ 	&&||!+-*/
+ 	
+ 	

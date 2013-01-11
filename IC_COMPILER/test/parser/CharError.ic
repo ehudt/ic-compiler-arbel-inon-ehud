@@ -1,5 +1,0 @@
-//tests what happens when a bad char is entered
-class Classtest {
-	int i = t;
-	string j;
-}

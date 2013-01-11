@@ -1,0 +1,148 @@
+package IC.Parser;
+
+import IC.AST.*;	
+import java_cup.runtime.*;
+import java.util.List;
+import java.util.LinkedList;
+import IC.DataTypes;
+import IC.Parser.Lexer;
+
+
+parser code  {:
+	
+	private Lexer lexer;
+
+	public LibraryParser(Lexer lexer) {
+		super(lexer);
+		this.lexer = lexer;
+	}
+	
+	public int getLine() {
+		return lexer.getCurrentLine();
+	}
+	
+	public void syntax_error(Symbol s) {
+		Token tok = (Token) s;
+		System.out.println("Line " + tok.getLine()+": Syntax error; unexpected " + tok);
+	}
+	
+:};
+	
+	
+
+scan with {:
+	Token t = lexer.next_token();
+	if (true)
+		System.out.println(t.getLine() + ":" + t);
+	return t; 
+:};
+
+//Terminals
+terminal		ASSIGN, BOOLEAN, BREAK, CLASS, COMMA;
+terminal 		CONTINUE, DIVIDE, DOT, ELSE, EQUAL;
+terminal 		EXTENDS, FALSE, GT, GTE, IF, INT;
+terminal 		LAND, LB, LCBR, LENGTH, LNEG, LOR;
+terminal 		LP, LT, LTE, MINUS, MOD, MULTIPLY;
+terminal 		NEQUAL, NEW, NULL, PLUS, RB, RCBR;
+terminal 		RETURN, RP, SEMI, STATIC, STRING;
+terminal 		THIS, TRUE, UMINUS, VOID, WHILE;
+
+terminal String INTEGER;
+terminal String CLASS_ID, ID, QUOTE;
+
+
+//Nonterminals
+non terminal ICClass libic;
+non terminal LibraryMethod libmethod;
+non terminal List<Method> libmethod_list;
+non terminal Formal formal;
+non terminal List<Formal> formal_list;
+non terminal Type type;
+
+//Precedences
+
+
+
+//The Grammar
+
+libic ::= CLASS CLASS_ID:libname LCBR libmethod_list:lmList RCBR
+		{: if (libname.equals("Library")){
+			RESULT = new ICClass(libnameleft, libname, new LinkedList<Field>(), lmList);
+		}else{
+			throw new SyntaxError(libnameleft, "Syntax error: library class name must be Library");
+			}
+			:}
+		;
+		
+libmethod_list ::= libmethod:lm	
+		{:	
+			List<Method> lmList = new LinkedList<Method>();
+			lmList.add(lm);
+			RESULT = lmList;
+		:}
+		| libmethod_list:lmList libmethod:lm
+		{:	
+			lmList.add(lm);
+			RESULT = lmList;
+		:}
+		|
+		{:
+			List<Method> lmList = new LinkedList<Method>();
+			RESULT = lmList;
+		:}
+;
+		
+libmethod ::= STATIC type:t ID:id LP formal_list:fl RP SEMI
+		{: RESULT = new LibraryMethod(t, id, fl); :}
+		| STATIC:st VOID ID:id LP formal_list:fl RP SEMI
+		{: RESULT = new LibraryMethod(new PrimitiveType(stleft,DataTypes.VOID), id, fl); :} 
+;
+
+formal_list ::= formal_list:fl COMMA formal:f
+			   {:
+			   	fl.add(f);
+			   	RESULT = fl;
+			   :}
+			   |
+			   formal:f
+			   {:
+			   List<Formal> fl=new LinkedList<Formal>();
+			   fl.add(f);
+			   RESULT = fl;
+			   :}
+			   |
+			   {:
+			   RESULT = new LinkedList<Formal>();
+			   :} 
+;					 
+
+formal ::= type:t ID:id
+		{: RESULT = new Formal(t, id); :}
+;		
+
+type ::= INT:i
+		 {:
+				RESULT=new PrimitiveType(ileft,DataTypes.INT);
+		 :} 
+		 | 
+		 BOOLEAN:bool
+		 {:
+				RESULT=new PrimitiveType(boolleft,DataTypes.BOOLEAN);
+		 :}  
+		 | 
+		 STRING:str 
+		 {:
+				RESULT=new PrimitiveType(strleft,DataTypes.STRING); 
+		 :} 
+		 | 
+		 CLASS_ID:c_name
+		 {:
+				RESULT=new UserType(c_nameleft, c_name);
+		 :}  
+		 | 
+		 type:t LB RB
+		 {:
+		 		t.incrementDimension();
+				RESULT=t;
+		 :}
+;

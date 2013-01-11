@@ -12,9 +12,6 @@
 //    void exit(int n) {}
 //}
 
-class Bla{
-	static void main() {}
-	}
 class Quicksort {
     int[] a;
 
@@ -89,6 +86,4 @@ class Quicksort {
     s.quicksort(0, n-1);
     s.printArray();
     }
-    
-      
 }

@@ -1,0 +1,430 @@
+package IC.Parser;
+
+import IC.AST.*;
+import IC.*;
+import java.util.List;
+import java.util.LinkedList;
+import java_cup.runtime.*;
+import IC.Parser.Lexer;
+
+parser code  {:	
+	private Lexer lexer;
+
+	public Parser(Lexer lexer) {
+		super(lexer);
+		this.lexer = lexer;
+	} 
+	
+	public int getCurrentLine() {
+		return this.lexer.getCurrentLine();
+	}
+
+	
+	//Overriding the default syntax error method	
+	public void syntax_error(Symbol cur_token) throws SyntaxError{
+		throw new SyntaxError(cur_token.left, (string)cur_token.value);
+	}
+	
+:};
+	
+////////////////////////////////////////////
+// Symbol list (terminals and non-terminals)
+
+terminal		ASSIGN, BOOLEAN, BREAK, CLASS, COMMA;
+terminal 		CONTINUE, DIVIDE, DOT, ELSE, EQUAL;
+terminal 		EXTENDS, FALSE, GT, GTE, IF, INT;
+terminal 		LAND, LB, LCBR, LENGTH, LNEG, LOR;
+terminal 		LP, LT, LTE, MINUS, MOD, MULTIPLY;
+terminal 		NEQUAL, NEW, NULL, PLUS, RB, RCBR;
+terminal 		RETURN, RP, SEMI, STATIC, STRING;
+terminal 		THIS, TRUE, UMINUS, VOID, WHILE;
+
+terminal String INTEGER;
+terminal String CLASS_ID, ID, QUOTE;
+
+nonterminal Program 	program;
+nonterminal ICClass 	classDecl;
+nonterminal List<ICClass> classList;
+nonterminal FieldMethodList fmList;
+nonterminal List<Field>	fieldList;
+nonterminal List<String> idList;
+nonterminal Method		method;
+nonterminal List<Statement> stmtList;
+nonterminal Formal		formal;
+nonterminal List<Formal> formalList;
+nonterminal Type		type;
+nonterminal Statement	stmt;
+nonterminal Expression 	expr;
+nonterminal List<Expression> exprList;
+nonterminal Location	location;
+nonterminal Call		call;
+nonterminal StaticCall	staticCall;
+nonterminal VirtualCall	virtualCall;
+nonterminal BinaryOps	mathBinOp;
+nonterminal BinaryOps	logicalBinOp;
+nonterminal UnaryOps	mathUnOp;
+nonterminal UnaryOps	logicalUnOp;
+nonterminal BinaryOp	binExpr;
+nonterminal UnaryOp		unExpr;
+nonterminal Literal		literal;	
+	
+
+//////////////////////////
+// Precedence declarations
+precedence right ASSIGN;
+precedence left  LOR;
+precedence left  LAND;
+precedence left  EQUAL, NEQUAL;
+precedence left  LT, LTE, GT, GTE;
+precedence left  PLUS, MINUS;
+precedence left  MULTIPLY, DIVIDE, MOD;
+precedence right UMINUS, LNEG;
+precedence left  LB, RB, LP, RP, DOT;
+precedence left  ELSE; //Maybe if
+
+
+//////////////
+// The grammar
+
+program ::= classList:c_list
+			{: 
+					RESULT = new Program(c_list);
+			:} 
+;
+
+classList ::= classDecl:c
+			   {: 
+			   		RESULT = new LinkedList<ICClass>();
+			   		RESULT.add(c);
+			   :}
+			   |
+			   classList:c_list classDecl:c
+			   {: 
+			   		c_list.add(c);
+			   		RESULT = c_list;
+			   :} 
+;
+
+classDecl ::= CLASS:cl CLASS_ID:c_name EXTENDS CLASS_ID:super_name LCBR fmList:l RCBR
+			  {:
+			  		RESULT = new ICClass(clleft, c_name,super_name, l.getFieldList(), l.getMethodList()); 			   
+			  :}
+			  |
+			  CLASS:cl CLASS_ID:c_name LCBR fmList:l RCBR
+			  {:
+			  		RESULT = new ICClass(clleft, c_name, l.getFieldList(), l.getMethodList());
+			  :}
+;
+
+fmList ::= fmList:fm fieldList:fl
+		   {:
+		       for(Field f:fl)
+		       {
+		       		fm.add(f);
+		       }
+			   //Left recursion fieldList
+		       RESULT = fm;
+		   :}
+			| fmList:fm method:m
+				{:
+				//Left recursion Method
+				fm.add(m);
+				RESULT = fm;
+		   :}
+		   | 
+		   {:
+			   //Epsilon case
+			   RESULT = new FieldMethodList(parser.getCurrentLine()); 
+		   :}   
+		
+;
+			  
+fieldList ::= type:t idList:id_list SEMI
+		{:
+			List<Field> fields=new LinkedList<Field>();
+			for(String id: id_list)
+			{
+				Field f=new Field(t,id);
+				fields.add(f);
+			}
+			RESULT = fields;
+		:}
+;
+
+idList ::= ID:id_name
+		   {:
+				List<String> ids=new LinkedList<String>();
+				ids.add(id_name);
+				RESULT= ids;		
+		   :}
+		   |
+		   idList:id_list COMMA ID:id_name
+		   {:
+		   		id_list.add(id_name);
+				RESULT= id_list;
+		   :}
+		
+;
+
+method ::= STATIC type:t ID:met_name LP formalList:fl RP LCBR stmtList:sl RCBR
+		   {:
+				RESULT= new StaticMethod(t, met_name, fl, sl);
+		   :}
+		   |
+		   STATIC:st VOID ID:met_name LP formalList:fl RP LCBR stmtList:sl RCBR
+		   {:
+				RESULT= new StaticMethod(new PrimitiveType(stleft, DataTypes.VOID) ,met_name, fl, sl);
+		   :}
+		   |
+		   type:t ID:met_name LP formalList:fl RP LCBR stmtList:sl RCBR
+		   {:
+				RESULT=new VirtualMethod(t, met_name, fl, sl);
+		   :}
+		   |
+		   VOID:v ID:met_name LP formalList:fl RP LCBR stmtList:sl RCBR
+		   {:
+				RESULT=new VirtualMethod(new PrimitiveType(vleft, DataTypes.VOID), met_name, fl, sl);
+		   :}
+;
+
+formalList ::= formalList:fl COMMA formal:f
+			   {:
+			   fl.add(f);
+			   RESULT = fl;
+			   :}
+			   |
+			   formal:f
+			   {:
+			   List<Formal> fl=new LinkedList<Formal>();
+			   fl.add(f);
+			   RESULT = fl;
+			   :}
+			   |
+			   {:
+			   RESULT = new LinkedList<Formal>();
+			   :}
+;				
+
+formal ::= type:t ID:formal_name
+			{:
+				RESULT=new Formal(t,formal_name);
+			:}
+;
+
+type ::= INT:i
+		 {:
+				RESULT=new PrimitiveType(ileft,DataTypes.INT);
+		 :} 
+		 | 
+		 BOOLEAN:bool
+		 {:
+				RESULT=new PrimitiveType(boolleft,DataTypes.BOOLEAN);
+		 :}  
+		 | 
+		 STRING:str 
+		 {:
+				RESULT=new PrimitiveType(strleft,DataTypes.STRING); 
+		 :} 
+		 | 
+		 CLASS_ID:c_name
+		 {:
+				RESULT=new UserType(c_nameleft, c_name);
+		 :}  
+		 | 
+		 type:t LB RB
+		 {:
+		 		t.incrementDimension();
+				RESULT=t;
+		 :}
+;
+stmtList ::= stmtList:sl stmt:s
+		      {:
+		     	 	sl.add(s);
+					RESULT=sl;
+		      :}
+		      |
+		      {:
+		      		RESULT = new LinkedList<Statement>();
+		      :}
+;
+
+stmt ::= location:l ASSIGN expr:e SEMI
+	     {:
+	     	RESULT = new Assignment(l,e);
+	     :}
+		 |
+		 call:c SEMI
+		 {:
+		 	RESULT = new CallStatement(c);
+		 :}
+		 |
+		 RETURN:r expr:e SEMI
+		 {:
+		 	RESULT= new Return(rleft,e);
+		 :}
+		 |
+		 RETURN:r SEMI
+		 {:
+		 	RESULT= new Return(rleft);
+		 :}
+		 |
+		 IF LP expr:e RP stmt:st ELSE stmt:s_else
+		 {:
+		 	RESULT = new If(e, st, s_else);
+		 :}
+		 |
+		 IF LP expr:e RP stmt:st
+		 {:
+		 	RESULT = new If(e, st);
+		 :}
+		 |
+		 WHILE LP expr:e RP stmt:st
+		 {:
+		 	RESULT = new While(e,st);
+		 :}
+		 |
+		 BREAK:b SEMI
+		 {:
+		 	RESULT = new Break(bleft);
+		 :}
+		 |
+		 CONTINUE:c SEMI
+		 {:
+		 	RESULT = new Continue(cleft);
+		 :}
+		 |
+		 LCBR:lb stmtList:sl RCBR
+		 {:
+		 	RESULT = new StatementsBlock(lbleft,sl);
+		 :}
+		 |
+		 type:t ID:id ASSIGN expr:e SEMI
+		 {:
+		 	RESULT = new LocalVariable(t, id, e); 
+		 :}
+		 |
+		 type:t ID:id SEMI
+		 {:
+			RESULT = new LocalVariable(t, id);
+		 :}
+;		 		 		 		 
+
+exprList ::=	/* empty list */
+				{: RESULT = new LinkedList<Expression>(); :}
+				| exprList:el COMMA expr:e
+				{: el.add(e); RESULT = el; :}
+				| expr:e
+				{: List<Expression> el = new LinkedList<Expression>();
+				   el.add(e); RESULT = el; :}
+;
+
+expr ::=		location:l
+				{: RESULT = l; :}
+				| call:c
+				{: RESULT = c; :}
+				| THIS:t
+				{: RESULT = new This(tleft); :}
+				| NEW:n CLASS_ID:classId LP RP
+				{: RESULT = new NewClass(nleft, classId); :}
+				| NEW type:t LB expr:e RB
+				{: RESULT = new NewArray(t, e); :}
+				| expr:e DOT LENGTH
+				{: RESULT = new Length(e); :}
+				| binExpr:be
+				{: RESULT = be; :}
+				| unExpr:ue
+				{: RESULT = ue; :}
+				| literal:l
+				{: RESULT = l; :}
+				| LP expr:e RP 
+				{: RESULT = e; :}
+;
+
+binExpr ::=		expr:e1 mathBinOp:op expr:e2
+				{: RESULT = new MathBinaryOp(e1, op, e2); :}
+				| expr:e1 logicalBinOp:op expr:e2
+				{: RESULT = new LogicalBinaryOp(e1, op, e2); :}
+;
+
+unExpr ::=		mathUnOp:op expr:e
+				{: RESULT = new MathUnaryOp(op, e); :}
+				| logicalUnOp:op expr:e
+				{: RESULT = new LogicalUnaryOp(op, e); :}
+; 
+
+
+call ::=		staticCall:c
+				{: RESULT = c; :}
+				| virtualCall:c
+				{: RESULT = c; :}
+;
+
+staticCall ::=	CLASS_ID:classId DOT ID:id LP exprList:args RP
+				{: RESULT = new StaticCall(classIdleft, classId, id, args); :};
+
+virtualCall ::= expr:e DOT ID:id LP exprList:args RP
+				{: RESULT = new VirtualCall(eleft, e, id, args); :}
+				| ID:id LP exprList:args RP
+				{: RESULT = new VirtualCall(idleft, id, args); :}
+;
+
+location ::= ID:id
+			{: RESULT = new VariableLocation(idleft, id); :}
+			| expr:e DOT ID:id
+			{: RESULT = new VariableLocation(eleft, e, id); :}
+			| expr:arr LB expr:index RB
+			{: RESULT = new ArrayLocation(arr, index); :}
+;
+			 		
+
+mathBinOp ::=	PLUS:x
+			{: RESULT = BinaryOps.PLUS; :}
+			| MINUS:x
+			{: RESULT = BinaryOps.MINUS; :}
+			| MULTIPLY:x
+			{: RESULT = BinaryOps.MULTIPLY; :}
+			| DIVIDE:x
+			{: RESULT = BinaryOps.DIVIDE; :}
+			| MOD:x
+			{: RESULT = BinaryOps.MOD; :}
+;
+
+logicalBinOp ::= LAND:x
+			{: RESULT = BinaryOps.LAND; :}
+			| LOR:x
+			{: RESULT = BinaryOps.LOR; :}
+			| LT:x
+			{: RESULT = BinaryOps.LT; :}
+			| LTE:x
+			{: RESULT = BinaryOps.LTE; :}
+			| GT:x
+			{: RESULT = BinaryOps.GT; :}
+			| GTE:x
+			{: RESULT = BinaryOps.GTE; :}
+			| EQUAL:x
+			{: RESULT = BinaryOps.EQUAL; :}
+			| NEQUAL:x
+			{: RESULT = BinaryOps.NEQUAL; :}
+;
+
+mathUnOp ::=	UMINUS:x
+			{: RESULT = UnaryOps.UMINUS; :};
+logicalUnOp ::= LNEG:x
+			{: RESULT = UnaryOps.LNEG; :};
+
+literal ::= INTEGER:n 
+			{:  long num_val = Long.parseLong(n);
+				if (num_val > 2147483648L){
+					throw new SyntaxError(nleft, "Integer literal out of range: " + n);
+				}
+				RESULT = new Literal(nleft, LiteralTypes.INTEGER, (int)num_val); 
+			:} 
+			| QUOTE:s 
+			{:	RESULT = new Literal(sleft, LiteralTypes.STRING, s); :}  
+			| TRUE:b
+			{: 	RESULT = new Literal(bleft, LiteralTypes.TRUE); :}
+			| FALSE:b 
+			{: 	RESULT = new Literal(bleft, LiteralTypes.FALSE); :}
+			| NULL:r
+			{: 	RESULT = new Literal(rleft, LiteralTypes.NULL); :}
+;

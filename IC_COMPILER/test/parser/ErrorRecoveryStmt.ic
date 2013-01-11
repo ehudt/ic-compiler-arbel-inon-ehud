@@ -6,6 +6,7 @@ class Something {
 		return y;
 	}
 
+	x + 3
 	string helloWorld(){
 		Library.println("Hello World!");
 	}
