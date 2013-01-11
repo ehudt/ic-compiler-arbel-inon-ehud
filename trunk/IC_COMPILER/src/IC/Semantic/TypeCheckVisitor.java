@@ -349,7 +349,9 @@ public class TypeCheckVisitor implements Visitor {
 		// query the class' scope for the static method
 		SymbolTable classScope = classInstance.getEnclosingScope().getSymbolTable(className);
 		String staticMethodName = call.getName();
-		Symbol methodSymbol = classScope.staticLookup(staticMethodName);
+		// TODO Again, must decide if we can call a method of a superclass or not
+		/*Symbol methodSymbol = classScope.staticLookup(staticMethodName);*/
+		Symbol methodSymbol = classScope.lookup(staticMethodName);
 		if(methodSymbol == null || methodSymbol.getKind() != Kind.METHOD ||
 				!((MethodSymbol)methodSymbol).isStatic()){
 			scopeError(call.getLine(), staticMethodName + ": no such static method in " + className);	
@@ -506,7 +508,9 @@ public class TypeCheckVisitor implements Visitor {
 		if ((op1Type == null) || (op2Type == null)) return null;
 		
 		if (op1Type != op2Type)
-			typeError(binaryOp.getLine(), "Illegal " + binaryOp.getOperator().getOperatorString() + " operation. Both operands' types must be the same");
+			typeError(binaryOp.getLine(), "Illegal " + binaryOp.getOperator().getOperatorString() + 
+					" operation. Both operands must be of the same type " + 
+					(binaryOp.getOperator() == BinaryOps.PLUS ? "(int or string)" : "(int)"));
 		
 		if(binaryOp.getOperator() != BinaryOps.PLUS){
 			if (op1Type != TypeTable.getType("int")){
