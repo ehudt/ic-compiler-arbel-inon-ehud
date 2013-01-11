@@ -131,21 +131,6 @@ public class BuildSymbolTables implements Visitor {
 
 	@Override
 	public Object visit(Method method) {
-	/*	MethodSymbolTable symbols = new MethodSymbolTable(method.getEnclosingScope(), method.getName(), !(method instanceof VirtualMethod));
-		method.getEnclosingScope().insertChildSymbolTable(symbols);
-		for(Formal formal : method.getFormals()){
-			formal.setEnclosingScope(symbols);
-			try{
-				symbols.insert(formal);
-			}
-			catch(SemanticError semantic){
-				tableError(formal.getLine() + ": " + semantic.getMessage());
-			}
-		}
-		for(Statement stmt : method.getStatements()){
-			stmt.setEnclosingScope(symbols);
-			stmt.accept(this);
-		}*/		
 		return null;
 	}
 	
@@ -398,8 +383,6 @@ public class BuildSymbolTables implements Visitor {
 
 	@Override
 	public Object visit(FieldMethodList fieldMethodList) {
-		// TODO Delete before handing in!!!
-		System.err.println("Visited FieldMethodList in build symbol table. shouldn't happen.");
 		return null;
 	}
 

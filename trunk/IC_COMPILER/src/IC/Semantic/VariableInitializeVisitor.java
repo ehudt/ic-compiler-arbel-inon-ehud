@@ -65,24 +65,20 @@ public class VariableInitializeVisitor implements Visitor {
 	
 	private int step = 0;
 	private boolean assignmentLValueContext = false;
-	private GlobalSymbolTable globalScope;
-	private ClassSymbolTable currentClassScope;
+	//private GlobalSymbolTable globalScope;
+	//private ClassSymbolTable currentClassScope;
 	private MethodSymbolTable currentMethodScope;
 	
 	private void initError(int line, String message) {
 		System.out.println("semantic error at line " + line + ": " + message);
 		System.exit(0);
 	}
-	
-	public VariableInitializeVisitor(GlobalSymbolTable globalScope) {
-		this.globalScope = globalScope; 
-	}
 
 	@Override
 	public Object visit(Program program) {
 		for(ICClass icClass : program.getClasses()){
 			step++;
-			currentClassScope = (ClassSymbolTable)globalScope.getSymbolTable(icClass.getName());
+			//currentClassScope = (ClassSymbolTable)globalScope.getSymbolTable(icClass.getName());
 			icClass.accept(this);
 		}
 		return null;
@@ -93,7 +89,8 @@ public class VariableInitializeVisitor implements Visitor {
 		if(icClass.getName().equals("Library")) return null;
 		for(Method method : icClass.getMethods()){
 			step++;
-			currentMethodScope = (MethodSymbolTable)currentClassScope.getSymbolTable(method.getName());
+			ClassSymbolTable classScope = (ClassSymbolTable)method.getEnclosingScope();
+			currentMethodScope = (MethodSymbolTable)classScope.getSymbolTable(method.getName());
 			method.accept(this);
 		}
 		return null;
