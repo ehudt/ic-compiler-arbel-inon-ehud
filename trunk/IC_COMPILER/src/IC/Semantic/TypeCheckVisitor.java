@@ -282,7 +282,7 @@ public class TypeCheckVisitor implements Visitor {
 					scopeError(location.getLine(), "variable " + location.getName() + " is used before declaration");
 				}
 				expressionType = TypeTable.getType(((VarSymbol)varSymbol).getType(), false);
-			} else if (varSymbol.getKind() == Kind.FIELD) {
+			} else if (varSymbol.getKind() == Kind.FIELD && inVirtualMethodContext) {
 				expressionType = TypeTable.getType(((FieldSymbol)varSymbol).getType(), false);
 			} else {
 				typeError(location.getLine(), "illegal reference: " + location.getName());
@@ -381,6 +381,7 @@ public class TypeCheckVisitor implements Visitor {
 		Type instanceType = null;
 		SymbolTable classScope = null;
 		String instanceClassName = null;
+		// first, determine the class context
 		if(call.isExternal()){
 			Expression location = call.getLocation();
 			instanceType = (Type)location.accept(this);
@@ -400,9 +401,12 @@ public class TypeCheckVisitor implements Visitor {
 				typeError(call.getLine(), e.getMessage());
 			}
 		}
+		// now, find the called method
 		String methodName = call.getName();
 		Symbol methodSymbol = null;
-		if (!call.isExternal()) {
+		// TODO decide what the behavior should be for the next part. Right now, any method is accepted.
+		methodSymbol = classScope.lookup(methodName);
+		/*if (!call.isExternal()) {
 			methodSymbol = classScope.staticLookup(methodName);
 		}
 		if (methodSymbol == null) {
@@ -410,7 +414,7 @@ public class TypeCheckVisitor implements Visitor {
 			if (methodSymbol != null && methodSymbol.getKind() == Kind.METHOD && ((MethodSymbol)methodSymbol).isStatic()) {
 				methodSymbol = null;
 			}
-		}
+		}*/
 		if(methodSymbol == null || methodSymbol.getKind() != Kind.METHOD){
 			scopeError(call.getLine(), methodName + ": no such method in " + instanceClassName);	
 		}

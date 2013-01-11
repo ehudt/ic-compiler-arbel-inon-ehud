@@ -109,6 +109,7 @@ public class Compiler
     		if(printAst){
     			PrettyPrinter printer = new PrettyPrinter(srcPath);
     			System.out.println(programRoot.accept(printer));
+    			System.out.println();
     		}
     		
     		// build symbol table

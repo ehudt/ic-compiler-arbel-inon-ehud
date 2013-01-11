@@ -310,6 +310,7 @@ public class BuildSymbolTables implements Visitor {
 	public Object visit(VirtualCall call) {
 		if(call.getLocation() != null){
 			call.getLocation().setEnclosingScope(call.getEnclosingScope());
+			call.getLocation().accept(this);
 		}
 		for(Expression expr : call.getArguments()){
 			expr.setEnclosingScope(call.getEnclosingScope());
