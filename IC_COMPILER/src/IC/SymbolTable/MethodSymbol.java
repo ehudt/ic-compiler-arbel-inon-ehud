@@ -8,7 +8,10 @@ public class MethodSymbol extends Symbol{
 
 	private MethodType type;
 	private boolean isStatic;
-	//constructor
+	
+	/**
+	 * constructor for MethodSymbol
+	 */
 	
 	public MethodSymbol(Method met){
 		this(met, met.isStatic());
@@ -20,7 +23,11 @@ public class MethodSymbol extends Symbol{
 		this.type= TypeTable.getType(met);
 		this.isStatic=isStatic;
 	}
-	//getters
+	
+	/**
+	 * getters
+	 */
+	
 	public MethodType getMetType()
 	{
 		return this.type;
@@ -29,6 +36,7 @@ public class MethodSymbol extends Symbol{
 	{
 		return this.isStatic;
 	}
+	
 	public String toString(){
 		StringBuilder str = new StringBuilder();
 		str.append(isStatic() ? "Static" : "Virtual");
