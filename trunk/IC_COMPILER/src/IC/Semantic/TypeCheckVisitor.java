@@ -2,14 +2,11 @@ package IC.Semantic;
 
 import java.util.Iterator;
 
-import sun.org.mozilla.javascript.regexp.SubString;
-
 import IC.BinaryOps;
 import IC.LiteralTypes;
 import IC.SemanticError;
 import IC.AST.ArrayLocation;
 import IC.AST.Assignment;
-import IC.AST.BinaryOp;
 import IC.AST.Break;
 import IC.AST.CallStatement;
 import IC.AST.Continue;
@@ -71,7 +68,6 @@ import IC.Types.TypeTable;
  */
 
 public class TypeCheckVisitor implements Visitor {
-	private boolean inLoopContext = false;
 	private boolean inVirtualMethodContext = false;
 	
 	@Override
