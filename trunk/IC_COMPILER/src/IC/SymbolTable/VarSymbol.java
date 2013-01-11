@@ -9,6 +9,15 @@ public class VarSymbol extends Symbol{
 
 	Type type;
 	boolean isParam;
+	int initStep = Integer.MAX_VALUE;
+	
+	public int getInitStep() {
+		return initStep;
+	}
+	
+	public void setInitStep(int step) {
+		initStep = step;
+	}
 	
 	//constructor
 	

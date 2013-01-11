@@ -103,10 +103,7 @@ public class ReturnStatementVisitor implements Visitor {
 
 	@Override
 	public Object visit(LibraryMethod method) {
-		for(Statement stmt : method.getStatements()){
-			if ((Boolean)stmt.accept(this)) return true;
-		}
-		return false;
+		return true;
 	}
 
 	@Override
