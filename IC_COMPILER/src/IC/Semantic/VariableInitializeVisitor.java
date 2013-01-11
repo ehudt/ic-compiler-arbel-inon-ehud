@@ -155,6 +155,7 @@ public class VariableInitializeVisitor implements Visitor {
 	@Override
 	public Object visit(Return returnStatement) {
 		step++;
+		returnStatement.getValue().accept(this);
 		return null;
 	}
 
@@ -264,7 +265,7 @@ public class VariableInitializeVisitor implements Visitor {
 			varSymbol.setInitStep(Math.min(step, varSymbol.getInitStep()));
 		} else {
 			if(varSymbol.getInitStep() > step) {
-				initError(location.getLine(), "illegal variable reference: variable " + location.getName() + " may not have been initialized");
+				initError(location.getLine(), "illegal variable reference: variable " + location.getName() + " may have not been initialized");
 			}
 		}
 		return null;
