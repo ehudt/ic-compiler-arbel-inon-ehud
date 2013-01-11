@@ -420,7 +420,7 @@ public class TypeCheckVisitor implements Visitor {
 			}
 		}
 		if(methodSymbol == null || methodSymbol.getKind() != Kind.METHOD){
-			scopeError(call.getLine(), methodName + ": no such instance method in " + instanceClassName);	
+			scopeError(call.getLine(), methodName + ": no such method in " + instanceClassName);	
 		}
 		MethodType methodType = ((MethodSymbol)methodSymbol).getMetType();
 		if (call.getArguments().size() != methodType.getParamTypes().size()) {

@@ -34,6 +34,7 @@ import IC.AST.Statement;
 import IC.AST.StatementsBlock;
 import IC.AST.StaticCall;
 import IC.AST.StaticMethod;
+import IC.AST.Type;
 import IC.AST.This;
 import IC.AST.UserType;
 import IC.AST.VariableLocation;
@@ -68,10 +69,11 @@ public class ReturnStatementVisitor implements Visitor {
 	@Override
 	public Object visit(ICClass icClass) {
 		for(Method method : icClass.getMethods()){
-			if(TypeTable.getType(method).getReturnType() == TypeTable.getType("void")) continue;
+			Type methodReturn = TypeTable.getType(TypeTable.getType(method).getReturnType());
+			if(methodReturn == TypeTable.getType("void")) continue;
 			boolean hasReturn = (Boolean)method.accept(this);
 			if(!hasReturn) {
-				returnError(method.getLine(), "method " + method.getName() + "is of non-void return type and must have a return statement in every execution path");
+				returnError(method.getLine(), "method " + method.getName() + " is of non-void return type and must have a return statement in every execution path");
 			}
 		}
 		return true;
