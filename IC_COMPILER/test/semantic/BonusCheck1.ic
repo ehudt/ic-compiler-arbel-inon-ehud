@@ -1,0 +1,17 @@
+class Bla{
+
+	static void main(string[] args) {
+	int x;
+	int y;
+	if(true)
+	{
+		x=5;
+	}
+	else
+	{
+		x=6;
+	}
+	y=x;	
+	
+	}
+}
