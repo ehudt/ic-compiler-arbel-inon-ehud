@@ -436,6 +436,15 @@ public class StructureChecksVisitor implements Visitor {
 				MethodType methodType = method.getMetType();
 				MethodSymbol parentMethod = (MethodSymbol)parentField;
 				MethodType parentType = parentMethod.getMetType();		
+				
+				if (method.isStatic() && !parentMethod.isStatic()){
+					structureError(method.getLine(), "Can't override "+ method.getID() + " with a static method");
+				}
+				
+				if (!method.isStatic() && parentMethod.isStatic()){
+					structureError(method.getLine(), "Can't override "+ method.getID() + " with a non-static method");
+				}
+				
 				if (!methodType.toString().equals(parentType.toString())){
 					structureError(method.getLine(), "illegal method name or signature. "+ method.getID() + " is used in a superclass with a different signature");
 				}
