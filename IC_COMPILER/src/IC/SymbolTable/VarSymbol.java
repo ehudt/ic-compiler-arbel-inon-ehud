@@ -12,6 +12,30 @@ public class VarSymbol extends Symbol {
 	int defineStep = 0;
 	int initStep = Integer.MAX_VALUE;
 	
+	
+	
+	/**
+	 * constructors
+	 */
+	
+	public VarSymbol(LocalVariable lv)
+	{
+		super(lv.getName(),Kind.VARIABLE, lv.getLine());
+		this.isParam=false;
+		this.type = TypeTable.getType(lv.getType());
+	}
+	
+	public VarSymbol(Formal f)
+	{
+		super(f.getName(),Kind.VARIABLE, f.getLine());
+		this.isParam=true;
+		this.type = TypeTable.getType(f.getType());
+	}
+	
+	/**
+	 * getters and setters
+	 */
+	
 	public int getDefineStep() {
 		return defineStep;
 	}
@@ -27,23 +51,6 @@ public class VarSymbol extends Symbol {
 	public void setInitStep(int step) {
 		initStep = step;
 	}
-	
-	//constructor
-	
-	public VarSymbol(LocalVariable lv)
-	{
-		super(lv.getName(),Kind.VARIABLE, lv.getLine());
-		this.isParam=false;
-		this.type = TypeTable.getType(lv.getType());
-	}
-	
-	public VarSymbol(Formal f)
-	{
-		super(f.getName(),Kind.VARIABLE, f.getLine());
-		this.isParam=true;
-		this.type = TypeTable.getType(f.getType());
-	}
-	//getters
 	
 	public boolean isParam()
 	{
