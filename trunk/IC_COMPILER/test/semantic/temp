@@ -1,0 +1,11 @@
+
+	@Override
+	public Object visit(ClassSymbolTable table) {
+		for (FieldSymbol field : table.getFieldSymbols()){
+			Symbol parentField  = table.getParent().lookup(field.getID());
+			System.out.println("########   " +parentField.getID());
+			if (!(parentField == null)){
+				structureError(field.getLine(), "Field: "+field.getID()+ " is already used!");
+			}
+		}
+		

@@ -1,0 +1,74 @@
+class Token extends Symbol {
+	/* The line in which the token appears */
+	int line;
+	/* A token's value, if applicable */
+	/* The token's name. This is derived by the constructor from the token ID. */
+	string value,name;
+	
+	/** 
+	 * Constructor for tokens without a value. This is used for any token whose value 
+	 * is implied. For example, the token '+' always means PLUS.
+	 * @param id	The token's ID, according to IC.Parser.sym
+	 * @param line	The line in which the token appears
+	 */
+
+	/** 
+	 * Constructor for tokens with a value. This contructor is used when a token's value
+	 * is variable. For example, a token ID can have a lot of different values, such as 'foo'. 
+	 * @param id	The token's ID, according to IC.Parser.sym
+	 * @param line	The line in which the token appears
+	 * @param value	The token's string value.
+	 */
+    Token(int id, int line, string value) {
+        
+        // A line's number must be positive
+		if(line <= 0){
+			throw new IllegalArgumentException("Line number can't be negative");
+		}
+        this.line = line;
+        
+        // A token's value cannot be null. If there is no value, it is represented as "".
+        if(value == null) {
+        	throw new IllegalArgumentException("Token value cannot be NULL.");
+        }
+    	this.value = value;
+    	
+    	// Resolves the token's name, to be printed later on.
+		this.name = getNameById(id);
+		if(this.name.isEmpty()){
+			//throw new IllegalArgumentException("Token id is invalid");
+		}
+    }
+    /**
+     * Get the current token's ID
+     * @return	this token's ID
+     */
+    int getId() {
+    	return this.sym;
+    }
+    
+    /**
+     * Get the current token's value (for tokens such as ID, Class ID, String, Integer). 
+     * If the token has no value then the empty string, "", is returned.
+     * @return	the specific value for a token
+     */
+    string getValue() {
+    	return this.value;
+    }
+    
+    /**
+     * Get the line in which this token appears.
+     * @return	the line in which this token appears
+     */
+    int getLine() {
+    	return this.line;
+    }
+    
+    /**
+     * Get the token's string name. "
+     * @return	this token's name in string representation
+     */
+    string getName(){
+    	return name;
+    }
+}

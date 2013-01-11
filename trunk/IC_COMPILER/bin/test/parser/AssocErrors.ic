@@ -1,10 +1,10 @@
-class AssocError {
+ class AssocError {
 	 void blah(int j){
-		 j = 7 --6 // j = (7 - (-6))
+		 j = 7 -- 6 // j = (7 - (-6))
 		 j = j - + 6; // error
 		 j = */ 5;
 		 j = 1 + / 7;
 		 j = 5 < + 6;
 		 j = j & 1;
-	}
+	 }
  }
