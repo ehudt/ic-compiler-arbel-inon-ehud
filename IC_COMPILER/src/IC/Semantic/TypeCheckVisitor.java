@@ -159,7 +159,7 @@ public class TypeCheckVisitor implements Visitor {
 			return null;
 		
 		if (!(assignmentType.subTypeOf(variableType))){
-			typeError(assignment.getLine(), "Type mismatch: " + assignmentType + " cannot be assigned to "+variableType);
+			typeError(assignment.getLine(), "Type mismatch: " + assignmentType + " cannot be assigned to " + variableType);
 			
 		}
 		return null;
@@ -203,7 +203,7 @@ public class TypeCheckVisitor implements Visitor {
 	public Object visit(If ifStatement) {
 		Type conditionType = (Type) ifStatement.getCondition().accept(this);
 			if (conditionType != TypeTable.getType("boolean")){
-				typeError(ifStatement.getLine(), "If condition must be of type boolean");
+				typeError(ifStatement.getLine(), "if condition expression must be of type boolean");
 			}
 			
 		ifStatement.getOperation().accept(this);
@@ -224,7 +224,7 @@ public class TypeCheckVisitor implements Visitor {
 	public Object visit(While whileStatement) {
 		Type conditionType = (Type)whileStatement.getCondition().accept(this);
 		if (conditionType != TypeTable.getType("boolean")){
-			typeError(whileStatement.getLine(), "While condition must be of type boolean");
+			typeError(whileStatement.getLine(), "while condition expression must be of type boolean");
 		}
 		
 		whileStatement.getOperation().accept(this);
@@ -297,7 +297,7 @@ public class TypeCheckVisitor implements Visitor {
 				SymbolTable classSymbolTable = TypeTable.getUserTypeByName(classType.getName()).getEnclosingScope().getSymbolTable(classType.getName());
 				fieldSymbol = classSymbolTable.lookup(location.getName());
 			} catch (SemanticError semantic) {
-				scopeError(location.getLine(), "no such class");
+				scopeError(location.getLine(), "no such class: " + classType.getName());
 			}
 			if (fieldSymbol == null) {
 				scopeError(location.getLine(), "undeclared identifier: " + location.getName());
@@ -321,7 +321,7 @@ public class TypeCheckVisitor implements Visitor {
 		Type indexType = (Type) location.getIndex().accept(this);
 		
 		if (indexType != TypeTable.getType("int")){
-			typeError(location.getLine(), "Array index must be of type int");
+			typeError(location.getLine(), "array index must be of type int");
 		}
 		
 		if (arrayType.getDimension() < 1) {
@@ -465,7 +465,7 @@ public class TypeCheckVisitor implements Visitor {
 		
 		Type sizeType = (Type) newArray.getSize().accept(this);	
 		if (sizeType != TypeTable.getType("int")) {
-			typeError(newArray.getLine(), "Array size must be of type int");
+			typeError(newArray.getLine(), "array size must be of type int");
 		}
 		
 		return arrayType;
@@ -482,7 +482,7 @@ public class TypeCheckVisitor implements Visitor {
 		Type arrType = (Type) length.getArray().accept(this);
 		
 		if( arrType.getDimension() < 1 ){
-			typeError(length.getLine(), "Not of array type");
+			typeError(length.getLine(), "length is applicable only for array types");
 		}
 		
 		return TypeTable.getType("int");
@@ -504,7 +504,7 @@ public class TypeCheckVisitor implements Visitor {
 		if ((op1Type == null) || (op2Type == null)) return null;
 		
 		if (op1Type != op2Type)
-			typeError(binaryOp.getLine(), "Illegal " + binaryOp.getOperator().getOperatorString() + " operation. Both operands' types should be the same");
+			typeError(binaryOp.getLine(), "Illegal " + binaryOp.getOperator().getOperatorString() + " operation. Both operands' types must be the same");
 		
 		if(binaryOp.getOperator() != BinaryOps.PLUS){
 			if (op1Type != TypeTable.getType("int")){
@@ -537,19 +537,19 @@ public class TypeCheckVisitor implements Visitor {
 		// Check for the || and && operators that both operands are boolean
 		if ((op == BinaryOps.LAND)|| (op == BinaryOps.LOR)) {
 			if (op1Type != TypeTable.getType("boolean") || op2Type != TypeTable.getType("boolean")){
-				typeError(binaryOp.getLine(), "Logical "+ op.getOperatorString() + " on non-boolean types");
+				typeError(binaryOp.getLine(), "Logical "+ op.getOperatorString() + " is applicable only for boolean operands");
 			}
 		}
 		//Check if one operand type is subtype of the other
 		if (op == BinaryOps.EQUAL || op == BinaryOps.NEQUAL){
 			if (!(op1Type.subTypeOf(op2Type)) && !(op2Type.subTypeOf(op1Type))){
-				typeError(binaryOp.getLine(), "Comparing foreign types with the operator: " + op.getOperatorString());
+				typeError(binaryOp.getLine(), "comparison of foreign types with the operator: " + op.getOperatorString());
 			}
 		}
 		//
 		if (op == BinaryOps.LTE || op == BinaryOps.LT || op == BinaryOps.GTE || op == BinaryOps.GT) {
 			if (op1Type != TypeTable.getType("int") || op2Type != TypeTable.getType("int")) {
-				typeError(binaryOp.getLine(), "Comparing non int values with " + op.getOperatorString());
+				typeError(binaryOp.getLine(), "comparison of non int values with " + op.getOperatorString());
 			}
 		}
 		return TypeTable.getType("boolean");

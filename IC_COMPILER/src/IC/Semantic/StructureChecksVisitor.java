@@ -70,27 +70,26 @@ public class StructureChecksVisitor implements Visitor {
 			return false; 
 		
 		if (hasMain){
-			structureError(m.getLine(), "There is more than one main() method");
+			structureError(m.getLine(), "only a single main method is allowed");
 		}
 		
 		MethodType mt = ms.getMetType();
 		if (mt.getReturnType().getName() != TypeTable.getType("void").getName()){
 			
-			structureError(m.getLine(),"The main method return type is not void");
+			structureError(m.getLine(),"invalid return type for method main. should be void");
 		}
 		
 		if (m.getFormals().size() != 1){
-			structureError(m.getLine(),"There should be exactly one argument for the main method");
+			structureError(m.getLine(),"invalid parameter signature for method main. should have a single parameter of type string[]");
 		}
 		
 		Type ty = TypeTable.getType(ms.getMetType().getParamTypes().get(0), false);
 		if ((!ty.getName().equals("string"))||
 				!(ty.getDimension() == 1))
 		{
-			structureError(m.getLine(),"The argument type for the main method should be string[]");
+			structureError(m.getLine(),"invalid argument type for method main. should be string[]");
 
 		}
-		
 		return true;
 	}
 	
@@ -421,7 +420,7 @@ public class StructureChecksVisitor implements Visitor {
 		for (FieldSymbol field : table.getFieldSymbols()){
 			Symbol parentField = table.getParent().lookup(field.getID());
 			if (!(parentField == null)){
-				structureError(field.getLine(), "Illegal structure. Field: "+ field.getID()+ " is already used!");
+				structureError(field.getLine(), "illegal field name. field "+ field.getID() + " is used in a superclass");
 			}
 		}
 
@@ -431,14 +430,14 @@ public class StructureChecksVisitor implements Visitor {
 			
 			if (!(parentField == null)){
 				if (!parentField.getKind().equals(Kind.METHOD)){
-					structureError(method.getLine(), "Illegal structure: "+ method.getID() + " is already used!");
+					structureError(method.getLine(), "illegal method name. name "+ method.getID() + " is used in a superclass");
 				}
 				
 				MethodType methodType = method.getMetType();
 				MethodSymbol parentMethod = (MethodSymbol)parentField;
 				MethodType parentType = parentMethod.getMetType();		
-				if (!methodType.equals(parentType)){
-					structureError(method.getLine(), "Illegal structure: "+ method.getID() + " is already used");
+				if (!methodType.toString().equals(parentType.toString())){
+					structureError(method.getLine(), "illegal method name or signature. "+ method.getID() + " is used in a superclass with a different signature");
 				}
 				
 			}

@@ -26,17 +26,22 @@ class A {
 	int setId(A newId) {
 		this.id = 88;
 	}
-	static int getNum() {
+	int getNum() {
 		return 7;
+	}
+	A[] getA() {
+		return null;
 	}
 }
  class B extends A {
 	int gid() {
 		return this.id;
 	}
-	int setId(string newId, string name) {
+	int aagetNum(int x) { return 8;}
+	int setId(A newId) {
 		this.id = 6;
 	}
+	int tr;
 }
 class C extends B{
 }
