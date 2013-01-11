@@ -130,7 +130,6 @@ public class TypeTable {
 						TypeTable.counter++;
 					} else {
 						typeError(atArr.getLine(), "no such type: " + atName);
-						//return null;
 					}
 				}
 			}
