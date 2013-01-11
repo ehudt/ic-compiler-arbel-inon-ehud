@@ -422,6 +422,9 @@ public class TypeCheckVisitor implements Visitor {
 		if(methodSymbol == null || methodSymbol.getKind() != Kind.METHOD){
 			scopeError(call.getLine(), methodName + ": no such method in " + instanceClassName);	
 		}
+		if(!inVirtualMethodContext && !((MethodSymbol)methodSymbol).isStatic()) {
+			scopeError(call.getLine(), "illegal call to virtual method from inside a static method");
+		}
 		MethodType methodType = ((MethodSymbol)methodSymbol).getMetType();
 		if (call.getArguments().size() != methodType.getParamTypes().size()) {
 			typeError(call.getLine(), "invalid amount of arguments passed to " + methodName);
