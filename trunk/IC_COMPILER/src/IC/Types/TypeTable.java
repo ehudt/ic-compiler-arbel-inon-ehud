@@ -2,7 +2,6 @@ package IC.Types;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,17 +14,39 @@ import IC.AST.PrimitiveType;
 import IC.AST.Type;
 import IC.AST.UserType;
 
+/**
+ * 
+ * This class is in charge on creating the Type Table
+ * The Type table hold all the types that the running program uses
+ * When traveling over the AST every Type that we encounter enters to the this table
+ * Also when a Symbol requests its type its getting it from this table. 
+ */
+
 public class TypeTable {
 	
+	/**
+	 * Each type has its on table, except classes(userTypes) that have holds both UserType and ICClass
+	 * The types available are: Classes(UserType), Arrays(Type), Methods(MethodType) and primitive types(Type)
+	 * The types we used are the same classes as in the AST except MethodType which is new
+	 */
 	private static Map<String, ICClass> 	userTypeClasses=new LinkedHashMap<String, ICClass>();
 	private static Map<String, UserType>	userTypes = new LinkedHashMap<String, UserType>();
 	private static Map<String, Type> 		primitiveTypes=new LinkedHashMap<String, Type>();
 	private static Map<String, MethodType> 	methodTypes=new LinkedHashMap<String, MethodType>();
 	private static Map<String, Type> 		arrayTypes=new LinkedHashMap<String,Type>();
 	
+	/**
+	 * Both static variables holds filename (for printing later) and a counter that counts the 
+	 * TypeTable IDs entered to the table, also the next entered Type will get the current
+	 * counter value as its TypeTable ID 
+	 */
 	private static String filename = null;
 	private static int counter= 1;
 	
+	/**
+	 * At the beginning of the the run all the primitive type are initialized to the table
+	 * by the requested order in PA3
+	 */
 	static
 	{	
 		Type intType=new PrimitiveType(0,DataTypes.INT);
@@ -49,9 +70,9 @@ public class TypeTable {
 		TypeTable.filename = fileName;
 	}
 	
+	
 	public static void addUserType(ICClass c) throws SemanticError
 	{
-		//TODO: fix error messages
 		if(userTypeClasses.containsKey(c.getName()))
 		{
 			throw new SemanticError(c.getLine(), "A class with the name "+c.getName()+" already exists");
@@ -165,6 +186,10 @@ public class TypeTable {
 		} else return null;
 	}
 	
+	/**
+	 * returns a String with the representation of the TypeTable as requested in PA3
+	 * Each Type Table is ordered by its TypeTable ID
+	 */
 	public static String toTypeTableString()
 	{
 		StringBuilder str = new StringBuilder();
