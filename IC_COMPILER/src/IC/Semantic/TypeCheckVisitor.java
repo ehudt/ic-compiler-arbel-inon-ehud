@@ -268,8 +268,6 @@ public class TypeCheckVisitor implements Visitor {
 
 	/**
 	 * Returns the location type, or error if found one.
-	 * Implements the checks for the bonus: Checks if the variable was declared before 
-	 * it is being used, and send an error otherwise.
 	 */
 	@Override
 	public Object visit(VariableLocation location) {
@@ -373,11 +371,9 @@ public class TypeCheckVisitor implements Visitor {
 	}
 	
 	 /**
-	   * 
 	   * Check that the method is defined in the relevant class
        * Check that all arguments correspond to the method's arguments types
        * Return the method return value, or error if found one.
-       * 
        */
 	@Override
 	public Object visit(VirtualCall call) {

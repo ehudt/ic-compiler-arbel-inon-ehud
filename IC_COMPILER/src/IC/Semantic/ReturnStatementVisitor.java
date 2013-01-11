@@ -50,7 +50,7 @@ import IC.Types.TypeTable;
 /**
  * This visitor is in charge of checking bonus 2: Any non-void method returns the right type in any 
  * path.
- * @author arbel
+ * @author ehud
  *
  */
 public class ReturnStatementVisitor implements Visitor {
@@ -72,6 +72,7 @@ public class ReturnStatementVisitor implements Visitor {
 	public Object visit(ICClass icClass) {
 		if(icClass.getName().equals("Library")) return true;
 		for(Method method : icClass.getMethods()){
+			// check only methods of a non-void return type
 			Type methodReturn = TypeTable.getType(TypeTable.getType(method).getReturnType());
 			if(methodReturn == TypeTable.getType("void")) continue;
 			boolean hasReturn = (Boolean)method.accept(this);
@@ -87,8 +88,10 @@ public class ReturnStatementVisitor implements Visitor {
 		return false;
 	}
 
-	@Override
+	@Override  
 	public Object visit(VirtualMethod method) {
+		// if one statement in the method is a return statement or has a 
+		// return statement in each of its paths, it's ok
 		for(Statement stmt : method.getStatements()){
 			if ((Boolean)stmt.accept(this)) return true;
 		}
@@ -143,6 +146,9 @@ public class ReturnStatementVisitor implements Visitor {
 
 	@Override
 	public Object visit(If ifStatement) {
+		// if the ifStatement has an else branch, then it can be a replacement
+		// for a return statement outside. So we check if both branches have
+		// a return statement
 		if(ifStatement.hasElse()){
 			return 	(Boolean)ifStatement.getOperation().accept(this) &&
 					(Boolean)ifStatement.getElseOperation().accept(this);

@@ -1,7 +1,6 @@
 package IC.SymbolTable;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,9 +8,14 @@ import java.util.Map;
 import IC.SemanticError;
 import IC.AST.Formal;
 import IC.AST.LocalVariable;
-import IC.AST.Method;
 import IC.AST.Visitor;
 
+/**
+ * Represents a symbol table for a method. Extends a block's symbol table
+ * by adding a map of method parameters
+ * @author ehud
+ *
+ */
 public class MethodSymbolTable extends BlockSymbolTable {
 	private boolean isStatic;
 	private Map<String, VarSymbol> parameters = new LinkedHashMap<String, VarSymbol>();

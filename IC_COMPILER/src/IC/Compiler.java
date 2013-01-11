@@ -124,7 +124,7 @@ public class Compiler
     		programRoot.accept(returnChecker);
     		VariableInitializeVisitor varInitCheck = new VariableInitializeVisitor();
     		programRoot.accept(varInitCheck);
-    		//System.out.println("globalSymbolTable is " + globalSymbolTable);
+    		
     		if(printSymTab){
     			PrettyPrinter symTabPrint = new PrettyPrinter(srcPath);
     			System.out.println(globalSymbolTable.accept(symTabPrint));

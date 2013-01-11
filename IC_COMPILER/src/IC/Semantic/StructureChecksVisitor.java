@@ -5,7 +5,7 @@ package IC.Semantic;
 /**
  *	This class is in charge with structure checks.
  *	This visitor recursively go over the program and see that the structure
- *	is correct, according to the IC spec
+ *	is correct, according to the IC spec.
  * @author arbel
  *
  */
@@ -66,9 +66,13 @@ import IC.Types.MethodType;
 
 public class StructureChecksVisitor implements Visitor {
 	boolean hasMain = false;
-	private boolean inLoopContext = false;
+	// for checking that 'this' is used in the correct context.
+	// the flag is turned on when entering a virtual method 
+	// and off when exiting it
 	private boolean inVirtualMethodContext = false;
-
+	// for checking the break and continue are used only inside loop context
+	private boolean inLoopContext = false;
+		
 	//return true iff this is a correct main method with the correct signature
 	private boolean isMain(MethodSymbol ms, Method m){
 		

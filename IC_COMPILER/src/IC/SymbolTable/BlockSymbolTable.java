@@ -9,7 +9,11 @@ import IC.SemanticError;
 import IC.AST.LocalVariable;
 import IC.AST.Visitor;
 
-
+/**
+ * Represents a statement block's symbol table.
+ * @author ehud
+ *
+ */
 public class BlockSymbolTable extends SymbolTable {
 	private static Integer enumerateIds = 0;
 	protected Map<String, VarSymbol> locals = new LinkedHashMap<String, VarSymbol>();
