@@ -49,4 +49,11 @@ public class PrimitiveType extends Type {
 		
 		return this == otherType;
 	}
+
+	@Override
+	public boolean equals(Object other) {
+		return (other instanceof PrimitiveType) && 
+				this.type == ((PrimitiveType)other).type &&
+				this.dimension == ((PrimitiveType)other).dimension;
+	}
 }

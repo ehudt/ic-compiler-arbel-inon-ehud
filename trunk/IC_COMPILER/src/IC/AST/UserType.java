@@ -56,4 +56,11 @@ public class UserType extends Type {
 		return returnVal;
 	}
 
+	@Override
+	public boolean equals(Object other) {
+		return 	(other instanceof UserType) && 
+				this.name == ((UserType)other).name &&
+				this.dimension == ((UserType)other).dimension;
+	}
+
 }

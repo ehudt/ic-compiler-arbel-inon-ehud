@@ -5,7 +5,7 @@ import IC.AST.LocalVariable;
 import IC.AST.Type;
 import IC.Types.TypeTable;
 
-public class VarSymbol extends Symbol{
+public class VarSymbol extends Symbol {
 
 	Type type;
 	boolean isParam;
@@ -53,5 +53,16 @@ public class VarSymbol extends Symbol{
 		str.append(" ");
 		str.append(getID());
 		return str.toString();
+	}
+	
+	public boolean equals(Object other) {
+		if(!(other instanceof VarSymbol)) return false;
+		VarSymbol otherSymbol = (VarSymbol)other;
+		boolean retVal = this.id.equals(otherSymbol.id) &&
+				this.kind == otherSymbol.kind &&
+				this.line == otherSymbol.line &&
+				this.type.equals(otherSymbol.type) &&
+				this.isParam == otherSymbol.isParam;
+		return retVal;
 	}
 }
