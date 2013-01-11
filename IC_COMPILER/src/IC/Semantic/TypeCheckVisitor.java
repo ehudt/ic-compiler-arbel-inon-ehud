@@ -136,7 +136,7 @@ public class TypeCheckVisitor implements Visitor {
 		try {
 			TypeTable.getUserTypeByName(type.getName());				
 		} catch (SemanticError semantic) {
-			scopeError(semantic.line, semantic.getMessage());
+			scopeError(type.getLine(), semantic.getMessage());
 		}
 		return TypeTable.getType(type);
 	}
