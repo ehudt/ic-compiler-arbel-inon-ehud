@@ -73,11 +73,6 @@ import IC.Types.TypeTable;
 public class TypeCheckVisitor implements Visitor {
 	private boolean inLoopContext = false;
 	private boolean inVirtualMethodContext = false;
-		
-	//TODO delete this
-	public void faPr (String x){
-		System.out.println(x);
-	}
 	
 	@Override
 	public Object visit(Program program) {
