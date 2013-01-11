@@ -9,7 +9,16 @@ public class VarSymbol extends Symbol {
 
 	Type type;
 	boolean isParam;
+	int defineStep = 0;
 	int initStep = Integer.MAX_VALUE;
+	
+	public int getDefineStep() {
+		return defineStep;
+	}
+	
+	public void setDefineStep(int step) {
+		defineStep = step;
+	}
 	
 	public int getInitStep() {
 		return initStep;

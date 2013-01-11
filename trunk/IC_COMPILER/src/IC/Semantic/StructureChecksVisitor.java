@@ -132,7 +132,6 @@ public class StructureChecksVisitor implements Visitor {
 
 	@Override
 	public Object visit(Field field) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -164,19 +163,16 @@ public class StructureChecksVisitor implements Visitor {
 
 	@Override
 	public Object visit(Formal formal) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(PrimitiveType type) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(UserType type) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -298,7 +294,6 @@ public class StructureChecksVisitor implements Visitor {
 
 	@Override
 	public Object visit(NewClass newClass) {
-			// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -381,25 +376,21 @@ public class StructureChecksVisitor implements Visitor {
 
 	@Override
 	public Object visit(FieldMethodList fieldMethodList) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(EmptyStatement emptyStatement) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(ErrorMethod errorMethod) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(ErrorClass errorClass) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

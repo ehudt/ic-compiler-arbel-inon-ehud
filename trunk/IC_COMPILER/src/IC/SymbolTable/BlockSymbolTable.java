@@ -1,14 +1,12 @@
 package IC.SymbolTable;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import IC.SemanticError;
 import IC.AST.LocalVariable;
-import IC.AST.Method;
 import IC.AST.Visitor;
 
 
