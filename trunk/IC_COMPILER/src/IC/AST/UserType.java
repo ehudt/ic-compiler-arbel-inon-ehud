@@ -32,7 +32,10 @@ public class UserType extends Type {
 	public String getName() {
 		return name;
 	}
-
+	
+	/**
+	 * This method allows to clone an object with another primitive type but with the requested dimension
+	 */
 	@Override
 	public Type clone(int newDimension) {
 		Type cloned = new UserType(getLine(), name);
@@ -41,7 +44,11 @@ public class UserType extends Type {
 		}
 		return cloned;
 	}
-
+	/**
+	 * A method to check if this type is a subType another Type. 
+	 * i.e if it both types are arrays then we only need to check if the references are equal.
+	 * otherwise if they are usertypes with dimension 0 we need to recursively check A<=B and B<=C then A<=C
+	 */
 	@Override
 	public boolean subTypeOf(Type otherType) {
 		boolean returnVal = false;
