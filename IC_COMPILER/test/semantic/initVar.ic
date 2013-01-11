@@ -2,13 +2,16 @@ class A {
 	static void main(string[] args) {
 		int x;  
 		int y = 5;
-{
-		if(y == 8) {
-			x = 6;
-		} else {
-//			x = 7;
-		}	
-}
+		{
+			int x;
+			if(y == 8) {
+				x = 6;
+			} else {
+				x = 7;
+			}	
+			int z = x;
+		}
+		x = 16;
 		y = x;
 
 	}

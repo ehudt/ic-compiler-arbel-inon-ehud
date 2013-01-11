@@ -46,7 +46,7 @@ import IC.AST.Visitor;
 import IC.AST.While;
 
 public class BuildSymbolTables implements Visitor {
-
+		
 	private void tableError(int line, String message) {
 		System.out.println("semantic error at line " + line + ": " + message);
 		System.exit(0);
@@ -420,31 +420,26 @@ public class BuildSymbolTables implements Visitor {
 
 	@Override
 	public Object visit(GlobalSymbolTable table) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(ClassSymbolTable table) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(BlockSymbolTable table) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(MethodSymbolTable table) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(SymbolTable symbolTable) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
