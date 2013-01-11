@@ -60,7 +60,7 @@ public class TypeTable {
 		{
 			if(!userTypeClasses.containsKey(c.getSuperClassName()))
 			{
-				throw new SemanticError(c.getLine(), "super class " + c.getSuperClassName() + " for this class wasn't defined");
+				throw new SemanticError(c.getLine(), "definition of superclass " + c.getSuperClassName() + " must appear before definition of inheriting class");
 			}
 		}
 		c.setTypeTableID(TypeTable.counter);
