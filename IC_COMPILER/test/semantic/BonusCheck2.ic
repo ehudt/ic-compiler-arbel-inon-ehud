@@ -1,0 +1,37 @@
+class Bla{
+
+	static void main(string[] args) {
+		boolean y;
+		while (true)
+		{
+			int x=2;
+			int g=2;
+			
+			if(x==1)
+			{
+				y=true;	
+				if(g==2)
+				{
+					while(y)
+					{
+					}
+				}
+			}
+			else
+			{
+				
+			}
+			
+			if(y)
+			{
+			}
+		}
+		
+	
+	}
+	
+	static int foo(int x)
+	{
+		return x;
+	}
+}
