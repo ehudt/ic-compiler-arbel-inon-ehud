@@ -142,6 +142,7 @@ public class VariableInitializeVisitor implements Visitor {
 		assignmentLValueContext = true;
 		assignment.getVariable().accept(this);
 		assignmentLValueContext = false;
+		step++;
 		return null;
 	}
 
@@ -168,10 +169,10 @@ public class VariableInitializeVisitor implements Visitor {
 		step++;
 		ifStatement.getOperation().accept(this);
 		// list all variables that were initiated during the if operation
-		List<VarSymbol> initiatedSymbols = new ArrayList<VarSymbol>();
+		Set<VarSymbol> initiatedSymbols = new HashSet<VarSymbol>();
 		SymbolTable scope = ifStatement.getEnclosingScope();
 		for (VarSymbol local : ((BlockSymbolTable)scope).getLocalSymbols()) {
-			if(local.getInitStep() > operationInitialStep) {
+			if(local.getInitStep() != Integer.MAX_VALUE && local.getInitStep() > operationInitialStep) {
 				initiatedSymbols.add(local);
 				local.setInitStep(Integer.MAX_VALUE);
 			}
@@ -190,6 +191,7 @@ public class VariableInitializeVisitor implements Visitor {
 				}
 			}
 		}
+		step++;
 		return null;
 	}
 	
@@ -206,6 +208,7 @@ public class VariableInitializeVisitor implements Visitor {
 				local.setInitStep(Integer.MAX_VALUE);
 			}
 		}
+		step++;
 		return null;
 	}
 

@@ -1,0 +1,46 @@
+class A {
+	int d;
+	static void main(string[] args) {
+		int x;
+		int y = 6;
+		{
+			x = 7;
+		}
+		A a = new A();
+		int b = a.getZ(y);
+		int[] arr;
+		arr = new int[5];
+		y = x + 6;
+		int z;
+		z = 5;
+		if ( x > 0 ) {
+			z = 6;
+			x = x - z;
+		}
+		y = y - z;
+
+
+		y = y + x;
+	}
+	int getZ(int z){
+		int x = 0;while ( x > 0 ) {
+			x = x - 1;
+		}
+		/*if(true) {
+			x = 6;
+		} else {
+			x = 7;
+		}*/
+		return x;
+	}
+}
+
+class B extends A {
+	int id;
+	int getId() {
+		return id;
+	}
+	static int checkId() {
+		return 8;
+	}
+}

@@ -55,4 +55,6 @@ public abstract class Type extends ASTNode {
 	
 	public abstract boolean subTypeOf(Type otherType);
 	
+	public abstract boolean equals(Object other);
+	
 }
