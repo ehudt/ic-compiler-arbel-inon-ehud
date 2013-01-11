@@ -52,6 +52,15 @@ import IC.SymbolTable.Symbol;
 import IC.SymbolTable.SymbolTable;
 import IC.Types.TypeTable;
 
+
+/**
+ *	This class is doing some scope checks, together with the typeDheckVisitor.
+ *	This visitor recursively go over the expressions and statements in the program and see that
+ *	the program is written in accordance with the IC spec.
+ * @author arbel
+ *
+ */
+
 public class ScopeCheckVisitor implements Visitor {
 	private boolean inLoopContext = false;
 	private boolean inVirtualMethodContext = false;
