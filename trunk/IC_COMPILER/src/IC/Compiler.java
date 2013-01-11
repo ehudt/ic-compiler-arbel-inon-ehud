@@ -7,6 +7,7 @@ import java_cup.runtime.Symbol;
 
 import IC.AST.*;
 import IC.Parser.*;
+import IC.Semantic.ReturnStatementVisitor;
 import IC.Semantic.StructureChecksVisitor;
 import IC.Semantic.TypeCheckVisitor;
 import IC.SymbolTable.BuildSymbolTables;
@@ -118,6 +119,8 @@ public class Compiler
     		globalSymbolTable.accept(checkStructure);
     		TypeCheckVisitor typeChecker = new TypeCheckVisitor();
     		programRoot.accept(typeChecker);
+    		ReturnStatementVisitor returnChecker = new ReturnStatementVisitor();
+    		programRoot.accept(returnChecker);
     		//System.out.println("globalSymbolTable is " + globalSymbolTable);
     		if(printSymTab){
     			PrettyPrinter symTabPrint = new PrettyPrinter(srcPath);
