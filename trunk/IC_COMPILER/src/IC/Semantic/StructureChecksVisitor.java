@@ -442,7 +442,7 @@ public class StructureChecksVisitor implements Visitor {
 				}
 				
 				if (!method.isStatic() && parentMethod.isStatic()){
-					structureError(method.getLine(), "Can't override "+ method.getID() + " with a non-static method");
+					structureError(method.getLine(), "Can't override "+ method.getID() + " with an instance method");
 				}
 				
 				if (!methodType.toString().equals(parentType.toString())){
