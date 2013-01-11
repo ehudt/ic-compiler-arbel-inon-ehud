@@ -1,0 +1,27 @@
+
+class A{
+	int foo;
+}
+
+class B extends A
+{	
+	static void main(string[] args) {
+		
+		
+		int i=0;
+		
+		while(i<30)
+		{
+			int x;
+			x=i;
+			i=i+1;
+		}
+	}
+	
+	void sf()
+	{
+		foo="das";
+	}
+	
+
+}
