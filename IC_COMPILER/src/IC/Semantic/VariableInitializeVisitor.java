@@ -163,7 +163,9 @@ public class VariableInitializeVisitor implements Visitor {
 	@Override
 	public Object visit(Return returnStatement) {
 		step++;
-		returnStatement.getValue().accept(this);
+		if(returnStatement.hasValue()) {
+			returnStatement.getValue().accept(this);
+		}
 		return null;
 	}
 	
@@ -268,7 +270,7 @@ public class VariableInitializeVisitor implements Visitor {
 	public Object visit(LocalVariable localVariable) {
 		step++;
 		localVariable.getType().accept(this);
-		if(localVariable.getInitValue() != null) {
+		if(localVariable.hasInitValue()) {
 			step++;
 			VarSymbol varSymbol = (VarSymbol)localVariable.getEnclosingScope().lookup(localVariable.getName());
 			varSymbol.setInitStep(step);
