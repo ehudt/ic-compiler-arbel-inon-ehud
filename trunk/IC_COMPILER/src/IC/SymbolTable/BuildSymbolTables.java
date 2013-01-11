@@ -44,7 +44,11 @@ import IC.AST.VirtualCall;
 import IC.AST.VirtualMethod;
 import IC.AST.Visitor;
 import IC.AST.While;
-
+/**
+ * A visitor implementation that builds the program's symbol tables.
+ * @author ehud
+ *
+ */
 public class BuildSymbolTables implements Visitor {
 		
 	private void tableError(int line, String message) {
@@ -56,6 +60,7 @@ public class BuildSymbolTables implements Visitor {
 	public Object visit(Program program) {
 		GlobalSymbolTable global = new GlobalSymbolTable(null);
 		program.setEnclosingScope(global);
+		// First, insert all classes to the symbol table, for forward references
 		for(ICClass classDecl : program.getClasses()){
 			try {
 				global.insert(classDecl);
@@ -63,6 +68,7 @@ public class BuildSymbolTables implements Visitor {
 				tableError(classDecl.getLine(), semantic.getMessage());
 			}
 		}
+		// Recursively visit all child classes
 		for(ICClass classDecl : program.getClasses()){
 			String superClass = classDecl.getSuperClassName(); 
 			if(superClass != null){
@@ -76,6 +82,7 @@ public class BuildSymbolTables implements Visitor {
 			classDecl.setEnclosingScope(global);
 			classDecl.accept(this);
 		}
+		// Correct class symbol table hierarchy so that each class's parent is the superclass
 		List<SymbolTable> toBeRemoved = new ArrayList<SymbolTable>();
 		for(ICClass classDecl : program.getClasses()){
 			if(classDecl.getSuperClassName() != null){

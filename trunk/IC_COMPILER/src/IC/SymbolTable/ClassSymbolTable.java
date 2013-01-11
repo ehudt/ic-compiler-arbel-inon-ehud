@@ -1,7 +1,6 @@
 package IC.SymbolTable;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +9,12 @@ import IC.SemanticError;
 import IC.AST.Field;
 import IC.AST.Method;
 import IC.AST.Visitor;
+
+/**
+ * Represents a class' symbol table, containing fields and methods
+ * @author ehud
+ *
+ */
 
 public class ClassSymbolTable extends SymbolTable {
 

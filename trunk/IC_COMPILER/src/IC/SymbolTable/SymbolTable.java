@@ -1,13 +1,19 @@
 package IC.SymbolTable;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import IC.AST.Method;
 import IC.AST.Visitor;
+
+/**
+ * Abstract superclass for representing a symbol table.
+ * Each table has a name, a list of children symbol tables and a pointer
+ * to the parent symbol table.
+ * @author ehud
+ *
+ */
 
 public abstract class SymbolTable {
 	protected SymbolTable parent;

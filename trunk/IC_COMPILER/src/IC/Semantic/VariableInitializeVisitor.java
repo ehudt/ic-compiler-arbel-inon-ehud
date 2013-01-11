@@ -62,11 +62,9 @@ import IC.SymbolTable.VarSymbol;
 
 
 public class VariableInitializeVisitor implements Visitor {
-	
+	// records the current step in the iteration
 	private int step = 0;
 	private boolean assignmentLValueContext = false;
-	//private GlobalSymbolTable globalScope;
-	//private ClassSymbolTable currentClassScope;
 	private MethodSymbolTable currentMethodScope;
 	
 	private void initError(int line, String message) {
@@ -78,7 +76,6 @@ public class VariableInitializeVisitor implements Visitor {
 	public Object visit(Program program) {
 		for(ICClass icClass : program.getClasses()){
 			step++;
-			//currentClassScope = (ClassSymbolTable)globalScope.getSymbolTable(icClass.getName());
 			icClass.accept(this);
 		}
 		return null;
@@ -174,6 +171,8 @@ public class VariableInitializeVisitor implements Visitor {
 		return getInitiatedSince(step, currentMethodScope);
 	}
 	
+	// a function that returns all the symbols that were initiated
+	// since the given step of the visitor
 	private Set<VarSymbol> getInitiatedSince(int step, BlockSymbolTable symbolTable) {
 		Set<VarSymbol> returnSet = new HashSet<VarSymbol>();
 		for(VarSymbol symbol : symbolTable.getLocalSymbols()) {
@@ -189,6 +188,11 @@ public class VariableInitializeVisitor implements Visitor {
 		return returnSet;
 	}
 
+	/**
+	 * To find out if a variable was initialized in both if and else blocks, we find out which was initialized
+	 * in each block using getInitiatedSince and comparing the 2 sets. Only variables that appear in both
+	 * are considered initialized 
+	 */
 	@Override
 	public Object visit(If ifStatement) {
 		step++;
@@ -219,6 +223,11 @@ public class VariableInitializeVisitor implements Visitor {
 		return null;
 	}
 	
+	/**
+	 * A variable can be initialized inside a loop context, but the initialization must be discarded because 
+	 * the loop of the body is not guaranteed to be executed. When the while ends, we check which variables were
+	 * initialized inside it and un-initialize them.
+	 */
 	@Override
 	public Object visit(While whileStatement) {
 		step++;

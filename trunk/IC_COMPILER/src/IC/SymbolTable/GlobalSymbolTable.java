@@ -1,7 +1,6 @@
 package IC.SymbolTable;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +9,11 @@ import IC.SemanticError;
 import IC.AST.ICClass;
 import IC.AST.Visitor;
 
+/**
+ * Represents the global symbol table. Contains all the program's classes
+ * @author ehud
+ *
+ */
 public class GlobalSymbolTable extends SymbolTable {
 	private Map<String, ClassSymbol> table = new LinkedHashMap<String, ClassSymbol>();
 	
