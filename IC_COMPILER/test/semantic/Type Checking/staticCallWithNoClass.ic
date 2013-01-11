@@ -1,0 +1,12 @@
+class A {
+	static void arbel(){
+	B x = new B();	
+	C.t();
+}}
+
+class B{
+ 	int test(){
+	}
+
+}
+

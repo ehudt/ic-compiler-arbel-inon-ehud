@@ -1,0 +1,6 @@
+class A {
+	static void arbel(){
+		int y;
+		DONTEXIST x = new DONTEXIST[3];
+}}
+

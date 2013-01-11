@@ -1,0 +1,18 @@
+class A{
+	void a(){
+		int x;
+	}
+
+	int b(){
+		while (false){
+			return 3;}
+
+		if (true){
+		return 5;
+		}
+		
+		
+	}
+
+}
+	
