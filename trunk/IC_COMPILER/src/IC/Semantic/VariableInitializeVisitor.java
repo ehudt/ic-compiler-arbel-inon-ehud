@@ -1,11 +1,8 @@
 package IC.Semantic;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
-import IC.SemanticError;
 import IC.AST.ArrayLocation;
 import IC.AST.Assignment;
 import IC.AST.Break;
@@ -39,7 +36,6 @@ import IC.AST.Statement;
 import IC.AST.StatementsBlock;
 import IC.AST.StaticCall;
 import IC.AST.StaticMethod;
-import IC.AST.Type;
 import IC.AST.This;
 import IC.AST.UserType;
 import IC.AST.VariableLocation;
@@ -55,7 +51,6 @@ import IC.SymbolTable.MethodSymbolTable;
 import IC.SymbolTable.Symbol;
 import IC.SymbolTable.SymbolTable;
 import IC.SymbolTable.VarSymbol;
-import IC.Types.TypeTable;
 
  
 /**
