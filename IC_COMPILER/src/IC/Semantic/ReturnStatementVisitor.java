@@ -1,6 +1,5 @@
 package IC.Semantic;
 
-import IC.SemanticError;
 import IC.AST.ArrayLocation;
 import IC.AST.Assignment;
 import IC.AST.Break;
@@ -9,7 +8,6 @@ import IC.AST.Continue;
 import IC.AST.EmptyStatement;
 import IC.AST.ErrorClass;
 import IC.AST.ErrorMethod;
-import IC.AST.Expression;
 import IC.AST.ExpressionBlock;
 import IC.AST.Field;
 import IC.AST.FieldMethodList;
@@ -45,9 +43,7 @@ import IC.AST.While;
 import IC.SymbolTable.BlockSymbolTable;
 import IC.SymbolTable.ClassSymbolTable;
 import IC.SymbolTable.GlobalSymbolTable;
-import IC.SymbolTable.Kind;
 import IC.SymbolTable.MethodSymbolTable;
-import IC.SymbolTable.Symbol;
 import IC.SymbolTable.SymbolTable;
 import IC.Types.TypeTable;
 
