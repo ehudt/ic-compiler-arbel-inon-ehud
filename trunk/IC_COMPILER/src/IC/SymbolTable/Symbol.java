@@ -1,24 +1,28 @@
 package IC.SymbolTable;
 
+/**
+ * 
+ * An abstract class that defines Symbol
+ * Its fields are: id, line and kind.
+ */
 public abstract class Symbol {
 	protected String id;
-	//protected Type type;
 	protected int line;
 	protected Kind kind;
-	/*
-	public Symbol(String id,Kind kind)
-	{
-		this.id=id;
-		this.kind=kind;
-	}*/
 	
+	/** 
+	 * Constructor for Symbol 
+	 **/
 	public Symbol(String id,Kind kind,int line)
 	{
 		this.id=id;
 		this.kind=kind;
 		this.line=line;
 	}
-	//getters
+	
+	/**
+	 * getters and setters 
+	 */
 	public String getID()
 	{
 		return this.id;

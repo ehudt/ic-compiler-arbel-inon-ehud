@@ -9,14 +9,19 @@ public class FieldSymbol extends Symbol{
 	private Field field;
 	Type type;
 	
-	//constructor
+	/**
+	 * constructor
+	 */
 	public FieldSymbol(Field f)
 	{
 		super(f.getName(),Kind.FIELD, f.getLine());
 		this.field=f;
 		this.type= TypeTable.getType(f.getType());
 	}
-	//getters
+	
+	/**
+	 * getters
+	 */
 	
 	public Field getField()
 	{
