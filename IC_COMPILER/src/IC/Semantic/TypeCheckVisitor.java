@@ -62,6 +62,14 @@ import IC.SymbolTable.FieldSymbol;
 import IC.Types.MethodType;
 import IC.Types.TypeTable;
 
+/**
+ *	This class is in charge with the type and scope checks.
+ *	This visitor recursively go over the expressions and statements in the program and see that all
+ *	the types are correct according to IC spec.  
+ * @author arbel
+ *
+ */
+
 public class TypeCheckVisitor implements Visitor {
 	private boolean inLoopContext = false;
 	private boolean inVirtualMethodContext = false;
