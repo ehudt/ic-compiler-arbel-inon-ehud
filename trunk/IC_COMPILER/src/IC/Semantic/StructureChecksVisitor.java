@@ -1,5 +1,15 @@
 package IC.Semantic;
 
+
+
+/**
+ *	This class is in charge with structure checks.
+ *	This visitor recursively go over the program and see that the structure
+ *	is correct, according to the IC spec
+ * @author arbel
+ *
+ */
+
 import java.util.List;
 
 import IC.LiteralTypes;
