@@ -531,7 +531,7 @@ public class PrettyPrinter implements Visitor {
 		depth = 0;
 		StringBuffer str = new StringBuffer();
 		str.append("Statement Block Symbol Table ");
-		str.append(" ( located in ");
+		str.append("( located in ");
 		str.append(table.getParent().toString());
 		str.append(" )");
 		depth += 4;
