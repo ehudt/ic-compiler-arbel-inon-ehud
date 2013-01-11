@@ -56,13 +56,14 @@ public class VarSymbol extends Symbol {
 	}
 	
 	public boolean equals(Object other) {
-		if(!(other instanceof VarSymbol)) return false;
+		/*if(!(other instanceof VarSymbol)) return false;
 		VarSymbol otherSymbol = (VarSymbol)other;
 		boolean retVal = this.id.equals(otherSymbol.id) &&
 				this.kind == otherSymbol.kind &&
 				this.line == otherSymbol.line &&
 				this.type.equals(otherSymbol.type) &&
 				this.isParam == otherSymbol.isParam;
-		return retVal;
+		return retVal;*/
+		return this == other;
 	}
 }

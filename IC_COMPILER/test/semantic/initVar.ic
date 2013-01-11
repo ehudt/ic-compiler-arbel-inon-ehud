@@ -4,7 +4,7 @@ class A {
 		int y = 5;
 {
 		if(y == 8) {
-//			x = 6;
+			x = 6;
 		} else {
 //			x = 7;
 		}	
