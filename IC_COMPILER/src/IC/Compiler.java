@@ -10,6 +10,7 @@ import IC.Parser.*;
 import IC.Semantic.ReturnStatementVisitor;
 import IC.Semantic.StructureChecksVisitor;
 import IC.Semantic.TypeCheckVisitor;
+import IC.Semantic.VariableInitializeVisitor;
 import IC.SymbolTable.BuildSymbolTables;
 import IC.SymbolTable.GlobalSymbolTable;
 import IC.Types.TypeTable;
@@ -121,6 +122,8 @@ public class Compiler
     		programRoot.accept(typeChecker);
     		ReturnStatementVisitor returnChecker = new ReturnStatementVisitor();
     		programRoot.accept(returnChecker);
+    		VariableInitializeVisitor varInitCheck = new VariableInitializeVisitor();
+    		programRoot.accept(varInitCheck);
     		//System.out.println("globalSymbolTable is " + globalSymbolTable);
     		if(printSymTab){
     			PrettyPrinter symTabPrint = new PrettyPrinter(srcPath);
