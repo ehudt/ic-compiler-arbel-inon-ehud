@@ -272,10 +272,11 @@ public class VariableInitializeVisitor implements Visitor {
 		localVariable.getType().accept(this);
 		if(localVariable.hasInitValue()) {
 			step++;
+			localVariable.getInitValue().accept(this);
+			step++;
 			VarSymbol varSymbol = (VarSymbol)localVariable.getEnclosingScope().lookup(localVariable.getName());
 			varSymbol.setInitStep(step);
 			step++;
-			localVariable.getInitValue().accept(this);
 		}
 		return null;
 	}
