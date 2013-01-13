@@ -8,10 +8,15 @@ package IC.Parser;
 %function next_token
 %type Token
 %line
+%column
 %scanerror LexicalError
 
 %{
 	public int getCurrentLine() { return (yyline + 1); }
+%}
+
+%{
+	public int getCurrentColumn() { return (yycolumn); }
 %}
 
 %eofval{
@@ -58,7 +63,7 @@ null	{ return new Token(sym.NULL,getCurrentLine()); }
 
 // rules for identifier IDs
 {CLASS_ID}	{ return new Token(sym.CLASS_ID,getCurrentLine(),yytext()); }
-{ID}	{ return new Token(sym.ID,getCurrentLine(),yytext()); }
+{ID}	{ return new Token(sym.ID, getCurrentLine(), getCurrentColumn(), yytext()); }
 
 // rules for numbers: illegal numbers and afterwards legal numbers
 0+{NONZERO}{DIGIT}*				{ throw new LexicalError(yytext(), getCurrentLine(), getCurrentLine() + ": Lexical error: illegal integer format in token '" + yytext() + "'"); }

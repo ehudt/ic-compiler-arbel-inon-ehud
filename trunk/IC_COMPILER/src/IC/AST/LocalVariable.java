@@ -25,10 +25,11 @@ public class LocalVariable extends Statement {
 	 * @param name
 	 *            Name of local variable.
 	 */
-	public LocalVariable(Type type, String name) {
+	public LocalVariable(Type type, String name, int column) {
 		super(type.getLine());
 		this.type = type;
 		this.name = name;
+		this.column = column;
 	}
 
 	/**
@@ -42,8 +43,8 @@ public class LocalVariable extends Statement {
 	 * @param initValue
 	 *            Initial value of local variable.
 	 */
-	public LocalVariable(Type type, String name, Expression initValue) {
-		this(type, name);
+	public LocalVariable(Type type, String name, Expression initValue, int column) {
+		this(type, name, column);
 		this.initValue = initValue;
 	}
 
@@ -61,6 +62,10 @@ public class LocalVariable extends Statement {
 
 	public Expression getInitValue() {
 		return initValue;
+	}
+
+	public int getColumn() {
+		return column;
 	}
 
 }

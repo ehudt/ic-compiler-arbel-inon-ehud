@@ -278,9 +278,21 @@ public class TypeCheckVisitor implements Visitor {
 				scopeError(location.getLine(), "undeclared identifier: " + location.getName());
 			}
 			if (varSymbol.getKind() == Kind.VARIABLE) {
-				if (varSymbol.getLine() > location.getLine()) {
-					scopeError(location.getLine(), "variable " + location.getName() + " is used before declaration");
+				if (varSymbol.getLine() > location.getLine() ||
+						(varSymbol.getLine() == location.getLine() &&
+						 location.getColumn() > -1 &&
+						 ((VarSymbol)varSymbol).getColumn() >= location.getColumn())) {
+					// the variable we're looking for was defined in an enclosing scope or it was
+					// used before declaration
+					Symbol altSymbol = location.getEnclosingScope().getParent().lookup(location.getName());
+					if(altSymbol != null && (altSymbol.getKind() == Kind.VARIABLE || altSymbol.getKind() == Kind.FIELD)) {
+						varSymbol = altSymbol;
+					} else {
+						scopeError(location.getLine(), "variable " + location.getName() + " is used before declaration");
+					}
 				}
+			}
+			if (varSymbol.getKind() == Kind.VARIABLE) {
 				expressionType = TypeTable.getType(((VarSymbol)varSymbol).getType(), false);
 			} else if (varSymbol.getKind() == Kind.FIELD && inVirtualMethodContext) {
 				expressionType = TypeTable.getType(((FieldSymbol)varSymbol).getType(), false);
@@ -352,6 +364,7 @@ public class TypeCheckVisitor implements Visitor {
 		// TODO Again, must decide if we can call a method of a superclass or not
 		/*Symbol methodSymbol = classScope.staticLookup(staticMethodName);*/
 		Symbol methodSymbol = classScope.lookup(staticMethodName);
+		
 		if(methodSymbol == null || methodSymbol.getKind() != Kind.METHOD ||
 				!((MethodSymbol)methodSymbol).isStatic()){
 			scopeError(call.getLine(), staticMethodName + ": no such static method in " + className);	

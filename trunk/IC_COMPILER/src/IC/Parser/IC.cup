@@ -21,8 +21,6 @@ parser code  {:
 	public int getCurrentLine() {
 		return this.lexer.getCurrentLine();
 	}
-
-	
 	
 	// override method: syntax_error
 	public void unrecovered_syntax_error(Symbol curr_tok) throws SyntaxError{
@@ -351,12 +349,12 @@ stmt ::= location:l ASSIGN expr:e SEMI
 
 varDecl ::=	type:t ID:id ASSIGN expr:e SEMI
 		 {:
-		 	RESULT = new LocalVariable(t, id, e); 
+		 	RESULT = new LocalVariable(t, id, e, idright); 
 		 :}
 		 |
 		 type:t ID:id SEMI
 		 {:
-			RESULT = new LocalVariable(t, id);
+			RESULT = new LocalVariable(t, id, idright);
 		 :}
 ;			 		 		 		 
 
@@ -442,7 +440,7 @@ virtualCall ::= expr:e DOT ID:id LP exprList:args RP
 ;
 
 location ::= ID:id
-			{: RESULT = new VariableLocation(idleft, id); :}
+			{: RESULT = new VariableLocation(idleft, id, idright); :}
 			| expr:e DOT ID:id
 			{: RESULT = new VariableLocation(eleft, e, id); :}
 			| expr:arr LB expr:index RB

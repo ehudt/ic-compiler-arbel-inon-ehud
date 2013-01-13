@@ -1,0 +1,38 @@
+class A {
+	int id;
+	static int getSquare(int x) {
+		return x * x;
+	}
+	int getId() {
+		return id;
+	}
+}
+
+class B extends A {
+	string name;
+	static int getCube(int x) {
+		return x * x * x;
+	}
+	string getName() {
+		string s = name;
+		return name;
+	}
+}
+
+class C extends B {
+	static void main(string[] args) {
+		C c = new C();
+		c.getSquare(7);
+		c.getId();
+		c.getCube(8);
+		c.getName();
+		return;
+	}
+	void doSomething() {
+		A.getSquare(7);
+		getId();
+		getCube(8);
+		getName();
+		return;
+	}	
+}
