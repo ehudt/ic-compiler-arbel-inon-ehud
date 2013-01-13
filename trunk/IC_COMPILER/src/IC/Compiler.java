@@ -160,7 +160,7 @@ public class Compiler
     		System.exit(0);
     	}
     	catch (Exception e) {
-    		System.out.println("Error: "+ e.getClass() + e.getMessage());
+    		System.out.println("Error: "+ e.getClass() + " " + e.getMessage());
     		e.printStackTrace();
     		System.exit(0);
     	}
