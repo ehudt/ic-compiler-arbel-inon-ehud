@@ -117,6 +117,8 @@ public class StructureChecksVisitor implements Visitor {
 			icClass.accept(this);
 		}
 		inLoopContext = false;
+		if (!hasMain)
+			structureError(program.getLine(),"No main method found");
 		return null;
 	}
 
