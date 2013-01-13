@@ -33,6 +33,14 @@ public class Token extends Symbol {
     }
     
     /**
+     * constructot for a token with column number
+     */
+    public Token(int id, int line, int column, Object value) {
+    	this(id, line, value);
+    	this.right = column;
+    }
+    
+    /**
      * Get the current token's ID
      * @return	this token's ID
      */

@@ -11,6 +11,7 @@ public class VarSymbol extends Symbol {
 	boolean isParam;
 	int defineStep = 0;
 	int initStep = Integer.MAX_VALUE;
+	int column = -1;
 	
 	
 	
@@ -23,6 +24,7 @@ public class VarSymbol extends Symbol {
 		super(lv.getName(),Kind.VARIABLE, lv.getLine());
 		this.isParam=false;
 		this.type = TypeTable.getType(lv.getType());
+		this.column = lv.getColumn();
 	}
 	
 	public VarSymbol(Formal f)
@@ -81,5 +83,9 @@ public class VarSymbol extends Symbol {
 				this.isParam == otherSymbol.isParam;
 		return retVal;*/
 		return this == other;
+	}
+	
+	public int getColumn() {
+		return column;
 	}
 }

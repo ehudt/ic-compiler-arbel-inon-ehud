@@ -12,6 +12,7 @@ import IC.SymbolTable.SymbolTable;
 public abstract class ASTNode {
 
 	private int line;
+	int column = -1;
 	
 	private SymbolTable enclosingScope;
 
@@ -50,6 +51,10 @@ public abstract class ASTNode {
 
 	public void setEnclosingScope(SymbolTable enclosingScope) {
 		this.enclosingScope = enclosingScope;
+	}
+	
+	public int getColumn() {
+		return column;
 	}
 
 
