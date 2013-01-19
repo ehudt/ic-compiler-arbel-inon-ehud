@@ -122,8 +122,18 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 
 	@Override
 	public LirBlock visit(StaticMethod method, Integer targetReg) {
-		// TODO Auto-generated method stub
-		return null;
+		StringBuilder lirCode = new StringBuilder();
+		String methodName = method.getName();
+		if (methodName == "main")
+			methodName = "_ic_main";
+		
+		lirCode.append(methodName+":\n");
+		
+		for (Statement s : method.getStatements()){
+			lirCode.append(s.accept(this, targetReg).getLirCode());
+		}
+		
+		return new LirBlock(lirCode, targetReg);
 	}
 
 	@Override
