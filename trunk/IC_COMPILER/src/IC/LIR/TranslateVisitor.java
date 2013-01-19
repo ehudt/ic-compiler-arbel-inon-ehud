@@ -3,6 +3,7 @@ package IC.LIR;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import IC.BinaryOps;
 import IC.AST.ArrayLocation;
 import IC.AST.Assignment;
 import IC.AST.Break;
@@ -45,6 +46,7 @@ import IC.SymbolTable.ClassSymbolTable;
 import IC.SymbolTable.GlobalSymbolTable;
 import IC.SymbolTable.MethodSymbolTable;
 import IC.SymbolTable.SymbolTable;
+import IC.Types.TypeTable;
 import IC.LIR.ClassLayout;
 
 public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
@@ -319,14 +321,131 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 
 	@Override
 	public LirBlock visit(MathBinaryOp binaryOp, Integer targetReg) {
-		// TODO Auto-generated method stub
-		return null;
+		String opString = "";
+		StringBuilder lirCode = new StringBuilder("");
+		
+		Integer firstTargetReg=targetReg;
+		Integer secondTargetReg=targetReg+1;
+		
+		LirBlock leftOperand=binaryOp.getFirstOperand().accept(this,firstTargetReg);
+		lirCode.append(leftOperand.getLirCode());
+		lirCode.append("\n");
+		
+		LirBlock rightOperand=binaryOp.getSecondOperand().accept(this,secondTargetReg);
+		lirCode.append(rightOperand.getLirCode());
+		lirCode.append("\n");
+		
+		switch(binaryOp.getOperator())
+		{
+			case PLUS:
+				IC.AST.Type operandType=(IC.AST.Type)binaryOp.getFirstOperand().accept(new IC.Semantic.TypeCheckVisitor());
+				if(operandType==TypeTable.getType("int"))
+				{
+					//Addition of 2 integers
+					opString="Add R"+secondTargetReg+",R"+firstTargetReg;
+				}
+				else
+				{
+					//Concatenation of 2 strings
+					opString="Library __stringCat(R"+secondTargetReg+",R"+firstTargetReg+"),R"+firstTargetReg;
+				}
+				break;
+			case MINUS:
+				opString="Sub R"+secondTargetReg+",R"+firstTargetReg;
+				break;
+			case MULTIPLY:
+				opString="Mul R"+secondTargetReg+",R"+firstTargetReg;
+				break;
+			case DIVIDE:
+				//static call to checkZero on runtime
+				opString+="StaticCall __checkZero(R"+secondTargetReg+")";
+				opString+="Div R"+secondTargetReg+",R"+firstTargetReg;
+				break;
+			case MOD:
+				opString="Mod R"+secondTargetReg+",R"+firstTargetReg;
+				break;
+		}
+		lirCode.append(opString);
+		lirCode.append("\n");
+		
+		return new LirBlock(lirCode, targetReg);
 	}
 
 	@Override
 	public LirBlock visit(LogicalBinaryOp binaryOp, Integer targetReg) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		String jumpString = "";
+		StringBuilder lirCode = new StringBuilder("");
+		int lblnum=getNextLabelNum();
+		
+		Integer firstTargetReg=targetReg;
+		Integer secondTargetReg=targetReg+1;
+		
+		LirBlock leftOperand=binaryOp.getFirstOperand().accept(this,firstTargetReg);
+		lirCode.append(leftOperand.getLirCode());
+		lirCode.append("\n");
+		
+		LirBlock rightOperand=binaryOp.getSecondOperand().accept(this,secondTargetReg);
+		lirCode.append(rightOperand.getLirCode());
+		lirCode.append("\n");
+		
+		if(binaryOp.getOperator()==BinaryOps.LOR || binaryOp.getOperator()==BinaryOps.LAND)
+		{
+			String compareTo;
+			String boolOp;
+			if(binaryOp.getOperator()==BinaryOps.LOR)
+			{
+				compareTo="0";
+				boolOp="Or";
+			}
+			else
+			{
+				compareTo="1";
+				boolOp="And";
+			}
+			lirCode.append("Compare "+compareTo+",R"+firstTargetReg);
+			lirCode.append("JumpTrue endlbl"+lblnum);
+			lirCode.append(boolOp+" R"+secondTargetReg+",R"+firstTargetReg);
+			
+		}
+		else
+		{
+			lirCode.append("Compare R"+secondTargetReg+",R"+firstTargetReg);
+			lirCode.append("\n");
+			
+			switch (binaryOp.getOperator()) {
+			case GT:
+				jumpString+="JumpG";
+				break;
+			case GTE:
+				jumpString+="JumpGE";
+				break;
+			case LT:
+				jumpString+="JumpL";
+				break;
+			case LTE:
+				jumpString+="JumpLE";
+				break;
+			case EQUAL:
+				jumpString+="JumpTrue";
+				break;
+			case NEQUAL:
+				jumpString+="JumpFalse";
+				break;
+			}
+			jumpString+=" truelbl"+lblnum+"\n";
+			
+			lirCode.append(jumpString);
+			lirCode.append("Move 0,R"+firstTargetReg);
+			lirCode.append("\n");
+			lirCode.append("Jump endlbl"+lblnum+"\n");
+			lirCode.append("truelbl"+lblnum+":\n");
+			lirCode.append("Move 1,R"+firstTargetReg);
+			lirCode.append("\n");
+		}
+		
+		lirCode.append("endlbl"+lblnum+":\n");
+		return new LirBlock(lirCode, targetReg);
 	}
 
 	@Override
