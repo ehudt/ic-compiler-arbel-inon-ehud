@@ -1,6 +1,7 @@
 package IC.LIR;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import IC.AST.ArrayLocation;
 import IC.AST.Assignment;
@@ -47,8 +48,10 @@ import IC.SymbolTable.SymbolTable;
 
 public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 	
-	private HashMap<String, String> stringLiterals = new HashMap<String, String>();
+	private Map<String, String> stringLiterals = new HashMap<String, String>();
+	private Map<String,ClassLayout> classLayouts = new HashMap<String, ClassLayout>();
 	private int stringLiteralsCounter = 0;
+	private int labelCount = 1;
 	
 	@Override
 	public LirBlock visit(Program program, Integer targetReg) {
