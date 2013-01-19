@@ -3,6 +3,9 @@ package IC.AST;
 import java.util.ArrayList;
 import java.util.List;
 
+import IC.LIR.LirBlock;
+import IC.LIR.PropagatingVisitor;
+
 /**
  * Library method declaration AST node.
  * 
@@ -12,6 +15,16 @@ public class LibraryMethod extends Method {
 
 	public Object accept(Visitor visitor) {
 		return visitor.visit(this);
+	}
+	
+	/**
+	 * Implementation of propagating visitor
+	 * @param visitor
+	 * @param targetReg
+	 * @return
+	 */
+	public LirBlock accept(PropagatingVisitor<LirBlock, Integer> visitor, Integer targetReg){
+		return visitor.visit(this, targetReg);
 	}
 
 	/**

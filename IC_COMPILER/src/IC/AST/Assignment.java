@@ -1,5 +1,8 @@
 package IC.AST;
 
+import IC.LIR.LirBlock;
+import IC.LIR.PropagatingVisitor;
+
 /**
  * Assignment statement AST node.
  * 
@@ -36,5 +39,14 @@ public class Assignment extends Statement {
 	public Expression getAssignment() {
 		return assignment;
 	}
-
+	
+	/**
+	 * Implementation of propagating visitor
+	 * @param visitor
+	 * @param targetReg
+	 * @return
+	 */
+	public LirBlock accept(PropagatingVisitor<LirBlock, Integer> visitor, Integer targetReg){
+		return visitor.visit(this, targetReg);
+	}
 }

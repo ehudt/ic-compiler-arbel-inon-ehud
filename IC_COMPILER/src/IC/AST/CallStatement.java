@@ -1,5 +1,8 @@
 package IC.AST;
 
+import IC.LIR.LirBlock;
+import IC.LIR.PropagatingVisitor;
+
 /**
  * Method call statement AST node.
  * 
@@ -13,6 +16,15 @@ public class CallStatement extends Statement {
 		return visitor.visit(this);
 	}
 
+	/**
+	 * Implementation of propagating visitor
+	 * @param visitor
+	 * @param targetReg
+	 * @return
+	 */
+	public LirBlock accept(PropagatingVisitor<LirBlock, Integer> visitor, Integer targetReg){
+		return visitor.visit(this, targetReg);
+	}
 	/**
 	 * Constructs a new method call statement node.
 	 * 

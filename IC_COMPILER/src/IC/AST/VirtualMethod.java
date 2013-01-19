@@ -2,6 +2,9 @@ package IC.AST;
 
 import java.util.List;
 
+import IC.LIR.LirBlock;
+import IC.LIR.PropagatingVisitor;
+
 /**
  * Virtual method AST node.
  * 
@@ -11,6 +14,16 @@ public class VirtualMethod extends Method {
 
 	public Object accept(Visitor visitor) {
 		return visitor.visit(this);
+	}
+	
+	/**
+	 * Implementation of propagating visitor
+	 * @param visitor
+	 * @param targetReg
+	 * @return
+	 */
+	public LirBlock accept(PropagatingVisitor<LirBlock, Integer> visitor, Integer targetReg){
+		return visitor.visit(this, targetReg);
 	}
 
 	/**
