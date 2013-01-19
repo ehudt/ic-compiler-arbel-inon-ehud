@@ -54,6 +54,7 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 	private Map<String, String> stringLiterals = new LinkedHashMap<String, String>();
 	private Map<String,ClassLayout> classLayouts = new LinkedHashMap<String, ClassLayout>();
 	private int labelCount = 1;
+	private int currentLoopLabel = -1;
 	
 	private int getNextLabelNum() {
 		return labelCount++;
@@ -210,7 +211,10 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 		whileCode.append("Compare 0,R" + conditionCode.getTargetRegister() + "\n");
 		whileCode.append("JumpTrue _end_label" + labelNum + "\n");
 		
+		Integer prevLoopLabel = currentLoopLabel;
+		currentLoopLabel = labelNum;
 		LirBlock operationCode = whileStatement.getOperation().accept(this, targetReg);
+		currentLoopLabel = prevLoopLabel;
 		whileCode.append(operationCode.getLirCode());
 		whileCode.append("Jump _test_label" + labelNum + "\n");
 		whileCode.append("_end_label" + labelNum + ":");
@@ -220,14 +224,14 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 
 	@Override
 	public LirBlock visit(Break breakStatement, Integer targetReg) {
-		// TODO Auto-generated method stub
-		return null;
+		StringBuilder lirCode = new StringBuilder("Jump _end_label" + currentLoopLabel+ "\n");
+		return new LirBlock(lirCode, targetReg);
 	}
 
 	@Override
 	public LirBlock visit(Continue continueStatement, Integer targetReg) {
-		// TODO Auto-generated method stub
-		return null;
+		StringBuilder lirCode = new StringBuilder("Jump _test_label" + currentLoopLabel+ "\n");
+		return new LirBlock(lirCode, targetReg);
 	}
 
 	@Override
