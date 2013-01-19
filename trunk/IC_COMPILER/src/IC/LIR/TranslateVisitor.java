@@ -223,16 +223,27 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 
 	@Override
 	public LirBlock visit(MathUnaryOp unaryOp, Integer targetReg) {
-		StringBuilder lirCode = new StringBuilder("MOVE ");
+		StringBuilder lirCode = new StringBuilder();
+		LirBlock operand = unaryOp.getOperand().accept(this, targetReg);
+		lirCode.append(operand.getLirCode());
+		lirCode.append("Neg R");
+		lirCode.append(operand.getTargetRegister().toString());
+		lirCode.append("\n");
 		
-		
-		return null;
+		return new LirBlock(lirCode, targetReg);
 	}
 
 	@Override
 	public LirBlock visit(LogicalUnaryOp unaryOp, Integer targetReg) {
-		// TODO Auto-generated method stub
-		return null;
+		StringBuilder lirCode = new StringBuilder();
+		LirBlock operand = unaryOp.getOperand().accept(this, targetReg);
+		lirCode.append(operand.getLirCode());
+		lirCode.append("Neg R");
+		lirCode.append(operand.getTargetRegister().toString());
+		lirCode.append("\n");
+		
+		return new LirBlock(lirCode, targetReg);
+		
 	}
 
 	@Override
@@ -267,6 +278,7 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 		lirCode.append(literalString);
 		lirCode.append(",R");
 		lirCode.append(targetReg.toString());
+		lirCode.append("\n");
 		
 		return new LirBlock(lirCode, targetReg);
 	}
