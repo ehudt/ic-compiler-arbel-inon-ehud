@@ -50,7 +50,6 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 	
 	private Map<String, String> stringLiterals = new HashMap<String, String>();
 	private Map<String,ClassLayout> classLayouts = new HashMap<String, ClassLayout>();
-	private int stringLiteralsCounter = 0;
 	private int labelCount = 1;
 	
 	@Override
@@ -224,7 +223,9 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 
 	@Override
 	public LirBlock visit(MathUnaryOp unaryOp, Integer targetReg) {
-		// TODO Auto-generated method stub
+		StringBuilder lirCode = new StringBuilder("MOVE ");
+		
+		
 		return null;
 	}
 
@@ -242,7 +243,7 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 			case STRING:
 				String str = literal.getValue().toString();
 				if(!stringLiterals.containsKey(str))
-					stringLiterals.put(str, "str"+(stringLiteralsCounter++));
+					stringLiterals.put(str, "str"+(stringLiterals.size()+1));
 				literalString = stringLiterals.get(str);
 				break;
 				
