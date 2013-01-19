@@ -42,11 +42,15 @@ import IC.AST.VariableLocation;
 import IC.AST.VirtualCall;
 import IC.AST.VirtualMethod;
 import IC.AST.While;
+import IC.Semantic.TypeCheckVisitor;
 import IC.SymbolTable.BlockSymbolTable;
 import IC.SymbolTable.ClassSymbolTable;
 import IC.SymbolTable.GlobalSymbolTable;
+import IC.SymbolTable.Kind;
 import IC.SymbolTable.MethodSymbolTable;
+import IC.SymbolTable.Symbol;
 import IC.SymbolTable.SymbolTable;
+import IC.SymbolTable.VarSymbol;
 import IC.Types.TypeTable;
 import IC.LIR.ClassLayout;
 
@@ -162,9 +166,28 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 
 	@Override
 	public LirBlock visit(Assignment assignment, Integer targetReg) {
+		StringBuilder assignCode = new StringBuilder();		
 		LirBlock exprBlock = assignment.getAssignment().accept(this, targetReg);
+		assignCode.append(exprBlock.getLirCode());
+		LirBlock varBlock = assignment.getVariable().accept(this, targetReg + 1);
+		assignCode.append(varBlock.getLirCode());
+		switch(exprBlock.getValueType()) {
+			case VARIABLE:
+				assignCode.append("Move R" + targetReg + "," + 
+									((VariableLocation)assignment.getVariable()).getName() + 
+									"\n");
+				break;
+			case FIELD:
+				assignCode.append("MoveField R" + targetReg + "," +
+									"R" + (targetReg+1) + ".R" + (targetReg+2) + "\n");
+				break;
+			case ARRAY_LOCATION:
+				assignCode.append("MoveArray R" + targetReg + "," +
+									"R" + (targetReg+1) + "[R" + (targetReg+2) + "]\n");
+				break;			
+		}
 		
-		return null;
+		return new LirBlock(assignCode, targetReg);
 	}
 
 	@Override
@@ -264,8 +287,30 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 
 	@Override
 	public LirBlock visit(VariableLocation location, Integer targetReg) {
-		// TODO Auto-generated method stub
-		return null;
+		StringBuilder locationCode = new StringBuilder();
+		if (location.isExternal()) {
+			LirBlock locExpr = location.getLocation().accept(this, targetReg);
+			locationCode.append(locExpr.getLirCode());
+			
+			UserType instanceType = (UserType)location.getLocation().accept(new TypeCheckVisitor());
+			String className = instanceType.getName();
+			Integer fieldOffset = classLayouts.get(className).getFieldOffset(location.getName());
+			locationCode.append("Move " + fieldOffset + ",R" + (targetReg+1) + "\n");
+			return new LirBlock(locationCode, targetReg, LirValueType.FIELD);
+		} else {
+			Symbol symbol = location.getEnclosingScope().lookup(location.getName());
+			if (symbol.getKind() == Kind.FIELD) {
+				locationCode.append("Move this,R" + targetReg + "\n");
+				String className = location.getEnclosingClassTable().getName();
+				Integer fieldOffset = classLayouts.get(className).getFieldOffset(location.getName());
+				locationCode.append("Move " + fieldOffset + ",R" + (targetReg+1) + "\n");
+				return new LirBlock(locationCode, targetReg, LirValueType.FIELD);
+			} else {
+				assert(symbol.getKind() == Kind.VARIABLE);
+				locationCode.append(location.getName());
+				return new LirBlock(locationCode, targetReg, LirValueType.VARIABLE);
+			}
+		}
 	}
 
 	@Override
