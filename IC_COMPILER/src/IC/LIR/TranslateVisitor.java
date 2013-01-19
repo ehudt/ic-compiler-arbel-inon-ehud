@@ -149,7 +149,8 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 
 	@Override
 	public LirBlock visit(Assignment assignment, Integer targetReg) {
-		// TODO Auto-generated method stub
+		LirBlock exprBlock = assignment.getAssignment().accept(this, targetReg);
+		
 		return null;
 	}
 
@@ -276,8 +277,13 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 
 	@Override
 	public LirBlock visit(NewClass newClass, Integer targetReg) {
-		// TODO Auto-generated method stub
-		return null;
+		StringBuilder newCode = new StringBuilder();
+		newCode.append("Library __allocateObject(" + 
+						classLayouts.get(newClass.getName()).getObjectAllocSize() +
+						"),R" + targetReg + "\n");
+		newCode.append("MoveField _DV_" + newClass.getName() + ",R" +
+						targetReg + ".0\n");
+		return new LirBlock(newCode, targetReg);
 	}
 
 	@Override
