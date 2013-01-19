@@ -1,0 +1,8 @@
+class A {
+	static void main(string[] args) {
+		int[][][] a = new int[][][5];
+		a[5] = new int[][6];
+		a[5][1] = new int[7];
+		return;
+	}
+}
