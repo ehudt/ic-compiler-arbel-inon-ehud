@@ -45,23 +45,34 @@ import IC.SymbolTable.ClassSymbolTable;
 import IC.SymbolTable.GlobalSymbolTable;
 import IC.SymbolTable.MethodSymbolTable;
 import IC.SymbolTable.SymbolTable;
+import IC.LIR.ClassLayout;
 
 public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 	
-	private Map<String, String> stringLiterals = new HashMap<String, String>();
-	private Map<String,ClassLayout> classLayouts = new HashMap<String, ClassLayout>();
+	private Map<String, String> stringLiterals = new LinkedHashMap<String, String>();
+	private Map<String,ClassLayout> classLayouts = new LinkedHashMap<String, ClassLayout>();
 	private int labelCount = 1;
 	
 	@Override
 	public LirBlock visit(Program program, Integer targetReg) {
-		// TODO Auto-generated method stub
+		StringBuilder programCode = new StringBuilder();
 		
-		return null;
+		
+		/* visit the program */
+		StringBuilder classesCode = new StringBuilder();
+		for (ICClass classDecl : program.getClasses()) {
+			classesCode.append(classDecl.accept(this, targetReg));
+		}
+		
+		/* generate the string literals' and DVs' code */
+		
+		
+		return new LirBlock(programCode, targetReg);
 	}
 
 	@Override
 	public LirBlock visit(ICClass icClass, Integer targetReg) {
-		// TODO Auto-generated method stub
+		classLayouts.put(icClass.getName(), ClassLayout.NewClassLayout(icClass));
 		return null;
 	}
 
