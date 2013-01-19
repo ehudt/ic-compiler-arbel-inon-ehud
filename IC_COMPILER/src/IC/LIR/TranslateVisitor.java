@@ -160,7 +160,33 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 	@Override
 	public LirBlock visit(If ifStatement, Integer targetReg) {
 		// TODO Auto-generated method stub
-		return null;
+		StringBuilder lirCode = new StringBuilder();
+		Integer labelNumber = getNextLabelNum();
+		String falseLabel = "_false_label" + labelNumber.toString();
+		String endLabel = "_end_label"+labelNumber.toString();
+		
+		LirBlock condition = ifStatement.getCondition().accept(this, targetReg);
+		LirBlock trueStatement = ifStatement.getOperation().accept(this,targetReg);
+		
+		lirCode.append(condition.getLirCode());
+		lirCode.append("Compare 0,R");
+		lirCode.append(condition.getTargetRegister()+"\n");
+		if (ifStatement.hasElse()){
+			LirBlock elseStatement = ifStatement.getElseOperation().accept(this, targetReg);
+			lirCode.append("JumpTrue "+falseLabel+"\n");
+			lirCode.append(trueStatement.getLirCode());
+			lirCode.append("Jump "+endLabel+"\n");
+			lirCode.append(falseLabel+":\n");
+			lirCode.append(elseStatement.getLirCode());
+			lirCode.append(endLabel+":\n");
+			}
+		else{
+			lirCode.append("JumpTrue "+endLabel+"\n");
+			lirCode.append(trueStatement.getLirCode());
+			lirCode.append(endLabel+":\n");
+		}
+			
+		return new LirBlock(lirCode, targetReg);
 	}
 
 	@Override
@@ -231,14 +257,28 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 
 	@Override
 	public LirBlock visit(NewArray newArray, Integer targetReg) {
-		// TODO Auto-generated method stub
-		return null;
+		StringBuilder lirCode = new StringBuilder();
+		LirBlock size = newArray.getSize().accept(this, targetReg);
+		lirCode.append(size.getLirCode());
+		lirCode.append("Library __allocateArray(R");
+		lirCode.append(size.getTargetRegister().toString());
+		lirCode.append("),R");
+		lirCode.append(targetReg.toString());
+		lirCode.append("\n");
+		return new LirBlock(lirCode, targetReg);
 	}
 
 	@Override
 	public LirBlock visit(Length length, Integer targetReg) {
-		// TODO Auto-generated method stub
-		return null;
+		//Expects to get the array in a register
+		//TODO maybe we'll change this in optimizations
+		StringBuilder lirCode = new StringBuilder();
+		LirBlock array = length.getArray().accept(this, targetReg);
+		lirCode.append(array.getLirCode());
+		lirCode.append("ArrayLength R"+ array.getTargetRegister().toString()+",R"+
+		targetReg.toString()+"\n");
+		
+		return new LirBlock(lirCode,targetReg);
 	}
 
 	@Override
