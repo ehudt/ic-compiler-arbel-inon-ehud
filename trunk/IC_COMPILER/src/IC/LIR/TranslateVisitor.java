@@ -1,6 +1,7 @@
 package IC.LIR;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import IC.AST.ArrayLocation;
@@ -53,6 +54,10 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 	private Map<String,ClassLayout> classLayouts = new LinkedHashMap<String, ClassLayout>();
 	private int labelCount = 1;
 	
+	private int getNextLabelNum() {
+		return labelCount++;
+	}
+	
 	@Override
 	public LirBlock visit(Program program, Integer targetReg) {
 		StringBuilder programCode = new StringBuilder();
@@ -64,8 +69,24 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 			classesCode.append(classDecl.accept(this, targetReg));
 		}
 		
-		/* generate the string literals' and DVs' code */
+		/* generate the string literals' code */
+		for (String label : stringLiterals.keySet()) {
+			programCode.append(label);
+			programCode.append(": \"");
+			programCode.append(stringLiterals.get(label));
+			programCode.append("\"\n");
+		}
+		programCode.append("\n");
 		
+		/* generate DVs' code */
+		for (ICClass classDecl : program.getClasses()) {
+			String dvStr = classLayouts.get(classDecl.getName()).getDispatchVector();
+			programCode.append(dvStr);
+			programCode.append("\n");
+		}
+		programCode.append("\n");
+		
+		programCode.append(classesCode);
 		
 		return new LirBlock(programCode, targetReg);
 	}
