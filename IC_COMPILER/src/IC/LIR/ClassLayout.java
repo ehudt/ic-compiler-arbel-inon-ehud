@@ -1,6 +1,10 @@
 package IC.LIR;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import IC.SemanticError;
@@ -101,5 +105,29 @@ public class ClassLayout {
 
 	private void setClassDecl(ICClass classDecl) {
 		this.classDecl = classDecl;
+	}
+
+	public String getDispatchVector() {
+		StringBuilder vector = new StringBuilder("_DV_" + classDecl.getName() + ": ");
+		
+		List<Method> methodList = new ArrayList<Method>(methodOffsetMap.keySet());
+		Collections.sort(methodList, new Comparator<Method>() {
+			@Override
+			public int compare(Method method1, Method method2) {
+				return methodOffsetMap.get(method1) -
+						methodOffsetMap.get(method2);
+			}
+		});
+		
+		vector.append("[");
+		for (Method method : methodList) {
+			vector.append("_");
+			vector.append(classDecl.getName());
+			vector.append("_");
+			vector.append(method.getName());
+			vector.append(",");
+		}
+		vector.setCharAt(vector.length() - 1, ']');
+		return vector.toString();
 	}
 }
