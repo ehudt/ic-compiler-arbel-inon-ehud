@@ -18,6 +18,12 @@ public class ArrayLocation extends Location {
 		return visitor.visit(this);
 	}
 	
+	/**
+	 * Implementation of propagating visitor
+	 * @param visitor
+	 * @param targetReg
+	 * @return
+	 */
 	public LirBlock accept(PropagatingVisitor<LirBlock, Integer> visitor, Integer targetReg){
 		return visitor.visit(this, targetReg);
 	}

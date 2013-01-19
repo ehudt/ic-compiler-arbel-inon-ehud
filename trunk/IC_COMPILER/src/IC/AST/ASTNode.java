@@ -1,6 +1,8 @@
 package IC.AST;
 
 import IC.SemanticError;
+import IC.LIR.LirBlock;
+import IC.LIR.PropagatingVisitor;
 import IC.SymbolTable.ClassSymbolTable;
 import IC.SymbolTable.SymbolTable;
 
@@ -25,6 +27,14 @@ public abstract class ASTNode {
 	 * @throws SemanticError 
 	 */
 	public abstract Object accept(Visitor visitor);
+	
+	/**
+	 * Implementation of propagating visitor
+	 * @param visitor
+	 * @param targetReg
+	 * @return
+	 */
+	public abstract LirBlock accept(PropagatingVisitor<LirBlock, Integer> visitor, Integer targetReg);
 
 	/**
 	 * Constructs an AST node corresponding to a line number in the original
