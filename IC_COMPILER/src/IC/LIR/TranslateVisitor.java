@@ -32,6 +32,7 @@ import IC.AST.NewClass;
 import IC.AST.PrimitiveType;
 import IC.AST.Program;
 import IC.AST.Return;
+import IC.AST.Statement;
 import IC.AST.StatementsBlock;
 import IC.AST.StaticCall;
 import IC.AST.StaticMethod;
@@ -236,8 +237,13 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 
 	@Override
 	public LirBlock visit(StatementsBlock statementsBlock, Integer targetReg) {
-		// TODO Auto-generated method stub
-		return null;
+		StringBuilder lirCode = new StringBuilder();
+		for (Statement s : statementsBlock.getStatements()){
+			lirCode.append(s.accept(this,targetReg).getLirCode());
+			lirCode.append("\n");
+		}
+		
+		return new LirBlock(lirCode, targetReg);
 	}
 
 	@Override
