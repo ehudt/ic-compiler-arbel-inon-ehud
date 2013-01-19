@@ -10,5 +10,15 @@ public class LirBlock {
 		this.lirCode = lirCode;
 	}
 	
+	public StringBuilder getLirCode(){
+		return lirCode;
+	}
+	
+	public Integer getTargetRegister(){
+		return targetRegister;
+	}
+	
+	
+	
 	
 }
