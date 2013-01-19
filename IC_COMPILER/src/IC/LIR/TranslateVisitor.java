@@ -1,6 +1,5 @@
 package IC.LIR;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -250,11 +249,18 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 	@Override
 	public LirBlock visit(ArrayLocation location, Integer targetReg) {
 			StringBuilder lirCode = new StringBuilder();
-			LirBlock index = location.getIndex().
 			
+			LirBlock array = location.getArray().accept(this, targetReg);
 			
+			lirCode.append(array.getLirCode());
+			lirCode.append("StaticCall __checkNullRef(a=R" + targetReg + "),Rdummy\n");
 			
-		return null;
+			LirBlock index = location.getIndex().accept(this, targetReg + 1);
+			lirCode.append(index.getLirCode());
+			lirCode.append("MoveArray R"+array.getTargetRegister()+"[R"+index.getTargetRegister()+"],R"+targetReg+"\n");
+			lirCode.append("StaticCall __checkArrayAccess(a=R"+targetReg+",i=R"+ index.getTargetRegister() +"),Rdummy\n");
+	
+		return new LirBlock(lirCode, targetReg);
 	}
 
 	@Override
@@ -292,7 +298,7 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 		LirBlock size = newArray.getSize().accept(this, targetReg);
 		lirCode.append(size.getLirCode());
 		lirCode.append("StaticCall __checkSize(n="+size.getTargetRegister()+",Rdummy\n");
-		lirCode.append("Library __allocateArray(R"+size.getTargetRegister().toString()+"),R");
+		lirCode.append("Library __allocateArray(R"+size.getTargetRegister()+"),R");
 		lirCode.append(targetReg+"\n");
 		return new LirBlock(lirCode, targetReg);
 	}
