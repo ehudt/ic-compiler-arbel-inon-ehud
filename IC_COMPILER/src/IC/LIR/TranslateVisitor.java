@@ -234,6 +234,7 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 	@Override
 	public LirBlock visit(Literal literal, Integer targetReg) {
 		String literalString = "";
+		StringBuilder lirCode = new StringBuilder("Move ");
 		switch(literal.getType()){
 			case STRING:
 				String str = literal.getValue().toString();
@@ -259,7 +260,11 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 				break;
 		}
 		
-		return new LirBlock(literalString, LirValueType.LITERAL, targetReg);
+		lirCode.append(literalString);
+		lirCode.append(",R");
+		lirCode.append(targetReg.toString());
+		
+		return new LirBlock(lirCode, targetReg);
 	}
 
 	@Override
