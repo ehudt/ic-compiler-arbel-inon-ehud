@@ -289,8 +289,10 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 
 	@Override
 	public LirBlock visit(This thisExpression, Integer targetReg) {
-		// TODO Auto-generated method stub
-		return null;
+		StringBuilder lirCode = new StringBuilder();
+		lirCode.append("Move this,R"+targetReg+"\n");
+		
+		return new LirBlock(lirCode, targetReg);
 	}
 
 	@Override
