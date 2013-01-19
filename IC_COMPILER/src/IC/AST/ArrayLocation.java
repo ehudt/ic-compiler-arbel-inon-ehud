@@ -1,5 +1,8 @@
 package IC.AST;
 
+import IC.LIR.LirBlock;
+import IC.LIR.PropagatingVisitor;
+
 /**
  * Array reference AST node.
  * 
@@ -13,6 +16,10 @@ public class ArrayLocation extends Location {
 
 	public Object accept(Visitor visitor) {
 		return visitor.visit(this);
+	}
+	
+	public LirBlock accept(PropagatingVisitor<LirBlock, Integer> visitor, Integer targetReg){
+		return visitor.visit(this, targetReg);
 	}
 
 	/**
