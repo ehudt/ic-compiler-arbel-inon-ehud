@@ -248,7 +248,11 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 
 	@Override
 	public LirBlock visit(ArrayLocation location, Integer targetReg) {
-		// TODO Auto-generated method stub
+			StringBuilder lirCode = new StringBuilder();
+			LirBlock index = location.getIndex().
+			
+			
+			
 		return null;
 	}
 
@@ -281,11 +285,9 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 		StringBuilder lirCode = new StringBuilder();
 		LirBlock size = newArray.getSize().accept(this, targetReg);
 		lirCode.append(size.getLirCode());
-		lirCode.append("Library __allocateArray(R");
-		lirCode.append(size.getTargetRegister().toString());
-		lirCode.append("),R");
-		lirCode.append(targetReg.toString());
-		lirCode.append("\n");
+		lirCode.append("StaticCall __checkSize(n="+size.getTargetRegister()+",Rdummy\n");
+		lirCode.append("Library __allocateArray(R"+size.getTargetRegister().toString()+"),R");
+		lirCode.append(targetReg+"\n");
 		return new LirBlock(lirCode, targetReg);
 	}
 
@@ -296,8 +298,9 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 		StringBuilder lirCode = new StringBuilder();
 		LirBlock array = length.getArray().accept(this, targetReg);
 		lirCode.append(array.getLirCode());
-		lirCode.append("ArrayLength R"+ array.getTargetRegister().toString()+",R"+
-		targetReg.toString()+"\n");
+		lirCode.append("StaticCall __checkNullRef(a=R"+targetReg+"),Rdummy\n");
+		lirCode.append("ArrayLength R"+ array.getTargetRegister()+",R"+
+		targetReg +"\n");
 		
 		return new LirBlock(lirCode,targetReg);
 	}
