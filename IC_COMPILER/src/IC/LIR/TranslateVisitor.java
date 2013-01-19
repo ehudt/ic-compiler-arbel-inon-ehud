@@ -66,7 +66,8 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 		/* visit the program */
 		StringBuilder classesCode = new StringBuilder();
 		for (ICClass classDecl : program.getClasses()) {
-			classesCode.append(classDecl.accept(this, targetReg));
+			LirBlock classLirBlock = classDecl.accept(this, targetReg);
+			classesCode.append(classLirBlock.getLirCode());
 		}
 		
 		/* generate the string literals' code */
@@ -94,7 +95,14 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 	@Override
 	public LirBlock visit(ICClass icClass, Integer targetReg) {
 		classLayouts.put(icClass.getName(), ClassLayout.NewClassLayout(icClass));
-		return null;
+		
+		StringBuilder classBody = new StringBuilder();
+		for (Method method : icClass.getMethods()) {
+			classBody.append("_" + icClass.getName() + "_" + method.getName());
+			LirBlock methodCode = method.accept(this, targetReg);
+			classBody.append(methodCode.getLirCode());
+		}
+		return new LirBlock(classBody, targetReg);
 	}
 
 	@Override
@@ -191,8 +199,21 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 
 	@Override
 	public LirBlock visit(While whileStatement, Integer targetReg) {
-		// TODO Auto-generated method stub
-		return null;
+		StringBuilder whileCode = new StringBuilder();
+		Integer labelNum = getNextLabelNum();
+		whileCode.append("_test_label" + labelNum + ": \n");
+		
+		LirBlock conditionCode = whileStatement.getCondition().accept(this, targetReg);
+		whileCode.append(conditionCode.getLirCode());
+		whileCode.append("Compare 0,R" + conditionCode.getTargetRegister() + "\n");
+		whileCode.append("JumpTrue _end_label" + labelNum + "\n");
+		
+		LirBlock operationCode = whileStatement.getOperation().accept(this, targetReg);
+		whileCode.append(operationCode.getLirCode());
+		whileCode.append("Jump _test_label" + labelNum + "\n");
+		whileCode.append("_end_label" + labelNum + ":");
+		
+		return new LirBlock(whileCode, targetReg);
 	}
 
 	@Override
