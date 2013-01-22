@@ -1,0 +1,54 @@
+class Math {
+
+	static void main(string[] args) {
+		string x="aaaa";
+		
+		if(5==5)
+		{
+			Library.println("5=5 V");
+		}
+		else
+		{
+			Library.println("5=5 X");
+		}
+		
+		if(5!=5)
+		{
+			Library.println("5!=5 V");
+		}
+		else
+		{
+			Library.println("5!=5 X");
+		}
+		
+		if(5>4)
+		{
+			Library.println("5>4 V");
+		}
+		else
+		{
+			Library.println("5>4 X");
+		}
+		
+		if(4<5)
+		{
+			Library.println("4<5 V");
+		}
+		
+		if(false && false && 5/0>5)
+		{
+			Library.println("close cirucut And:true");
+		}
+		else
+		{
+			Library.println("close cirucut And:false");
+		}
+		
+		if(false || true || 5/0>5)
+		{
+			Library.println("close cirucut or:true");
+		}
+		
+		
+	}
+}

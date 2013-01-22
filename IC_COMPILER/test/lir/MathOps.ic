@@ -1,0 +1,39 @@
+class Math {
+	int a;
+	int b;
+	
+	static void main(string[] args) {
+		int x=3;
+		int y=2;
+		int z=x+y;
+			
+		Library.print("x+y=");
+		Library.printi(z);
+		Library.println("");
+		
+		z=x*y;
+		Library.print("x*y=");
+		Library.printi(z);
+		Library.println("");
+		
+		z=x-y;
+		Library.print("xy=");
+		Library.printi(z);
+		Library.println("");
+		
+		z=x/y;
+		Library.print("x/y=");
+		Library.printi(z);
+		Library.println("");
+		
+		z=x % y;
+		Library.print("x % y=");
+		Library.printi(z);
+		Library.println("");
+		
+		z=x/0;
+		Library.print("x/0=");
+		Library.printi(z);
+		Library.println("");
+	}
+}

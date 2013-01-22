@@ -1,0 +1,8 @@
+class Add {
+	static void main(string[] args) {
+		string x="Hello ";
+		string y="World!";
+		string z=x+y;
+		Library.println(z);
+	}
+}
