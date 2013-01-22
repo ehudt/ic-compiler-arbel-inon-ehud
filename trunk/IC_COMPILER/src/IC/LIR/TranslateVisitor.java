@@ -351,8 +351,14 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 
 	@Override
 	public LirBlock visit(LocalVariable localVariable, Integer targetReg) {
-		// TODO Auto-generated method stub
-		return null;
+		StringBuilder lirCode = new StringBuilder();
+		if(localVariable.hasInitValue())
+		{
+			LirBlock init_val = localVariable.getInitValue().accept(this,targetReg);
+			lirCode.append(init_val.getLirCode());
+			lirCode.append("Move R"+targetReg+","+localVariable.getName()+localVariable.getEnclosingScope().getBlockDepth());
+		}
+		return new LirBlock(lirCode, targetReg);
 	}
 
 	@Override
@@ -497,7 +503,7 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 				break;
 			case DIVIDE:
 				//static call to checkZero on runtime
-				opString+="StaticCall __checkZero(b=R"+secondTargetReg+"),Rdummy";
+				opString+="StaticCall __checkZero(b=R"+secondTargetReg+")";
 				opString+="Div R"+secondTargetReg+",R"+firstTargetReg;
 				break;
 			case MOD:
