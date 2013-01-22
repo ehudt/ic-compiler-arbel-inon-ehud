@@ -382,9 +382,12 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 	public LirBlock visit(VariableLocation location, Integer targetReg) {
 		StringBuilder locationCode = new StringBuilder();
 		if (location.isExternal()) {
+			boolean previousLvalueContext = inLvalueContext;
+			inLvalueContext = false;
 			LirBlock locExpr = location.getLocation().accept(this, targetReg);
 			locationCode.append(locExpr.getLirCode());
 			locationCode.append("StaticCall __checkNullRef(o=R" + targetReg + "),Rdummy # check object null ref in VariableLocation\n");
+			inLvalueContext = previousLvalueContext;
 			
 			UserType instanceType = (UserType)location.getLocation().accept(typeVisitor);
 			String className = instanceType.getName();
@@ -421,11 +424,10 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 	@Override
 	public LirBlock visit(ArrayLocation location, Integer targetReg) {
 			StringBuilder lirCode = new StringBuilder();
-			boolean previousLvalueContext = inLvalueContext;
 			
+			boolean previousLvalueContext = inLvalueContext;
 			inLvalueContext = false;
 			LirBlock array = location.getArray().accept(this, targetReg);
-			inLvalueContext = previousLvalueContext;
 			
 			lirCode.append(array.getLirCode());
 			lirCode.append("StaticCall __checkNullRef(o=R" + targetReg + "),Rdummy # check array null ref in ArrayLocation\n");
@@ -433,6 +435,7 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 			LirBlock index = location.getIndex().accept(this, targetReg + 1);
 			lirCode.append(index.getLirCode());
 			lirCode.append("StaticCall __checkArrayAccess(a=R"+targetReg+",i=R"+ index.getTargetRegister() +"),Rdummy\n");
+			inLvalueContext = previousLvalueContext;
 			if (!inLvalueContext) {
 				lirCode.append("MoveArray R"+array.getTargetRegister()+"[R"+index.getTargetRegister()+"],R"+targetReg+"\n");
 			}
