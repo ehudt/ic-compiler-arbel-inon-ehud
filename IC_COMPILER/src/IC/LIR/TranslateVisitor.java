@@ -620,9 +620,6 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 		lirCode.append(leftOperand.getLirCode());
 		lirCode.append("\n");
 		
-		LirBlock rightOperand=binaryOp.getSecondOperand().accept(this,secondTargetReg);
-		lirCode.append(rightOperand.getLirCode());
-		lirCode.append("\n");
 		
 		if(binaryOp.getOperator()==BinaryOps.LOR || binaryOp.getOperator()==BinaryOps.LAND)
 		{
@@ -630,21 +627,30 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 			String boolOp;
 			if(binaryOp.getOperator()==BinaryOps.LOR)
 			{
-				compareTo="0";
+				compareTo="1";
 				boolOp="Or";
 			}
 			else
 			{
-				compareTo="1";
+				compareTo="0";
 				boolOp="And";
 			}
-			lirCode.append("Compare "+compareTo+",R"+firstTargetReg);
-			lirCode.append("JumpTrue _endlbl"+lblnum);
-			lirCode.append(boolOp+" R"+secondTargetReg+",R"+firstTargetReg);
+			lirCode.append("Compare "+compareTo+",R"+firstTargetReg+"\n");
+			lirCode.append("JumpTrue _endlbl"+lblnum+"\n");
+			
+			LirBlock rightOperand=binaryOp.getSecondOperand().accept(this,secondTargetReg);
+			lirCode.append(rightOperand.getLirCode());
+			lirCode.append("\n");
+			
+			lirCode.append(boolOp+" R"+secondTargetReg+",R"+firstTargetReg+"\n");
 			
 		}
 		else
 		{
+			LirBlock rightOperand=binaryOp.getSecondOperand().accept(this,secondTargetReg);
+			lirCode.append(rightOperand.getLirCode());
+			lirCode.append("\n");
+			
 			lirCode.append("Compare R"+secondTargetReg+",R"+firstTargetReg);
 			lirCode.append("\n");
 			
