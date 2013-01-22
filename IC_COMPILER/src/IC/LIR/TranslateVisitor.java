@@ -62,6 +62,7 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 	private Map<String,ClassLayout> classLayouts = new LinkedHashMap<String, ClassLayout>();
 	private int labelCount = 1;
 	private int currentLoopLabel = -1;
+	private boolean inLvalueContext = false;
 	
 	private TypeCheckVisitor typeVisitor = new TypeCheckVisitor();
 	
@@ -233,13 +234,16 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 		StringBuilder assignCode = new StringBuilder();		
 		LirBlock exprBlock = assignment.getAssignment().accept(this, targetReg);
 		assignCode.append(exprBlock.getLirCode());
+		inLvalueContext = true;
 		LirBlock varBlock = assignment.getVariable().accept(this, targetReg + 1);
+		inLvalueContext = false;
 		assignCode.append(varBlock.getLirCode());
 		switch(varBlock.getValueType()) {
 			case VARIABLE:
 				VariableLocation varLocation = (VariableLocation)assignment.getVariable();
 				assignCode.append("Move R" + targetReg + "," + 
-									varLocation.getName() + varLocation.getEnclosingScope().getBlockDepth() +
+									varLocation.getName() + 
+									varLocation.getEnclosingScope().lookupTable(varLocation.getName()).getBlockDepth() +
 									"\n");
 				break;
 			case FIELD:
@@ -364,7 +368,8 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 		{
 			LirBlock init_val = localVariable.getInitValue().accept(this,targetReg);
 			lirCode.append(init_val.getLirCode());
-			lirCode.append("Move R"+targetReg+","+localVariable.getName()+localVariable.getEnclosingScope().getBlockDepth() + "\n");
+			lirCode.append("Move R" + targetReg + "," + localVariable.getName() + 
+					localVariable.getEnclosingScope().lookupTable(localVariable.getName()).getBlockDepth() + "\n");
 		}
 		return new LirBlock(lirCode, targetReg);
 	}
@@ -380,16 +385,24 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 			UserType instanceType = (UserType)location.getLocation().accept(typeVisitor);
 			String className = instanceType.getName();
 			Integer fieldOffset = classLayouts.get(className).getFieldOffset(location.getName());
-			locationCode.append("Move " + fieldOffset + ",R" + (targetReg+1) + "\n");
+			if (inLvalueContext) {
+				locationCode.append("Move " + fieldOffset + ",R" + (targetReg+1) + "\n");
+			} else {
+				locationCode.append("MoveField R" + targetReg + "." + fieldOffset + ",R" + targetReg + "\n");
+			}
 			return new LirBlock(locationCode, targetReg, LirValueType.FIELD);
 		} else {
 			Symbol symbol = location.getEnclosingScope().lookup(location.getName());
-			int blockDepth = location.getEnclosingScope().getBlockDepth();
+			int blockDepth = location.getEnclosingScope().lookupTable(location.getName()).getBlockDepth();
 			if (symbol.getKind() == Kind.FIELD) {
 				locationCode.append("Move this,R" + targetReg + "\n");
 				String className = location.getEnclosingClassTable().getName();
 				Integer fieldOffset = classLayouts.get(className).getFieldOffset(location.getName());
-				locationCode.append("Move " + fieldOffset + ",R" + (targetReg+1) + "\n");
+				if (inLvalueContext) {
+					locationCode.append("Move " + fieldOffset + ",R" + (targetReg+1) + "\n");
+				} else {
+					locationCode.append("MoveField R" + targetReg + "." + fieldOffset + ",R" + targetReg + "\n");
+				}
 				return new LirBlock(locationCode, targetReg, LirValueType.FIELD);
 			} else {
 				assert(symbol.getKind() == Kind.VARIABLE);
@@ -410,8 +423,10 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 			
 			LirBlock index = location.getIndex().accept(this, targetReg + 1);
 			lirCode.append(index.getLirCode());
-			lirCode.append("MoveArray R"+array.getTargetRegister()+"[R"+index.getTargetRegister()+"],R"+targetReg+"\n");
 			lirCode.append("StaticCall __checkArrayAccess(a=R"+targetReg+",i=R"+ index.getTargetRegister() +"),Rdummy\n");
+			if (!inLvalueContext) {
+				lirCode.append("MoveArray R"+array.getTargetRegister()+"[R"+index.getTargetRegister()+"],R"+targetReg+"\n");
+			}
 	
 		return new LirBlock(lirCode, targetReg, LirValueType.ARRAY_LOCATION);
 	}
@@ -453,22 +468,6 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 		return new LirBlock(argCode, targetReg);
 	}
 
-	private List<Formal> getMethodParameters(String className, String methodName) {
-		ICClass icClass = null;
-		try {
-			icClass = TypeTable.getUserTypeByName(className);
-		} catch (SemanticError e) {
-			// this shouldn't be reached
-			e.printStackTrace();
-		}
-		for (Method method : icClass.getMethods()) {
-			if (method.getName().equals(methodName)) {
-				return method.getFormals();
-			}
-		}
-		return getMethodParameters(icClass.getSuperClassName(), methodName);
-	}
-
 	@Override
 	public LirBlock visit(VirtualCall call, Integer targetReg) {
 		StringBuilder argCode = new StringBuilder();
@@ -481,8 +480,9 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 			locationCode.append(locationBlock.getLirCode());
 			className = ((UserType)call.getLocation().accept(typeVisitor)).getName();
 		} else {
-			locationCode.append("Move this,R" + (targetReg + 1) + "\n");
 			className = call.getEnclosingClassTable().getName();
+			
+			locationCode.append("Move this,R" + (targetReg + 1) + "\n");
 		}
 		locationCode.append("StaticCall __checkNullRef(o=R" + (targetReg + 1) + "),Rdummy\n");
 		argCode.append(locationCode);
@@ -507,6 +507,22 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 		callCode.append("),R" + targetReg + "\n");
 		argCode.append(callCode);
 		return new LirBlock(argCode, targetReg);
+	}
+	
+	private List<Formal> getMethodParameters(String className, String methodName) {
+		ICClass icClass = null;
+		try {
+			icClass = TypeTable.getUserTypeByName(className);
+		} catch (SemanticError e) {
+			// this shouldn't be reached
+			e.printStackTrace();
+		}
+		for (Method method : icClass.getMethods()) {
+			if (method.getName().equals(methodName)) {
+				return method.getFormals();
+			}
+		}
+		return getMethodParameters(icClass.getSuperClassName(), methodName);
 	}
 
 	@Override
@@ -533,6 +549,7 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 		StringBuilder lirCode = new StringBuilder();
 		LirBlock size = newArray.getSize().accept(this, targetReg);
 		lirCode.append(size.getLirCode());
+		lirCode.append("Mul 4,R" + targetReg + "\n");
 		lirCode.append("StaticCall __checkSize(n="+size.getTargetRegister()+"),Rdummy\n");
 		lirCode.append("Library __allocateArray(R"+size.getTargetRegister()+"),R");
 		lirCode.append(targetReg+"\n");

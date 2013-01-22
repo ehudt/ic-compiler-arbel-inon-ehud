@@ -60,6 +60,14 @@ public class ClassSymbolTable extends SymbolTable {
 		}
 		else return parent.lookup(name);
 	}
+	
+	@Override
+	public SymbolTable lookupTable(String name) {
+		if(classFieldTable.containsKey(name) || classMethodTable.containsKey(name)){
+			return this;
+		}
+		else return parent.lookupTable(name);
+	}
 
 	@Override
 	public Symbol staticLookup(String name) {
