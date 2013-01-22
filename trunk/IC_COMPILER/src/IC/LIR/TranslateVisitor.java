@@ -64,8 +64,13 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 	private int getNextLabelNum() {
 		return labelCount++;
 	}
+	static final String runTimeErrorStrings = 
+			"str_size_error: \"Runtime Error: Array allocation with negative array size!\"\n" +
+			"str_null_ref_error: \"Runtime Error: Null pointer dereference!\"\n" +
+			"_string_div_zero: \"Runtime Error: Division by zero!\"\n" +
+			"_string_arr_access: \"Runtime Error: Array index out of bounds!\"\n";
 	
-	static final String runTimeChecks=""+
+	static final String runTimeChecks = "" +
 			"__checkZero:\n"+
 			"Move b,Rcheck\n"+
 			"Compare 0,Rcheck1\n"+
@@ -74,7 +79,7 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 			"_err_zero:\n"+
 			"Library __println(_string_div_zero),Rdummy\n"+
 			"Jump _runtime_error\n" +
-			"" +
+			"\n" +
 			"__checkArrayAccess:\n" +
 			"Move a,Rcheck1\n" +
 			"Move i,Rcheck2\n" +
@@ -87,7 +92,7 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 			"_err_access:\n" +
 			"Library __println(_string_arr_access),Rdummy\n" +
 			"Jump _runtime_error\n" +
-			"" +
+			"\n" +
 			"__checkSize:\n" +
 			"Move n,Rcheck1\n" +
 			"Compare 0,Rcheck1\n" +
@@ -96,7 +101,7 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 			"_size_error:\n" +
 			"Library __println(str_size_error),Rdummy\n" +
 			"Jump _runtime_error\n" +
-			"" +
+			"\n" +
 			"__checkNullRef:\n" +
 			"Move o,Rcheck1\n" +
 			"Compare 0,Rcheck1\n" +
@@ -104,7 +109,7 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 			"Return 9999\n" +
 			"_null_ref_error:\n" +
 			"Library __println(str_null_ref_error),Rdummy\n" +
-			"Jump _runtime_error\n";
+			"Jump _runtime_error\n\n";
 	
 	@Override
 	public LirBlock visit(Program program, Integer targetReg) {
@@ -126,10 +131,7 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 			programCode.append("\"\n");
 		}
 		// put static strings into the program
-		programCode.append("str_size_error: \"Runtime Error: Array allocation with negative array size!\"\n");
-		programCode.append("str_null_ref_error: \"Runtime Error: Null pointer dereference!\"\n");
-		programCode.append("_string_div_zero: \"Runtime Error: Division by zero!\"\n");
-		programCode.append("_string_arr_access: \"Runtime Error: Array index out of bounds!\"\n");
+		programCode.append(runTimeErrorStrings);
 		programCode.append("\n");
 		
 		/* generate DVs' code */
@@ -169,14 +171,20 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 
 	@Override
 	public LirBlock visit(Field field, Integer targetReg) {
-		// TODO Auto-generated method stub
+		// this method shouldn't be reached
 		return null;
 	}
 
 	@Override
 	public LirBlock visit(VirtualMethod method, Integer targetReg) {
-		// TODO Auto-generated method stub
-		return null;
+		StringBuilder methodBody = new StringBuilder();
+		
+		for (Statement statement : method.getStatements()) {
+			LirBlock statementCode = statement.accept(this, targetReg);
+			methodBody.append(statementCode.getLirCode());
+		}
+		
+		return new LirBlock(methodBody, targetReg);
 	}
 
 	@Override
@@ -241,8 +249,7 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 
 	@Override
 	public LirBlock visit(CallStatement callStatement, Integer targetReg) {
-		// TODO Auto-generated method stub
-		return null;
+		return callStatement.getCall().accept(this, targetReg);
 	}
 
 	@Override
@@ -644,37 +651,36 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 
 	@Override
 	public LirBlock visit(ExpressionBlock expressionBlock, Integer targetReg) {
-		// TODO Auto-generated method stub
-		return null;
+		return expressionBlock.getExpression().accept(this, targetReg);
 	}
 
 	@Override
 	public LirBlock visit(FieldMethodList fieldMethodList, Integer targetReg) {
-		// TODO Auto-generated method stub
+		// this method shouldn't be reached
 		return null;
 	}
 
 	@Override
 	public LirBlock visit(EmptyStatement emptyStatement, Integer targetReg) {
-		// TODO Auto-generated method stub
+		// this method shouldn't be reached
 		return null;
 	}
 
 	@Override
 	public LirBlock visit(ErrorMethod errorMethod, Integer targetReg) {
-		// TODO Auto-generated method stub
+		// this method shouldn't be reached
 		return null;
 	}
 
 	@Override
 	public LirBlock visit(ErrorClass errorClass, Integer targetReg) {
-		// TODO Auto-generated method stub
+		// this method shouldn't be reached
 		return null;
 	}
 
 	@Override
 	public LirBlock visit(Method method, Integer targetReg) {
-		// TODO Auto-generated method stub
+		// this method shouldn't be reached
 		return null;
 	}
 
