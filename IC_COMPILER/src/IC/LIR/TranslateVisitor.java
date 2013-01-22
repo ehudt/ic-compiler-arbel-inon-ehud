@@ -85,7 +85,10 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 			programCode.append("\"\n");
 		}
 		// put static strings into the program
-		
+		programCode.append("str_size_error: \"Runtime Error: Array allocation with negative array size!\"\n");
+		programCode.append("str_null_ref_error: \"Runtime Error: Null pointer dereference!\"\n");
+		programCode.append("_string_div_zero: \"Runtime Error: Division by zero!\"\n");
+		programCode.append("_string_arr_access: \"Runtime Error: Array index out of bounds!\"\n");
 		programCode.append("\n");
 		
 		/* generate DVs' code */
@@ -136,11 +139,6 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 	@Override
 	public LirBlock visit(StaticMethod method, Integer targetReg) {
 		StringBuilder lirCode = new StringBuilder();
-		String methodName = method.getName();
-		if (methodName == "main")
-			methodName = "_ic_main";
-		
-		lirCode.append(methodName+":\n");
 		
 		for (Statement s : method.getStatements()){
 			lirCode.append(s.accept(this, targetReg).getLirCode());
@@ -151,14 +149,12 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 
 	@Override
 	public LirBlock visit(LibraryMethod method, Integer targetReg) {
-		// TODO Auto-generated method stub
-		return null;
+		return new LirBlock(new StringBuilder(), targetReg);
 	}
 
 	@Override
 	public LirBlock visit(Formal formal, Integer targetReg) {
-		// TODO Auto-generated method stub
-		return null;
+		return new LirBlock(new StringBuilder(), targetReg);
 	}
 
 	@Override
