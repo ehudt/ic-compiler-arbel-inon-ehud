@@ -74,7 +74,7 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 	
 	static final String runTimeChecks = "" +
 			"__checkZero:\n"+
-			"Move b,Rcheck\n"+
+			"Move b,Rcheck1\n"+
 			"Compare 0,Rcheck1\n"+
 			"JumpTrue _err_zero\n"+
 			"Return 9999\n"+
@@ -575,7 +575,7 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 				else
 				{
 					//Concatenation of 2 strings
-					opString="Library __stringCat(R"+secondTargetReg+",R"+firstTargetReg+"),R"+firstTargetReg;
+					opString="Library __stringCat(R"+firstTargetReg+",R"+secondTargetReg+"),R"+firstTargetReg;
 				}
 				break;
 			case MINUS:
@@ -590,6 +590,8 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 				opString+="Div R"+secondTargetReg+",R"+firstTargetReg;
 				break;
 			case MOD:
+				//static call to checkZero on runtime
+				opString+="StaticCall __checkZero(b=R"+secondTargetReg+"),Rdummy\n";
 				opString="Mod R"+secondTargetReg+",R"+firstTargetReg;
 				break;
 		}
