@@ -406,7 +406,9 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 				return new LirBlock(locationCode, targetReg, LirValueType.FIELD);
 			} else {
 				assert(symbol.getKind() == Kind.VARIABLE);
-				locationCode.append("Move " + symbol.getID() + blockDepth + ",R" + targetReg + "\n");
+				if (!inLvalueContext) {
+					locationCode.append("Move " + symbol.getID() + blockDepth + ",R" + targetReg + "\n");
+				}
 				return new LirBlock(locationCode, targetReg, LirValueType.VARIABLE);
 			}
 		}
