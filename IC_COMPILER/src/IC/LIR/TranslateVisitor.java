@@ -63,6 +63,8 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 	private int labelCount = 1;
 	private int currentLoopLabel = -1;
 	
+	private TypeCheckVisitor typeVisitor = new TypeCheckVisitor();
+	
 	private int getNextLabelNum() {
 		return labelCount++;
 	}
@@ -181,6 +183,7 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 
 	@Override
 	public LirBlock visit(VirtualMethod method, Integer targetReg) {
+		typeVisitor.setInVirtualMethodContext(true);
 		StringBuilder methodBody = new StringBuilder();
 		
 		for (Statement statement : method.getStatements()) {
@@ -188,6 +191,7 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 			methodBody.append(statementCode.getLirCode());
 		}
 		
+		typeVisitor.setInVirtualMethodContext(false);
 		return new LirBlock(methodBody, targetReg);
 	}
 
@@ -371,9 +375,9 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 		if (location.isExternal()) {
 			LirBlock locExpr = location.getLocation().accept(this, targetReg);
 			locationCode.append(locExpr.getLirCode());
-			locationCode.append("StaticCall __checkNullRef(a=R" + targetReg + "),Rdummy\n");
+			locationCode.append("StaticCall __checkNullRef(o=R" + targetReg + "),Rdummy\n");
 			
-			UserType instanceType = (UserType)location.getLocation().accept(new TypeCheckVisitor());
+			UserType instanceType = (UserType)location.getLocation().accept(typeVisitor);
 			String className = instanceType.getName();
 			Integer fieldOffset = classLayouts.get(className).getFieldOffset(location.getName());
 			locationCode.append("Move " + fieldOffset + ",R" + (targetReg+1) + "\n");
@@ -402,7 +406,7 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 			LirBlock array = location.getArray().accept(this, targetReg);
 			
 			lirCode.append(array.getLirCode());
-			lirCode.append("StaticCall __checkNullRef(a=R" + targetReg + "),Rdummy\n");
+			lirCode.append("StaticCall __checkNullRef(o=R" + targetReg + "),Rdummy\n");
 			
 			LirBlock index = location.getIndex().accept(this, targetReg + 1);
 			lirCode.append(index.getLirCode());
@@ -475,11 +479,12 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 		if (call.isExternal()) {
 			LirBlock locationBlock = call.getLocation().accept(this, targetReg + 1);
 			locationCode.append(locationBlock.getLirCode());
-			className = ((UserType)call.getLocation().accept(new TypeCheckVisitor())).getName();
+			className = ((UserType)call.getLocation().accept(typeVisitor)).getName();
 		} else {
 			locationCode.append("Move this,R" + (targetReg + 1) + "\n");
 			className = call.getEnclosingClassTable().getName();
 		}
+		locationCode.append("StaticCall __checkNullRef(o=R" + (targetReg + 1) + "),Rdummy\n");
 		argCode.append(locationCode);
 		methodOffset = classLayouts.get(className).getMethodOffset(call.getName());
 		callCode.append("R" + (targetReg + 1) + "." + methodOffset + "(");
@@ -540,7 +545,7 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 		StringBuilder lirCode = new StringBuilder();
 		LirBlock array = length.getArray().accept(this, targetReg);
 		lirCode.append(array.getLirCode());
-		lirCode.append("StaticCall __checkNullRef(a=R"+targetReg+"),Rdummy\n");
+		lirCode.append("StaticCall __checkNullRef(o=R"+targetReg+"),Rdummy\n");
 		lirCode.append("ArrayLength R"+ array.getTargetRegister()+",R"+
 		targetReg +"\n");
 		
@@ -566,7 +571,7 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 		switch(binaryOp.getOperator())
 		{
 			case PLUS:
-				IC.AST.Type operandType=(IC.AST.Type)binaryOp.getFirstOperand().accept(new IC.Semantic.TypeCheckVisitor());
+				IC.AST.Type operandType=(IC.AST.Type)binaryOp.getFirstOperand().accept(typeVisitor);
 				if(operandType==TypeTable.getType("int"))
 				{
 					//Addition of 2 integers

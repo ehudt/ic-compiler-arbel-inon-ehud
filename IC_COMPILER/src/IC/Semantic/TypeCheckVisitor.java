@@ -70,6 +70,10 @@ import IC.Types.TypeTable;
 public class TypeCheckVisitor implements Visitor {
 	private boolean inVirtualMethodContext = false;
 	
+	public void setInVirtualMethodContext(boolean value) {
+		inVirtualMethodContext = value;
+	}
+	
 	@Override
 	public Object visit(Program program) {
 		for(ICClass icClass : program.getClasses()){
@@ -297,7 +301,7 @@ public class TypeCheckVisitor implements Visitor {
 			} else if (varSymbol.getKind() == Kind.FIELD && inVirtualMethodContext) {
 				expressionType = TypeTable.getType(((FieldSymbol)varSymbol).getType(), false);
 			} else {
-				typeError(location.getLine(), "illegal reference: " + location.getName());
+				typeError(location.getLine(), "AAillegal reference: " + location.getName());
 			}			
 		} else {
 			Type classType = (Type)location.getLocation().accept(this);
