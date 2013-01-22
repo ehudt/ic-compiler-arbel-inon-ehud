@@ -1,0 +1,16 @@
+class Math {
+	int a;
+	int b;
+	
+	static void main(string[] args) {
+		int x=1;
+		int y=2;
+		int z = add(x,y);
+		Library.printi(z);
+	}
+	
+	static int add(int x,int y)
+	{
+		return x+y;
+	}
+}

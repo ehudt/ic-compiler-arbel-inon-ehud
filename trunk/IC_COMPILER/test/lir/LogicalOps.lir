@@ -1,0 +1,205 @@
+str1: "aaaa"
+str2: "5=5 V"
+str3: "5=5 X"
+str4: "5!=5 V"
+str5: "5!=5 X"
+str6: "5>4 V"
+str7: "5>4 X"
+str8: "4<5 V"
+str9: "close cirucut And:true"
+str10: "close cirucut And:false"
+str11: "close cirucut or:true"
+str_size_error: "Runtime Error: Array allocation with negative array size!"
+str_null_ref_error: "Runtime Error: Null pointer dereference!"
+str_div_zero: "Runtime Error: Division by zero!"
+str_arr_access: "Runtime Error: Array index out of bounds!"
+
+_DV_Math: [_Math_main]
+
+__checkZero:
+Move b,Rcheck1
+Compare 0,Rcheck1
+JumpTrue _err_zero
+Return 9999
+_err_zero:
+Library __println(str_div_zero),Rdummy
+Jump _runtime_error
+
+__checkArrayAccess:
+Move a,Rcheck1
+Move i,Rcheck2
+Compare 0,Rcheck2
+JumpL _err_access
+ArrayLength Rcheck1,Rcheck1
+Compare Rcheck1,Rcheck2
+JumpGE _err_access
+Return 9999
+_err_access:
+Library __println(str_arr_access),Rdummy
+Jump _runtime_error
+
+__checkSize:
+Move n,Rcheck1
+Compare 0,Rcheck1
+JumpLE _size_error
+Return 9999
+_size_error:
+Library __println(str_size_error),Rdummy
+Jump _runtime_error
+
+__checkNullRef:
+Move o,Rcheck1
+Compare 0,Rcheck1
+JumpTrue _null_ref_error
+Return 9999
+_null_ref_error:
+Library __println(str_null_ref_error),Rdummy
+Jump _runtime_error
+
+_ic_main:
+_Math_main:
+Move str1,R1
+Move R1,x1
+Move 5,R1
+Move 5,R2
+Compare R2,R1
+JumpTrue _truelbl2
+Move 0,R1
+Jump _endlbl2
+_truelbl2:
+Move 1,R1
+_endlbl2:
+Compare 0,R1
+JumpTrue _false_label1
+Move str2,R2
+Library __println(R2),R1
+
+Jump _end_label1
+_false_label1:
+Move str3,R2
+Library __println(R2),R1
+
+_end_label1:
+Move 5,R1
+Move 5,R2
+Compare R2,R1
+JumpFalse _truelbl4
+Move 0,R1
+Jump _endlbl4
+_truelbl4:
+Move 1,R1
+_endlbl4:
+Compare 0,R1
+JumpTrue _false_label3
+Move str4,R2
+Library __println(R2),R1
+
+Jump _end_label3
+_false_label3:
+Move str5,R2
+Library __println(R2),R1
+
+_end_label3:
+Move 5,R1
+Move 4,R2
+Compare R2,R1
+JumpG _truelbl6
+Move 0,R1
+Jump _endlbl6
+_truelbl6:
+Move 1,R1
+_endlbl6:
+Compare 0,R1
+JumpTrue _false_label5
+Move str6,R2
+Library __println(R2),R1
+
+Jump _end_label5
+_false_label5:
+Move str7,R2
+Library __println(R2),R1
+
+_end_label5:
+Move 4,R1
+Move 5,R2
+Compare R2,R1
+JumpL _truelbl8
+Move 0,R1
+Jump _endlbl8
+_truelbl8:
+Move 1,R1
+_endlbl8:
+Compare 0,R1
+JumpTrue _end_label7
+Move str8,R2
+Library __println(R2),R1
+
+_end_label7:
+Move 0,R1
+Compare 0,R1
+JumpTrue _endlbl11
+Move 0,R2
+And R2,R1
+_endlbl11:
+Compare 0,R1
+JumpTrue _endlbl10
+Move 5,R2
+
+Move 0,R3
+
+StaticCall __checkZero(b=R3),Rdummy
+Div R3,R2
+Move 5,R3
+Compare R3,R2
+JumpG _truelbl12
+Move 0,R2
+Jump _endlbl12
+_truelbl12:
+Move 1,R2
+_endlbl12:
+And R2,R1
+_endlbl10:
+Compare 0,R1
+JumpTrue _false_label9
+Move str9,R2
+Library __println(R2),R1
+
+Jump _end_label9
+_false_label9:
+Move str10,R2
+Library __println(R2),R1
+
+_end_label9:
+Move 0,R1
+Compare 1,R1
+JumpTrue _endlbl15
+Move 1,R2
+Or R2,R1
+_endlbl15:
+Compare 1,R1
+JumpTrue _endlbl14
+Move 5,R2
+
+Move 0,R3
+
+StaticCall __checkZero(b=R3),Rdummy
+Div R3,R2
+Move 5,R3
+Compare R3,R2
+JumpG _truelbl16
+Move 0,R2
+Jump _endlbl16
+_truelbl16:
+Move 1,R2
+_endlbl16:
+Or R2,R1
+_endlbl14:
+Compare 0,R1
+JumpTrue _end_label13
+Move str11,R2
+Library __println(R2),R1
+
+_end_label13:
+Library __exit(0),Rdummy
+
+_runtime_error:
