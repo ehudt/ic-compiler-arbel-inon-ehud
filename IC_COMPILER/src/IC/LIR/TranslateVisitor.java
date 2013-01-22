@@ -140,7 +140,7 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 		}
 		programCode.append("\n");
 		
-		programCode.append(runTimeChecks)
+		programCode.append(runTimeChecks);
 		
 		programCode.append(classesCode);
 		
