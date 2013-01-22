@@ -48,6 +48,14 @@ public class BlockSymbolTable extends SymbolTable {
 	}
 	
 	@Override
+	public SymbolTable lookupTable(String name) {
+		if(locals.containsKey(name)){
+			return this;
+		}
+		else return parent.lookupTable(name);
+	}
+	
+	@Override
 	public Symbol staticLookup(String name) {
 		return locals.get(name);
 	}

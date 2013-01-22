@@ -42,6 +42,14 @@ public class MethodSymbolTable extends BlockSymbolTable {
 	}
 	
 	@Override
+	public SymbolTable lookupTable(String name){
+		if(parameters.containsKey(name) || locals.containsKey(name)){
+			return this;
+		}
+		else return parent.lookupTable(name);
+	}
+	
+	@Override
 	public Symbol staticLookup(String name) {
 		if(parameters.containsKey(name)){
 			return parameters.get(name);

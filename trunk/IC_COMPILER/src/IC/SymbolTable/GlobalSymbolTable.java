@@ -31,6 +31,15 @@ public class GlobalSymbolTable extends SymbolTable {
 		return getClassSymbol(name);
 	}
 	
+	@Override
+	public SymbolTable lookupTable(String name) {
+		if (getClassSymbol(name) != null) {
+			return this;
+		} else {
+			return null;
+		}
+	}
+	
 
 	@Override
 	public Symbol staticLookup(String name) {
