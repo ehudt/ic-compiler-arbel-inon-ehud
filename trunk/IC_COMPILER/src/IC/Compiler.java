@@ -149,6 +149,7 @@ public class Compiler
     			String lirPath = srcPath.substring(0, srcPath.length() - 2) + "lir";
     			FileWriter writeLir = new FileWriter(lirPath);
     			writeLir.write(programLir.getLirCode().toString());
+    			writeLir.close();
     		}
     	}
     	// Catch lexical Errors and print the line and the value of the token
