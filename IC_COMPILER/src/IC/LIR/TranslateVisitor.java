@@ -421,8 +421,11 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 	@Override
 	public LirBlock visit(ArrayLocation location, Integer targetReg) {
 			StringBuilder lirCode = new StringBuilder();
+			boolean previousLvalueContext = inLvalueContext;
 			
+			inLvalueContext = false;
 			LirBlock array = location.getArray().accept(this, targetReg);
+			inLvalueContext = previousLvalueContext;
 			
 			lirCode.append(array.getLirCode());
 			lirCode.append("StaticCall __checkNullRef(o=R" + targetReg + "),Rdummy # check array null ref in ArrayLocation\n");
