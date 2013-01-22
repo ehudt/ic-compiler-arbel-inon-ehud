@@ -95,6 +95,10 @@ public class ClassLayout {
 		return 4 * fieldOffset;
 	}
 	
+	public Method getMethod(String name) {
+		return methodPointerMap.get(name);
+	}
+	
 	private void insertMethod(Method method) {
 		methodOffsetMap.put(method, methodOffset++);
 		methodPointerMap.put(method.getName(), method);
