@@ -1,0 +1,18 @@
+class HelloWorld {
+	static void main(string[] args) {
+		string[] s=new string[5];
+		s[0]="a";
+		s[1]="b";
+		s[2]="c";
+		s[3]="d";
+		s[4]="e";
+		//s[5]="f";
+		//s[-1]="g";
+		int i=0;
+		while(i<s.length)
+		{
+			Library.println(s[i]);
+			i=i+1;
+		}
+	}
+}
