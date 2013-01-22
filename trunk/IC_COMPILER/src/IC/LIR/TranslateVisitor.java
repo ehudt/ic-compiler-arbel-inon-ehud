@@ -50,6 +50,7 @@ import IC.SymbolTable.BlockSymbolTable;
 import IC.SymbolTable.ClassSymbolTable;
 import IC.SymbolTable.GlobalSymbolTable;
 import IC.SymbolTable.Kind;
+import IC.SymbolTable.MethodSymbol;
 import IC.SymbolTable.MethodSymbolTable;
 import IC.SymbolTable.Symbol;
 import IC.SymbolTable.SymbolTable;
@@ -481,12 +482,14 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 			LirBlock locationBlock = call.getLocation().accept(this, targetReg + 1);
 			locationCode.append(locationBlock.getLirCode());
 			className = ((UserType)call.getLocation().accept(typeVisitor)).getName();
+			locationCode.append("StaticCall __checkNullRef(o=R" + (targetReg + 1) + "),Rdummy\n");
 		} else {
 			className = call.getEnclosingClassTable().getName();
-			
-			locationCode.append("Move this,R" + (targetReg + 1) + "\n");
+			/*MethodSymbol methodSym = (MethodSymbol)call.getEnclosingClassTable().lookup(call.getName());
+			if (!methodSym.isStatic()) {
+				locationCode.append("Move this,R" + (targetReg + 1) + "\n");
+			}*/
 		}
-		locationCode.append("StaticCall __checkNullRef(o=R" + (targetReg + 1) + "),Rdummy\n");
 		argCode.append(locationCode);
 		methodOffset = classLayouts.get(className).getMethodOffset(call.getName());
 		callCode.append("R" + (targetReg + 1) + "." + methodOffset + "(");
