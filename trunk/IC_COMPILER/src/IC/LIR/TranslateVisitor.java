@@ -65,10 +65,51 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 		return labelCount++;
 	}
 	
+	static final String runTimeChecks=""+
+			"__checkZero:\n"+
+			"Move b,Rcheck\n"+
+			"Compare 0,Rcheck1\n"+
+			"JumpTrue _err_zero\n"+
+			"Return 9999\n"+
+			"_err_zero:\n"+
+			"Library __println(_string_div_zero),Rdummy\n"+
+			"Jump _runtime_error\n" +
+			"" +
+			"__checkArrayAccess:\n" +
+			"Move a,Rcheck1\n" +
+			"Move i,Rcheck2\n" +
+			"Compare 0,Rcheck2\n" +
+			"JumpL _err_access\n" +
+			"ArrayLength Rcheck1,Rcheck1\n" +
+			"Compare Rcheck1,Rcheck2\n" +
+			"JumpGE _err_access\n" +
+			"Return 9999\n" +
+			"_err_access:\n" +
+			"Library __println(_string_arr_access),Rdummy\n" +
+			"Jump _runtime_error\n" +
+			"" +
+			"__checkSize:\n" +
+			"Move n,Rcheck1\n" +
+			"Compare 0,Rcheck1\n" +
+			"JumpLE _size_error\n" +
+			"Return 9999\n" +
+			"_size_error:\n" +
+			"Library __println(str_size_error),Rdummy\n" +
+			"Jump _runtime_error\n" +
+			"" +
+			"__checkNullRef:\n" +
+			"Move o,Rcheck1\n" +
+			"Compare 0,Rcheck1\n" +
+			"JumpTrue _null_ref_error\n" +
+			"Return 9999\n" +
+			"_null_ref_error:\n" +
+			"Library __println(str_null_ref_error),Rdummy\n" +
+			"Jump _runtime_error\n";
+	
 	@Override
 	public LirBlock visit(Program program, Integer targetReg) {
 		StringBuilder programCode = new StringBuilder();
-		
+				
 		
 		/* visit the program */
 		StringBuilder classesCode = new StringBuilder();
@@ -98,6 +139,8 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 			programCode.append("\n");
 		}
 		programCode.append("\n");
+		
+		programCode.append(runTimeChecks)
 		
 		programCode.append(classesCode);
 		
