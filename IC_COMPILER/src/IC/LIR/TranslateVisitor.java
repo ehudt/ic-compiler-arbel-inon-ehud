@@ -64,6 +64,7 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 	private int labelCount = 1;
 	private int currentLoopLabel = -1;
 	private boolean inLvalueContext = false;
+	private boolean inVirtualMethodContext = false;
 	
 	private TypeCheckVisitor typeVisitor = new TypeCheckVisitor();
 	
@@ -186,6 +187,7 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 	@Override
 	public LirBlock visit(VirtualMethod method, Integer targetReg) {
 		typeVisitor.setInVirtualMethodContext(true);
+		inVirtualMethodContext = true;
 		StringBuilder methodBody = new StringBuilder();
 		
 		for (Statement statement : method.getStatements()) {
@@ -194,6 +196,7 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 		}
 		
 		typeVisitor.setInVirtualMethodContext(false);
+		inVirtualMethodContext = false;
 		return new LirBlock(methodBody, targetReg);
 	}
 
@@ -381,7 +384,7 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 		if (location.isExternal()) {
 			LirBlock locExpr = location.getLocation().accept(this, targetReg);
 			locationCode.append(locExpr.getLirCode());
-			locationCode.append("StaticCall __checkNullRef(o=R" + targetReg + "),Rdummy\n");
+			locationCode.append("StaticCall __checkNullRef(o=R" + targetReg + "),Rdummy # check object null ref in VariableLocation\n");
 			
 			UserType instanceType = (UserType)location.getLocation().accept(typeVisitor);
 			String className = instanceType.getName();
@@ -422,7 +425,7 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 			LirBlock array = location.getArray().accept(this, targetReg);
 			
 			lirCode.append(array.getLirCode());
-			lirCode.append("StaticCall __checkNullRef(o=R" + targetReg + "),Rdummy\n");
+			lirCode.append("StaticCall __checkNullRef(o=R" + targetReg + "),Rdummy # check array null ref in ArrayLocation\n");
 			
 			LirBlock index = location.getIndex().accept(this, targetReg + 1);
 			lirCode.append(index.getLirCode());
@@ -482,13 +485,13 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 			LirBlock locationBlock = call.getLocation().accept(this, targetReg + 1);
 			locationCode.append(locationBlock.getLirCode());
 			className = ((UserType)call.getLocation().accept(typeVisitor)).getName();
-			locationCode.append("StaticCall __checkNullRef(o=R" + (targetReg + 1) + "),Rdummy\n");
+			locationCode.append("StaticCall __checkNullRef(o=R" + (targetReg + 1) + "),Rdummy #check null ref of object in VirtualCall\n");
 		} else {
 			className = call.getEnclosingClassTable().getName();
-			/*MethodSymbol methodSym = (MethodSymbol)call.getEnclosingClassTable().lookup(call.getName());
-			if (!methodSym.isStatic()) {
+			//MethodSymbol methodSym = (MethodSymbol)call.getEnclosingClassTable().lookup(call.getName());
+			if (inVirtualMethodContext) {
 				locationCode.append("Move this,R" + (targetReg + 1) + "\n");
-			}*/
+			}
 		}
 		argCode.append(locationCode);
 		methodOffset = classLayouts.get(className).getMethodOffset(call.getName());
@@ -555,7 +558,7 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 		LirBlock size = newArray.getSize().accept(this, targetReg);
 		lirCode.append(size.getLirCode());
 		lirCode.append("Mul 4,R" + targetReg + "\n");
-		lirCode.append("StaticCall __checkSize(n="+size.getTargetRegister()+"),Rdummy\n");
+		lirCode.append("StaticCall __checkSize(n=R"+size.getTargetRegister()+"),Rdummy\n");
 		lirCode.append("Library __allocateArray(R"+size.getTargetRegister()+"),R");
 		lirCode.append(targetReg+"\n");
 		return new LirBlock(lirCode, targetReg);
@@ -567,7 +570,7 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 		StringBuilder lirCode = new StringBuilder();
 		LirBlock array = length.getArray().accept(this, targetReg);
 		lirCode.append(array.getLirCode());
-		lirCode.append("StaticCall __checkNullRef(o=R"+targetReg+"),Rdummy\n");
+		lirCode.append("StaticCall __checkNullRef(o=R"+targetReg+"),Rdummy # check array null ref in Length\n");
 		lirCode.append("ArrayLength R"+ array.getTargetRegister()+",R"+
 		targetReg +"\n");
 		
@@ -584,11 +587,9 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 		
 		LirBlock leftOperand=binaryOp.getFirstOperand().accept(this,firstTargetReg);
 		lirCode.append(leftOperand.getLirCode());
-		lirCode.append("\n");
 		
 		LirBlock rightOperand=binaryOp.getSecondOperand().accept(this,secondTargetReg);
 		lirCode.append(rightOperand.getLirCode());
-		lirCode.append("\n");
 		
 		switch(binaryOp.getOperator())
 		{
