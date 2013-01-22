@@ -640,7 +640,7 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 		
 		LirBlock leftOperand=binaryOp.getFirstOperand().accept(this,firstTargetReg);
 		lirCode.append(leftOperand.getLirCode());
-		lirCode.append("\n");
+		//lirCode.append("\n");
 		
 		
 		if(binaryOp.getOperator()==BinaryOps.LOR || binaryOp.getOperator()==BinaryOps.LAND)
@@ -662,7 +662,7 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 			
 			LirBlock rightOperand=binaryOp.getSecondOperand().accept(this,secondTargetReg);
 			lirCode.append(rightOperand.getLirCode());
-			lirCode.append("\n");
+			//lirCode.append("\n");
 			
 			lirCode.append(boolOp+" R"+secondTargetReg+",R"+firstTargetReg+"\n");
 			
@@ -671,7 +671,7 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 		{
 			LirBlock rightOperand=binaryOp.getSecondOperand().accept(this,secondTargetReg);
 			lirCode.append(rightOperand.getLirCode());
-			lirCode.append("\n");
+			//lirCode.append("\n");
 			
 			lirCode.append("Compare R"+secondTargetReg+",R"+firstTargetReg);
 			lirCode.append("\n");
@@ -728,7 +728,7 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 		StringBuilder lirCode = new StringBuilder();
 		LirBlock operand = unaryOp.getOperand().accept(this, targetReg);
 		lirCode.append(operand.getLirCode());
-		lirCode.append("Neg R");
+		lirCode.append("Xor 1,R");
 		lirCode.append(operand.getTargetRegister().toString());
 		lirCode.append("\n");
 		
