@@ -19,6 +19,11 @@ public abstract class SymbolTable {
 	protected SymbolTable parent;
 	protected String name;
 	protected Map<String, SymbolTable> childrenSymbolTables = new LinkedHashMap<String, SymbolTable>();
+	protected int blockDepth = 0;
+	
+	public int getBlockDepth() {
+		return blockDepth;
+	}
 	
 	public SymbolTable(SymbolTable parent){
 		this(parent, "");

@@ -23,6 +23,7 @@ public class MethodSymbolTable extends BlockSymbolTable {
 	public MethodSymbolTable(SymbolTable parent, String name, boolean isStatic) {
 		super(parent, name);
 		this.isStatic = isStatic;
+		this.blockDepth = 1;
 	}
 
 	public boolean isStatic() {
