@@ -1,9 +1,11 @@
 package IC.LIR;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import IC.BinaryOps;
+import IC.SemanticError;
 import IC.AST.ArrayLocation;
 import IC.AST.Assignment;
 import IC.AST.Break;
@@ -12,6 +14,7 @@ import IC.AST.Continue;
 import IC.AST.EmptyStatement;
 import IC.AST.ErrorClass;
 import IC.AST.ErrorMethod;
+import IC.AST.Expression;
 import IC.AST.ExpressionBlock;
 import IC.AST.Field;
 import IC.AST.FieldMethodList;
@@ -67,8 +70,8 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 	static final String runTimeErrorStrings = 
 			"str_size_error: \"Runtime Error: Array allocation with negative array size!\"\n" +
 			"str_null_ref_error: \"Runtime Error: Null pointer dereference!\"\n" +
-			"_string_div_zero: \"Runtime Error: Division by zero!\"\n" +
-			"_string_arr_access: \"Runtime Error: Array index out of bounds!\"\n";
+			"str_div_zero: \"Runtime Error: Division by zero!\"\n" +
+			"str_arr_access: \"Runtime Error: Array index out of bounds!\"\n";
 	
 	static final String runTimeChecks = "" +
 			"__checkZero:\n"+
@@ -77,7 +80,7 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 			"JumpTrue _err_zero\n"+
 			"Return 9999\n"+
 			"_err_zero:\n"+
-			"Library __println(_string_div_zero),Rdummy\n"+
+			"Library __println(str_div_zero),Rdummy\n"+
 			"Jump _runtime_error\n" +
 			"\n" +
 			"__checkArrayAccess:\n" +
@@ -90,7 +93,7 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 			"JumpGE _err_access\n" +
 			"Return 9999\n" +
 			"_err_access:\n" +
-			"Library __println(_string_arr_access),Rdummy\n" +
+			"Library __println(str_arr_access),Rdummy\n" +
 			"Jump _runtime_error\n" +
 			"\n" +
 			"__checkSize:\n" +
@@ -410,14 +413,96 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 
 	@Override
 	public LirBlock visit(StaticCall call, Integer targetReg) {
-		// TODO Auto-generated method stub
-		return null;
+		String className = call.getClassName();
+		String methodName = call.getName();
+		StringBuilder argCode = new StringBuilder();
+		String methodLabel = null;
+		boolean isLibrary = className.equals("Library");
+		if (isLibrary) {
+			methodLabel = "__" + methodName;
+		} else {
+			methodLabel = "_" + className + "_" + methodName;
+		}
+		StringBuilder callCode = new StringBuilder("StaticCall " + methodLabel + "(");
+		List<Expression> arguments = call.getArguments();
+		List<Formal> parameters = getMethodParameters(className, methodName);
+		int argReg = targetReg + 1;
+		for (int i = 0; i < arguments.size(); ++i) {
+			Expression arg = arguments.get(i);
+			Formal param = parameters.get(i);
+			
+			// insert argument code
+			LirBlock argBlock = arg.accept(this, argReg + i);
+			argCode.append(argBlock.getLirCode());
+			
+			// insert argument name and register into call code
+			if (!isLibrary) {
+				callCode.append(param.getName() + "=R" + (argReg + i));
+			} else {
+				callCode.append("R" + (argReg + i));
+			}
+			if (i < arguments.size() - 1) callCode.append(",");
+			++i;
+		}
+		callCode.append("),R" + targetReg + "\n");
+		argCode.append(callCode);
+		return new LirBlock(argCode, targetReg);
+	}
+
+	private List<Formal> getMethodParameters(String className, String methodName) {
+		ICClass icClass = null;
+		try {
+			icClass = TypeTable.getUserTypeByName(className);
+		} catch (SemanticError e) {
+			// this shouldn't be reached
+			e.printStackTrace();
+		}
+		for (Method method : icClass.getMethods()) {
+			if (method.getName().equals(methodName)) {
+				return method.getFormals();
+			}
+		}
+		return getMethodParameters(icClass.getSuperClassName(), methodName);
 	}
 
 	@Override
 	public LirBlock visit(VirtualCall call, Integer targetReg) {
-		// TODO Auto-generated method stub
-		return null;
+		StringBuilder argCode = new StringBuilder();
+		StringBuilder callCode = new StringBuilder("VirtualCall ");
+		StringBuilder locationCode = new StringBuilder();
+		Integer methodOffset = 0;
+		String className = "";
+		if (call.isExternal()) {
+			LirBlock locationBlock = call.getLocation().accept(this, targetReg + 1);
+			locationCode.append(locationBlock.getLirCode());
+			className = ((UserType)call.getLocation().accept(new TypeCheckVisitor())).getName();
+		} else {
+			locationCode.append("Move this,R" + (targetReg + 1) + "\n");
+			className = call.getEnclosingClassTable().getName();
+		}
+		argCode.append(locationCode);
+		methodOffset = classLayouts.get(className).getMethodOffset(call.getName());
+		callCode.append("R" + (targetReg + 1) + "." + methodOffset + "(");
+		
+		List<Expression> arguments = call.getArguments();
+		List<Formal> parameters = getMethodParameters(className, call.getName());
+		int argReg = targetReg + 2;
+		for (int i = 0; i < arguments.size(); ++i) {
+			Expression arg = arguments.get(i);
+			Formal param = parameters.get(i);
+			
+			// insert argument code
+			LirBlock argBlock = arg.accept(this, argReg + i);
+			argCode.append(argBlock.getLirCode());
+			
+			// insert argument name and register into call code
+			callCode.append(param.getName() + "=R" + (argReg + i));
+			if (i < arguments.size() - 1) callCode.append(",");
+			++i;
+		}
+		callCode.append("),R" + targetReg + "\n");
+		argCode.append(callCode);
+		return new LirBlock(argCode, targetReg);
 	}
 
 	@Override
@@ -453,7 +538,6 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 	@Override
 	public LirBlock visit(Length length, Integer targetReg) {
 		//Expects to get the array in a register
-		//TODO maybe we'll change this in optimizations
 		StringBuilder lirCode = new StringBuilder();
 		LirBlock array = length.getArray().accept(this, targetReg);
 		lirCode.append(array.getLirCode());
