@@ -483,26 +483,32 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 	@Override
 	public LirBlock visit(VirtualCall call, Integer targetReg) {
 		StringBuilder argCode = new StringBuilder();
-		StringBuilder callCode = new StringBuilder("VirtualCall ");
+		StringBuilder callCode = new StringBuilder();
 		StringBuilder locationCode = new StringBuilder();
 		Integer methodOffset = 0;
 		String className = "";
+		boolean isStatic = false;
 		if (call.isExternal()) {
 			LirBlock locationBlock = call.getLocation().accept(this, targetReg + 1);
 			locationCode.append(locationBlock.getLirCode());
 			className = ((UserType)call.getLocation().accept(typeVisitor)).getName();
+			isStatic = classLayouts.get(className).getMethod(call.getName()).isStatic();
 			locationCode.append("StaticCall __checkNullRef(o=R" + (targetReg + 1) + "),Rdummy #check null ref of object in VirtualCall\n");
 		} else {
 			className = call.getEnclosingClassTable().getName();
 			//MethodSymbol methodSym = (MethodSymbol)call.getEnclosingClassTable().lookup(call.getName());
+			isStatic = classLayouts.get(call.getEnclosingClassTable().getName()).getMethod(call.getName()).isStatic();
 			if (inVirtualMethodContext) {
 				locationCode.append("Move this,R" + (targetReg + 1) + "\n");
 			}
 		}
 		argCode.append(locationCode);
-		methodOffset = classLayouts.get(className).getMethodOffset(call.getName());
-		callCode.append("R" + (targetReg + 1) + "." + methodOffset + "(");
-		
+		if (!isStatic) {
+			methodOffset = classLayouts.get(className).getMethodOffset(call.getName());
+			callCode.append("VirtualCall R" + (targetReg + 1) + "." + methodOffset + "(");
+		} else {
+			callCode.append("StaticCall _" + className + "_" + call.getName() + "(");
+		}
 		List<Expression> arguments = call.getArguments();
 		List<Formal> parameters = getMethodParameters(className, call.getName());
 		int argReg = targetReg + 2;
