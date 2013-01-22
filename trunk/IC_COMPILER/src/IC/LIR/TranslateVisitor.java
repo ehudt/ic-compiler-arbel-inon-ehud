@@ -597,7 +597,7 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 			case MOD:
 				//static call to checkZero on runtime
 				opString+="StaticCall __checkZero(b=R"+secondTargetReg+"),Rdummy\n";
-				opString="Mod R"+secondTargetReg+",R"+firstTargetReg;
+				opString+="Mod R"+secondTargetReg+",R"+firstTargetReg;
 				break;
 		}
 		lirCode.append(opString);
