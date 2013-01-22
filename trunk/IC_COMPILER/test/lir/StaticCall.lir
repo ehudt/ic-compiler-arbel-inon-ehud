@@ -53,16 +53,14 @@ Move 2,R1
 Move R1,y1
 Move x1,R3
 Move y1,R4
-VirtualCall R2.1(x1=R3,y1=R4),R1
+StaticCall _Math_add(x1=R3,y1=R4),R1
 Move R1,z1
 Move z1,R2
 Library __printi(R2),R1
 Library __exit(0),Rdummy
 _Math_add:
 Move x1,R1
-
 Move y1,R2
-
 Add R2,R1
 
 Return R1
