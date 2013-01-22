@@ -2,10 +2,13 @@ package IC;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java_cup.runtime.Symbol;
 
 import IC.AST.*;
+import IC.LIR.LirBlock;
+import IC.LIR.TranslateVisitor;
 import IC.Parser.*;
 import IC.Semantic.ReturnStatementVisitor;
 import IC.Semantic.StructureChecksVisitor;
@@ -33,7 +36,7 @@ public class Compiler
     */
 	public static void main(String[] args)
     {
-		boolean printAst = false, useExternalLib = false, printSymTab=false;
+		boolean printAst = false, useExternalLib = false, printSymTab = false, printLir = false;
 		String 	srcPath, libPath = "libic.sig", currentFile = "";
 
 		// validate the number of arguments
@@ -65,11 +68,16 @@ public class Compiler
 				} else printAst = true;
 			}
 			else if(arg.equals("-dump-symtab")){
-				if(printSymTab)
-				{
+				if(printSymTab)	{
 					System.out.println("Error: duplicate flag: " + arg);
 					usage();
-				} else printSymTab=true;
+				} else printSymTab = true;
+			}
+			else if(arg.equals("-print-lir")) {
+				if(printLir) {
+					System.out.println("Error: duplicate flag: " + arg);
+					usage();
+				} else printLir = true;
 			}
 			else {
 				System.out.println("Error: invalid argument: " + arg);
@@ -135,7 +143,13 @@ public class Compiler
     			System.out.println(TypeTable.toTypeTableString());
     		}
     		
-    		
+    		TranslateVisitor makeLir = new TranslateVisitor();
+    		LirBlock programLir = programRoot.accept(makeLir, 1);
+    		if (printLir) {
+    			String lirPath = srcPath.substring(0, srcPath.length() - 2) + "lir";
+    			FileWriter writeLir = new FileWriter(lirPath);
+    			writeLir.write(programLir.getLirCode().toString());
+    		}
     	}
     	// Catch lexical Errors and print the line and the value of the token
     	catch (LexicalError e) {

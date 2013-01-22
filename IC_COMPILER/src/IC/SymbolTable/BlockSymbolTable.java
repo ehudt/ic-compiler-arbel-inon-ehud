@@ -25,6 +25,7 @@ public class BlockSymbolTable extends SymbolTable {
 	
 	public BlockSymbolTable(SymbolTable parent, String name) {
 		super(parent, name);
+		this.blockDepth = parent.blockDepth + 1;
 	}
 	
 	public List<VarSymbol> getLocalSymbols(){
