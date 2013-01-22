@@ -1,0 +1,396 @@
+str1: "Array elements: "
+str2: " "
+str3: "\n"
+str4: "Unspecified array length"
+str5: "Invalid array length"
+str_size_error: "Runtime Error: Array allocation with negative array size!"
+str_null_ref_error: "Runtime Error: Null pointer dereference!"
+str_div_zero: "Runtime Error: Division by zero!"
+str_arr_access: "Runtime Error: Array index out of bounds!"
+
+_DV_Quicksort: [_Quicksort_partition,_Quicksort_quicksort,_Quicksort_initArray,_Quicksort_printArray,_Quicksort_main]
+
+__checkZero:
+Move b,Rcheck
+Compare 0,Rcheck1
+JumpTrue _err_zero
+Return 9999
+_err_zero:
+Library __println(str_div_zero),Rdummy
+Jump _runtime_error
+
+__checkArrayAccess:
+Move a,Rcheck1
+Move i,Rcheck2
+Compare 0,Rcheck2
+JumpL _err_access
+ArrayLength Rcheck1,Rcheck1
+Compare Rcheck1,Rcheck2
+JumpGE _err_access
+Return 9999
+_err_access:
+Library __println(str_arr_access),Rdummy
+Jump _runtime_error
+
+__checkSize:
+Move n,Rcheck1
+Compare 0,Rcheck1
+JumpLE _size_error
+Return 9999
+_size_error:
+Library __println(str_size_error),Rdummy
+Jump _runtime_error
+
+__checkNullRef:
+Move o,Rcheck1
+Compare 0,Rcheck1
+JumpTrue _null_ref_error
+Return 9999
+_null_ref_error:
+Library __println(str_null_ref_error),Rdummy
+Jump _runtime_error
+
+_Quicksort_partition:
+Move this,R1
+Move 1,R2
+StaticCall __checkNullRef(a=R1),Rdummy
+Move low1,R2
+MoveArray R1[R2],R1
+StaticCall __checkArrayAccess(a=R1,i=R2),Rdummy
+Move R1,pivot1
+Move low1,R1
+Move R1,i1
+Move high1,R1
+Move R1,j1
+_test_label1: 
+Move 1,R1
+Compare 0,R1
+JumpTrue _end_label1
+_test_label2: 
+Move this,R1
+Move 1,R2
+StaticCall __checkNullRef(a=R1),Rdummy
+Move i2,R2
+MoveArray R1[R2],R1
+StaticCall __checkArrayAccess(a=R1,i=R2),Rdummy
+
+Move pivot2,R2
+
+Compare R2,R1
+JumpL _truelbl3
+Move 0,R1
+Jump _endlbl3
+_truelbl3:
+Move 1,R1
+_endlbl3:
+Compare 0,R1
+JumpTrue _end_label2
+Move i2,R1
+
+Move 1,R2
+
+Add R2,R1
+Move i2,R2
+Move R1,i2
+Jump _test_label2
+_end_label2:
+_test_label4: 
+Move this,R1
+Move 1,R2
+StaticCall __checkNullRef(a=R1),Rdummy
+Move j2,R2
+MoveArray R1[R2],R1
+StaticCall __checkArrayAccess(a=R1,i=R2),Rdummy
+
+Move pivot2,R2
+
+Compare R2,R1
+JumpG _truelbl5
+Move 0,R1
+Jump _endlbl5
+_truelbl5:
+Move 1,R1
+_endlbl5:
+Compare 0,R1
+JumpTrue _end_label4
+Move j2,R1
+
+Move 1,R2
+
+Sub R2,R1
+Move j2,R2
+Move R1,j2
+Jump _test_label4
+_end_label4:
+Move i2,R1
+
+Move j2,R2
+
+Compare R2,R1
+JumpGE _truelbl7
+Move 0,R1
+Jump _endlbl7
+_truelbl7:
+Move 1,R1
+_endlbl7:
+Compare 0,R1
+JumpTrue _end_label6
+Jump _end_label1
+_end_label6:
+
+Move this,R1
+Move 1,R2
+StaticCall __checkNullRef(a=R1),Rdummy
+Move i2,R2
+MoveArray R1[R2],R1
+StaticCall __checkArrayAccess(a=R1,i=R2),Rdummy
+Move tmp2,R2
+Move R1,tmp2
+
+Move this,R1
+Move 1,R2
+StaticCall __checkNullRef(a=R1),Rdummy
+Move j2,R2
+MoveArray R1[R2],R1
+StaticCall __checkArrayAccess(a=R1,i=R2),Rdummy
+Move this,R2
+Move 1,R3
+StaticCall __checkNullRef(a=R2),Rdummy
+Move i2,R3
+MoveArray R2[R3],R2
+StaticCall __checkArrayAccess(a=R2,i=R3),Rdummy
+MoveArray R1,R2[R3]
+
+Move tmp2,R1
+Move this,R2
+Move 1,R3
+StaticCall __checkNullRef(a=R2),Rdummy
+Move j2,R3
+MoveArray R2[R3],R2
+StaticCall __checkArrayAccess(a=R2,i=R3),Rdummy
+MoveArray R1,R2[R3]
+
+Move i2,R1
+
+Move 1,R2
+
+Add R2,R1
+Move i2,R2
+Move R1,i2
+
+Move j2,R1
+
+Move 1,R2
+
+Sub R2,R1
+Move j2,R2
+Move R1,j2
+
+Jump _test_label1
+_end_label1:Move j1,R1
+
+Return R1
+_Quicksort_quicksort:
+Move low1,R1
+
+Move high1,R2
+
+Compare R2,R1
+JumpL _truelbl9
+Move 0,R1
+Jump _endlbl9
+_truelbl9:
+Move 1,R1
+_endlbl9:
+Compare 0,R1
+JumpTrue _end_label8
+Move this,R2
+Move low2,R3
+Move high2,R4
+VirtualCall R2.0(low1=R3,high1=R4),R1
+Move R1,mid2
+
+Move this,R2
+Move low2,R3
+Move mid2,R4
+VirtualCall R2.1(low1=R3,high1=R4),R1
+
+Move this,R2
+Move mid2,R3
+
+Move 1,R4
+
+Add R4,R3
+Move high2,R4
+VirtualCall R2.1(low1=R3,high1=R4),R1
+
+_end_label8:
+_Quicksort_initArray:
+Move 0,R1
+Move R1,i1
+_test_label10: 
+Move i1,R1
+
+Move this,R2
+Move 1,R3
+StaticCall __checkNullRef(a=R2),Rdummy
+ArrayLength R2,R2
+
+Compare R2,R1
+JumpL _truelbl11
+Move 0,R1
+Jump _endlbl11
+_truelbl11:
+Move 1,R1
+_endlbl11:
+Compare 0,R1
+JumpTrue _end_label10
+Move this,R2
+Move 1,R3
+StaticCall __checkNullRef(a=R2),Rdummy
+ArrayLength R2,R2
+
+Move 2,R3
+
+Mul R3,R2
+Library __random(R2),R1
+Move this,R2
+Move 1,R3
+StaticCall __checkNullRef(a=R2),Rdummy
+Move i2,R3
+MoveArray R2[R3],R2
+StaticCall __checkArrayAccess(a=R2,i=R3),Rdummy
+MoveArray R1,R2[R3]
+
+Move i2,R1
+
+Move 1,R2
+
+Add R2,R1
+Move i2,R2
+Move R1,i2
+
+Jump _test_label10
+_end_label10:_Quicksort_printArray:
+Move 0,R1
+Move R1,i1
+Move str1,R2
+Library __print(R2),R1
+_test_label12: 
+Move i1,R1
+
+Move this,R2
+Move 1,R3
+StaticCall __checkNullRef(a=R2),Rdummy
+ArrayLength R2,R2
+
+Compare R2,R1
+JumpL _truelbl13
+Move 0,R1
+Jump _endlbl13
+_truelbl13:
+Move 1,R1
+_endlbl13:
+Compare 0,R1
+JumpTrue _end_label12
+Move this,R2
+Move 1,R3
+StaticCall __checkNullRef(a=R2),Rdummy
+Move i2,R3
+MoveArray R2[R3],R2
+StaticCall __checkArrayAccess(a=R2,i=R3),Rdummy
+Library __printi(R2),R1
+
+Move str2,R2
+Library __print(R2),R1
+
+Move i2,R1
+
+Move 1,R2
+
+Add R2,R1
+Move i2,R2
+Move R1,i2
+
+Jump _test_label12
+_end_label12:Move str3,R2
+Library __print(R2),R1
+_ic_main:
+_Quicksort_main:
+Move args1,R1
+StaticCall __checkNullRef(a=R1),Rdummy
+ArrayLength R1,R1
+
+Move 1,R2
+
+Compare R2,R1
+JumpFalse _truelbl15
+Move 0,R1
+Jump _endlbl15
+_truelbl15:
+Move 1,R1
+_endlbl15:
+Compare 0,R1
+JumpTrue _end_label14
+Move str4,R2
+Library __println(R2),R1
+
+Move 1,R2
+Library __exit(R2),R1
+
+_end_label14:
+Move args1,R2
+StaticCall __checkNullRef(a=R2),Rdummy
+Move 0,R3
+MoveArray R2[R3],R2
+StaticCall __checkArrayAccess(a=R2,i=R3),Rdummy
+Move 0,R3
+Library __stoi(R2,R3),R1
+Move n1,R2
+Move R1,n1
+Move n1,R1
+
+Move 0,R2
+
+Compare R2,R1
+JumpLE _truelbl17
+Move 0,R1
+Jump _endlbl17
+_truelbl17:
+Move 1,R1
+_endlbl17:
+Compare 0,R1
+JumpTrue _end_label16
+Move str5,R2
+Library __println(R2),R1
+
+Move 1,R2
+Library __exit(R2),R1
+
+_end_label16:
+Library __allocateObject(8),R1
+MoveField _DV_Quicksort,R1.0
+Move R1,s1
+Move n1,R1
+StaticCall __checkSize(n=1),Rdummy
+Library __allocateArray(R1),R1
+Move s1,R2
+StaticCall __checkNullRef(a=R2),Rdummy
+Move 1,R3
+MoveField R1,R2.R3
+Move s1,R2
+VirtualCall R2.2(),R1
+Move s1,R2
+VirtualCall R2.3(),R1
+Move s1,R2
+Move 0,R3
+Move n1,R4
+
+Move 1,R5
+
+Sub R5,R4
+VirtualCall R2.1(low1=R3,high1=R4),R1
+Move s1,R2
+VirtualCall R2.3(),R1
+Library __exit(0),Rdummy
+_runtime_error:
