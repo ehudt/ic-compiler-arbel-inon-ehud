@@ -182,7 +182,7 @@ public class Compiler
     }
 	
 	private static void usage(){
-		System.out.println("Usage: java IC.Compiler <input-filename> [ -L<library-path> ] [ -print-ast ] [ -dump-symtab ]\n");
+		System.out.println("Usage: java IC.Compiler <input-filename> [ -L<library-path> ] [ -print-ast ] [ -dump-symtab ] [ -print-lir ]\n");
 		System.exit(0);
 	}
 }
