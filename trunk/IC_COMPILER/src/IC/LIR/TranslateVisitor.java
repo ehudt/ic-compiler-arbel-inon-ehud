@@ -490,7 +490,7 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 				break;
 			case DIVIDE:
 				//static call to checkZero on runtime
-				opString+="StaticCall __checkZero(R"+secondTargetReg+")";
+				opString+="StaticCall __checkZero(b=R"+secondTargetReg+"),Rdummy";
 				opString+="Div R"+secondTargetReg+",R"+firstTargetReg;
 				break;
 			case MOD:
