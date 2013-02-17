@@ -1,0 +1,11 @@
+class A {
+	string name;
+	static void main(string[] args) {
+		A a = new A();
+		a.name = "ehud";
+		Library.println(a.name);
+		a = null;
+		Library.println(a.name);
+	}
+}
+		

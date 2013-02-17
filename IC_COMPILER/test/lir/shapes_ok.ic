@@ -1,0 +1,60 @@
+class Shape {
+	string name;
+	int circum;
+	int area;
+	int getCircum() {
+		return circum;
+	}
+	int getArea() {
+		return area;
+	}
+}
+
+class Square extends Shape {
+	int sideLength;
+	int getCircum() {
+		return 4*sideLength;
+	}
+	int getArea() {
+		return sideLength * sideLength;
+	}
+}
+
+class Rectangle extends Shape {
+	int side1;
+	int side2;
+	int getCircum() {
+		return (side1 + side2)*2;
+	}
+	int getArea() {
+		return side1*side2;
+	}
+}
+
+class Test {
+	static void main(string[] args) {
+		Rectangle rect = new Rectangle();
+		rect.side1 = 5;
+		rect.side2 = 7;
+		Library.printi(rect.getArea());
+		Library.println("");
+		Library.printi(rect.getCircum());
+		Library.println("");
+		Shape shape = new Shape();
+		shape.circum = 11;
+		shape.area = 13;
+		Library.printi(shape.getArea());
+		Library.println("");
+		Library.printi(shape.getCircum());
+		Library.println("");
+		shape = rect;
+		Library.printi(shape.getArea());
+		Library.println("");
+		Library.printi(shape.getCircum());
+		Library.println("");
+	}
+
+	static void error() {
+		Library.println("Not supposed to reach this!");
+	}
+}
