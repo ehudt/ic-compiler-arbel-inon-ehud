@@ -1,0 +1,14 @@
+class A {
+	string name;
+	string getName() {
+		return this.name;
+	}
+	static void main(string[] args) {
+		A a = new A();
+		a.name = "ehud";
+		Library.println(a.getName());
+		a = null;
+		Library.println(a.getName());
+	}
+}
+		

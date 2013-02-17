@@ -1,0 +1,10 @@
+class BBC {
+	int channel;
+	static void main(string[] args) {
+		Library.printi(getNum(78));
+		Library.println("");
+	}
+	static int getNum(int x) {
+		return x;
+	}
+}

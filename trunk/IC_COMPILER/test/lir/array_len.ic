@@ -1,0 +1,19 @@
+class Arrays {
+	static void main(string[] args) {
+		int len = 50;
+		int[] arr = new int[len];
+		int i = 0;
+		while (i < arr.length) {
+			arr[i] = i * i;
+			i = i + 1;
+		}
+		int sum = 0;
+		i = 0;
+		while (i < arr.length) {
+			sum = sum + arr[i];
+			i = i + 1;
+		}
+		Library.printi(sum);
+		Library.println("");
+	}
+}
