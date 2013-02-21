@@ -1,0 +1,22 @@
+class A {
+	string foo(){
+	string x;
+	x = "string from A";
+	return x;
+}}
+
+class B extends A{
+	string foo(){
+		string y;
+		y="string from B";
+		return y;
+	}}
+
+class M{
+	static void main(string[] args) {
+		A a = new A()	;
+		B b = new B();
+		Library.println(a.foo()+b.foo());
+	}
+
+}
