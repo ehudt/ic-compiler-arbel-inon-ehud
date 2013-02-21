@@ -85,7 +85,12 @@ public class StructureChecksVisitor implements Visitor {
 			structureError(m.getLine(), "only a single main method is allowed");
 		}
 		
+		if (!ms.isStatic()){
+			structureError(m.getLine(), "main method must be static");
+		}
+		
 		MethodType mt = ms.getMetType();
+		
 		if (mt.getReturnType().getName() != TypeTable.getType("void").getName()){
 			
 			structureError(m.getLine(),"invalid return type for method main. should be void");
