@@ -3,7 +3,7 @@ str_null_ref_error: "Runtime Error: Null pointer dereference!"
 str_div_zero: "Runtime Error: Division by zero!"
 str_arr_access: "Runtime Error: Array index out of bounds!"
 
-_DV_List: ]
+_DV_List: []
 _DV_A: [_A_main]
 
 __checkZero:
@@ -58,6 +58,11 @@ Move 5,R1
 Move l1,R2
 StaticCall __checkNullRef(o=R2),Rdummy # check object null ref in VariableLocation
 Move 1,R3
+MoveField R1,R2.R3
+Move b1,R1
+Move l1,R2
+StaticCall __checkNullRef(o=R2),Rdummy # check object null ref in VariableLocation
+Move 2,R3
 MoveField R1,R2.R3
 Move 6,R1
 Move b1,R2
