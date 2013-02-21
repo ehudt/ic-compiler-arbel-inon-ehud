@@ -1,0 +1,78 @@
+str1: "one"
+str_size_error: "Runtime Error: Array allocation with negative array size!"
+str_null_ref_error: "Runtime Error: Null pointer dereference!"
+str_div_zero: "Runtime Error: Division by zero!"
+str_arr_access: "Runtime Error: Array index out of bounds!"
+
+_DV_A: [_A_main]
+
+__checkZero:
+Move b,Rcheck1
+Compare 0,Rcheck1
+JumpTrue _err_zero
+Return 9999
+_err_zero:
+Library __println(str_div_zero),Rdummy
+Jump _runtime_error
+
+__checkArrayAccess:
+Move a,Rcheck1
+Move i,Rcheck2
+Compare 0,Rcheck2
+JumpL _err_access
+ArrayLength Rcheck1,Rcheck1
+Compare Rcheck1,Rcheck2
+JumpGE _err_access
+Return 9999
+_err_access:
+Library __println(str_arr_access),Rdummy
+Jump _runtime_error
+
+__checkSize:
+Move n,Rcheck1
+Compare 0,Rcheck1
+JumpLE _size_error
+Return 9999
+_size_error:
+Library __println(str_size_error),Rdummy
+Jump _runtime_error
+
+__checkNullRef:
+Move o,Rcheck1
+Compare 0,Rcheck1
+JumpTrue _null_ref_error
+Return 9999
+_null_ref_error:
+Library __println(str_null_ref_error),Rdummy
+Jump _runtime_error
+
+_ic_main:
+_A_main:
+Move 0,R1
+Move R1,i1
+_test_label1: 
+Move i1,R1
+Move 15,R2
+Compare R2,R1
+JumpL _truelbl2
+Move 0,R1
+Jump _endlbl2
+_truelbl2:
+Move 1,R1
+_endlbl2:
+Compare 0,R1
+JumpTrue _end_label1
+Move str1,R2
+Library __println(R2),R1
+
+Move i1,R1
+Move 1,R2
+Add R2,R1
+Move R1,i1
+
+Jump _end_label1
+
+Jump _test_label1
+_end_label1:Library __exit(0),Rdummy
+
+_runtime_error:

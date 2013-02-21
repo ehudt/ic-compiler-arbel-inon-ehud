@@ -1,0 +1,12 @@
+class A {
+	static void main(string[] args) {
+		int i;
+		i=0;
+		while(i<15)
+		{
+			Library.println("one");
+			i=i+1;
+			break;
+		}
+	}
+}
