@@ -126,6 +126,9 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 		/* visit the program */
 		StringBuilder classesCode = new StringBuilder();
 		for (ICClass classDecl : program.getClasses()) {
+			classLayouts.put(classDecl.getName(), ClassLayout.NewClassLayout(classDecl));
+		}
+		for (ICClass classDecl : program.getClasses()) {
 			if (classDecl.getName().equals("Library")) continue;
 			LirBlock classLirBlock = classDecl.accept(this, targetReg);
 			classesCode.append(classLirBlock.getLirCode());
@@ -162,8 +165,6 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 
 	@Override
 	public LirBlock visit(ICClass icClass, Integer targetReg) {
-		classLayouts.put(icClass.getName(), ClassLayout.NewClassLayout(icClass));
-		
 		StringBuilder classBody = new StringBuilder();
 		for (Method method : icClass.getMethods()) {
 			if (method.getName().equals("main")) {
