@@ -301,7 +301,7 @@ public class TypeCheckVisitor implements Visitor {
 			} else if (varSymbol.getKind() == Kind.FIELD && inVirtualMethodContext) {
 				expressionType = TypeTable.getType(((FieldSymbol)varSymbol).getType(), false);
 			} else {
-				typeError(location.getLine(), "AAillegal reference: " + location.getName());
+				typeError(location.getLine(), "illegal reference: " + location.getName());
 			}			
 		} else {
 			Type classType = (Type)location.getLocation().accept(this);
