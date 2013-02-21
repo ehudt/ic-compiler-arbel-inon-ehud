@@ -46,6 +46,16 @@ import IC.SymbolTable.GlobalSymbolTable;
 import IC.SymbolTable.MethodSymbolTable;
 import IC.SymbolTable.SymbolTable;
 
+/**
+ * 
+ * Since the default value for regWeight is 0, 
+ * we did not implement the visitor methods for expressions that needs
+ * 0 registers
+ * 
+ * @author arbel
+ *
+ */
+
 public class SethiUllmanWeightVisitor implements Visitor {
 
 	@Override
@@ -105,7 +115,7 @@ public class SethiUllmanWeightVisitor implements Visitor {
 
 	@Override
 	public Object visit(PrimitiveType type) {
-		// TODO Auto-generated method stub
+		type.setOptimizable(true);
 		return null;
 	}
 
@@ -175,6 +185,17 @@ public class SethiUllmanWeightVisitor implements Visitor {
 	@Override
 	public Object visit(LocalVariable localVariable) {
 		localVariable.getType().accept(this);
+		if (localVariable.hasInitValue()){
+			localVariable.getInitValue().accept(this);
+			localVariable.setRegWeight(localVariable.getInitValue().getRegWeight());
+			localVariable.setOptimizable(localVariable.getInitValue().isOptimizable());
+			}
+		
+		else{
+			localVariable.setRegWeight(1);
+			localVariable.setOptimizable(true);
+			
+		}
 		if(localVariable.getInitValue() == null) return null;
 		localVariable.getInitValue().accept(this);
 		return null;
@@ -184,18 +205,41 @@ public class SethiUllmanWeightVisitor implements Visitor {
 	public Object visit(VariableLocation location) {
 		if(location.getLocation() == null) return null;
 		location.getLocation().accept(this);
+		if (location.isExternal()){
+			location.setOptimizable(location.getLocation().isOptimizable());
+			location.setRegWeight(location.getLocation().getRegWeight());
+			}
+
+		else{
+			location.setOptimizable(true);
+			location.setRegWeight(1);
+			}
+		
 		return null;
 	}
 
 	@Override
 	public Object visit(ArrayLocation location) {
 		location.getArray().accept(this);
+		int arrayReg = location.getArray().getRegWeight();
+		boolean arrOpt = location.getArray().isOptimizable();
+		
 		location.getIndex().accept(this);
+		int indexReg = location.getIndex().getRegWeight();
+		boolean indOpt = location.getIndex().isOptimizable();
+		
+		location.setOptimizable(indOpt&&arrOpt);
+		location.setRegWeight(sethiHelper(arrayReg, indexReg));
+		
 		return null;
 	}
 
 	@Override
 	public Object visit(StaticCall call) {
+		/**
+		 * Method is never optimizable since it can change the state
+		 */
+		call.setOptimizable(false);
 		for(Expression arg : call.getArguments()){
 			arg.accept(this);
 		}
@@ -204,37 +248,48 @@ public class SethiUllmanWeightVisitor implements Visitor {
 
 	@Override
 	public Object visit(VirtualCall call) {
+		/**
+		 * Method is never optimizable since it can change the state
+		 */
+		call.setOptimizable(false);
 		if(call.getLocation() != null){
-			call.getLocation().accept(this);
+			call.getLocation().accept(this);	
 		}
+		
 		for(Expression arg : call.getArguments()){
 			arg.accept(this);
 		}
+		
 		return null;
 	}
 
 	@Override
 	public Object visit(This thisExpression) {
-		// TODO
+		thisExpression.setRegWeight(1);
+		thisExpression.setOptimizable(true);
 		return null;
 	}
 
 	@Override
 	public Object visit(NewClass newClass) {
-		// TODO Auto-generated method stub
+		newClass.setOptimizable(true);
+		newClass.setRegWeight(1);
 		return null;
 	}
 
 	@Override
 	public Object visit(NewArray newArray) {
 		newArray.getSize().accept(this);
-		newArray.getType().accept(this);
+		newArray.setRegWeight(newArray.getSize().getRegWeight());
+		newArray.setOptimizable(newArray.getSize().isOptimizable());
 		return null;
 	}
 
 	@Override
 	public Object visit(Length length) {
 		length.getArray().accept(this);
+		length.setRegWeight(length.getArray().getRegWeight());
+		length.setOptimizable(length.getArray().isOptimizable());
 		return null;
 	}
 
@@ -242,6 +297,10 @@ public class SethiUllmanWeightVisitor implements Visitor {
 	public Object visit(MathBinaryOp binaryOp) {
 		binaryOp.getFirstOperand().accept(this);
 		binaryOp.getSecondOperand().accept(this);
+		binaryOp.setOptimizable(binaryOp.getFirstOperand().isOptimizable()&&binaryOp.getSecondOperand().isOptimizable());
+		int firstReg = binaryOp.getFirstOperand().getRegWeight();
+		int secondReg = binaryOp.getSecondOperand().getRegWeight();
+		binaryOp.setRegWeight(sethiHelper(firstReg, secondReg));
 		return null;
 	}
 
@@ -249,30 +308,40 @@ public class SethiUllmanWeightVisitor implements Visitor {
 	public Object visit(LogicalBinaryOp binaryOp) {
 		binaryOp.getFirstOperand().accept(this);
 		binaryOp.getSecondOperand().accept(this);
+		binaryOp.setOptimizable(binaryOp.getFirstOperand().isOptimizable()&&binaryOp.getSecondOperand().isOptimizable());
+		int firstReg = binaryOp.getFirstOperand().getRegWeight();
+		int secondReg = binaryOp.getSecondOperand().getRegWeight();
+		binaryOp.setRegWeight(sethiHelper(firstReg, secondReg));
 		return null;
 	}
 
 	@Override
 	public Object visit(MathUnaryOp unaryOp) {
 		unaryOp.getOperand().accept(this);
+		unaryOp.setOptimizable(unaryOp.isOptimizable());
+		unaryOp.setRegWeight(unaryOp.getOperand().getRegWeight());
 		return null;
 	}
 
 	@Override
 	public Object visit(LogicalUnaryOp unaryOp) {
 		unaryOp.getOperand().accept(this);
+		unaryOp.setOptimizable(unaryOp.isOptimizable());
+		unaryOp.setRegWeight(unaryOp.getOperand().getRegWeight());
 		return null;
 	}
 
 	@Override
 	public Object visit(Literal literal) {
-		// TODO
+		literal.setOptimizable(true);
 		return null;
 	}
 
 	@Override
 	public Object visit(ExpressionBlock expressionBlock) {
 		expressionBlock.getExpression().accept(this);
+		expressionBlock.setRegWeight(expressionBlock.getExpression().getRegWeight());
+		expressionBlock.setOptimizable(expressionBlock.getExpression().isOptimizable());
 		return null;
 	}
 
@@ -338,4 +407,15 @@ public class SethiUllmanWeightVisitor implements Visitor {
 		return null;
 	}
 
+	/** 
+	 * Calculates the register weight for the expression tree 
+	 * 
+	 **/
+	public int sethiHelper(int right, int left){
+		if (right==left){
+			return right+1;
+		}
+		else return Math.max(right, left);
+	}
+	
 }
