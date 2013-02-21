@@ -1,7 +1,9 @@
 package IC.LIR;
 
+import IC.BinaryOps;
 import IC.AST.ArrayLocation;
 import IC.AST.Assignment;
+import IC.AST.BinaryOp;
 import IC.AST.Break;
 import IC.AST.CallStatement;
 import IC.AST.Continue;
@@ -48,9 +50,7 @@ import IC.SymbolTable.SymbolTable;
 
 /**
  * 
- * Since the default value for regWeight is 0, 
- * we did not implement the visitor methods for expressions that needs
- * 0 registers
+ * The default weight is 0.
  * 
  * @author arbel
  *
@@ -79,7 +79,6 @@ public class SethiUllmanWeightVisitor implements Visitor {
 
 	@Override
 	public Object visit(Field field) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -101,27 +100,22 @@ public class SethiUllmanWeightVisitor implements Visitor {
 
 	@Override
 	public Object visit(LibraryMethod method) {
-		for(Statement stmt : method.getStatements()){
-			stmt.accept(this);
-		}
+
 		return null;
 	}
 
 	@Override
 	public Object visit(Formal formal) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(PrimitiveType type) {
-		type.setOptimizable(true);
 		return null;
 	}
 
 	@Override
 	public Object visit(UserType type) {
-		// TODO
 		return null;
 	}
 
@@ -164,13 +158,11 @@ public class SethiUllmanWeightVisitor implements Visitor {
 
 	@Override
 	public Object visit(Break breakStatement) {
-		// TODO
 		return null;
 	}
 
 	@Override
 	public Object visit(Continue continueStatement) {
-		// TODO
 		return null;
 	}
 
@@ -190,22 +182,14 @@ public class SethiUllmanWeightVisitor implements Visitor {
 			localVariable.setRegWeight(localVariable.getInitValue().getRegWeight());
 			localVariable.setOptimizable(localVariable.getInitValue().isOptimizable());
 			}
-		
-		else{
-			localVariable.setRegWeight(1);
-			localVariable.setOptimizable(true);
-			
-		}
-		if(localVariable.getInitValue() == null) return null;
-		localVariable.getInitValue().accept(this);
+
 		return null;
 	}
 
 	@Override
 	public Object visit(VariableLocation location) {
-		if(location.getLocation() == null) return null;
-		location.getLocation().accept(this);
 		if (location.isExternal()){
+			location.getLocation().accept(this);
 			location.setOptimizable(location.getLocation().isOptimizable());
 			location.setRegWeight(location.getLocation().getRegWeight());
 			}
@@ -308,11 +292,19 @@ public class SethiUllmanWeightVisitor implements Visitor {
 	public Object visit(LogicalBinaryOp binaryOp) {
 		binaryOp.getFirstOperand().accept(this);
 		binaryOp.getSecondOperand().accept(this);
-		binaryOp.setOptimizable(binaryOp.getFirstOperand().isOptimizable()&&binaryOp.getSecondOperand().isOptimizable());
+	
+		if (binaryOp.getOperator().equals(BinaryOps.LOR) || binaryOp.getOperator().equals(BinaryOps.LAND)){
+			binaryOp.setOptimizable(false);
+		}
+		else{
+			binaryOp.setOptimizable(binaryOp.getFirstOperand().isOptimizable()&&binaryOp.getSecondOperand().isOptimizable());
+		}
+		
 		int firstReg = binaryOp.getFirstOperand().getRegWeight();
 		int secondReg = binaryOp.getSecondOperand().getRegWeight();
 		binaryOp.setRegWeight(sethiHelper(firstReg, secondReg));
 		return null;
+		
 	}
 
 	@Override
@@ -347,25 +339,21 @@ public class SethiUllmanWeightVisitor implements Visitor {
 
 	@Override
 	public Object visit(FieldMethodList fieldMethodList) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(EmptyStatement emptyStatement) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(ErrorMethod errorMethod) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(ErrorClass errorClass) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -379,31 +367,26 @@ public class SethiUllmanWeightVisitor implements Visitor {
 
 	@Override
 	public Object visit(GlobalSymbolTable table) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(ClassSymbolTable table) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(BlockSymbolTable table) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(MethodSymbolTable table) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(SymbolTable symbolTable) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
