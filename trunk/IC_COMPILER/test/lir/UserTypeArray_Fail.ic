@@ -1,0 +1,20 @@
+class A {
+	int x;
+	int y;
+	
+	static int foo()
+	{
+		return 6;
+	}
+}
+
+class Main{
+	static void main(string[] args) 
+	{
+		int i;
+		A[] test=new A[3];
+		i=test[0].x;
+		Library.printi(i);	
+	}
+
+}
