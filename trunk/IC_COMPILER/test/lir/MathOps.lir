@@ -59,9 +59,7 @@ Move R1,x1
 Move 2,R1
 Move R1,y1
 Move x1,R1
-
 Move y1,R2
-
 Add R2,R1
 Move R1,z1
 Move str1,R2
@@ -71,11 +69,8 @@ Library __printi(R2),R1
 Move str2,R2
 Library __println(R2),R1
 Move x1,R1
-
 Move y1,R2
-
 Mul R2,R1
-Move z1,R2
 Move R1,z1
 Move str3,R2
 Library __print(R2),R1
@@ -84,11 +79,8 @@ Library __printi(R2),R1
 Move str2,R2
 Library __println(R2),R1
 Move x1,R1
-
 Move y1,R2
-
 Sub R2,R1
-Move z1,R2
 Move R1,z1
 Move str4,R2
 Library __print(R2),R1
@@ -97,12 +89,9 @@ Library __printi(R2),R1
 Move str2,R2
 Library __println(R2),R1
 Move x1,R1
-
 Move y1,R2
-
 StaticCall __checkZero(b=R2),Rdummy
 Div R2,R1
-Move z1,R2
 Move R1,z1
 Move str5,R2
 Library __print(R2),R1
@@ -111,12 +100,9 @@ Library __printi(R2),R1
 Move str2,R2
 Library __println(R2),R1
 Move x1,R1
-
 Move y1,R2
-
 StaticCall __checkZero(b=R2),Rdummy
 Mod R2,R1
-Move z1,R2
 Move R1,z1
 Move str6,R2
 Library __print(R2),R1
@@ -125,12 +111,9 @@ Library __printi(R2),R1
 Move str2,R2
 Library __println(R2),R1
 Move x1,R1
-
 Move 0,R2
-
 StaticCall __checkZero(b=R2),Rdummy
 Div R2,R1
-Move z1,R2
 Move R1,z1
 Move str7,R2
 Library __print(R2),R1

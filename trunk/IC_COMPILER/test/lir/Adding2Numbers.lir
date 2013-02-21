@@ -6,7 +6,7 @@ str_arr_access: "Runtime Error: Array index out of bounds!"
 _DV_Add: [_Add_main]
 
 __checkZero:
-Move b,Rcheck
+Move b,Rcheck1
 Compare 0,Rcheck1
 JumpTrue _err_zero
 Return 9999
@@ -52,9 +52,7 @@ Move R1,x1
 Move 6,R1
 Move R1,y1
 Move x1,R1
-
 Move y1,R2
-
 Add R2,R1
 Move R1,z1
 Move z1,R2

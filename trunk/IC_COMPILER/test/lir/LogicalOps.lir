@@ -144,9 +144,7 @@ _endlbl11:
 Compare 0,R1
 JumpTrue _endlbl10
 Move 5,R2
-
 Move 0,R3
-
 StaticCall __checkZero(b=R3),Rdummy
 Div R3,R2
 Move 5,R3
@@ -179,9 +177,7 @@ _endlbl15:
 Compare 1,R1
 JumpTrue _endlbl14
 Move 5,R2
-
 Move 0,R3
-
 StaticCall __checkZero(b=R3),Rdummy
 Div R3,R2
 Move 5,R3
