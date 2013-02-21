@@ -1,0 +1,32 @@
+class A {
+	int x;
+	int y;
+	
+	static int foo()
+	{
+		return 6;
+	}
+}
+
+class Main{
+	static void main(string[] args) 
+	{
+		int i=0;
+		A[] test=new A[3];
+		while(i<test.length)
+		{
+			test[i]=new A();
+			test[i].x=i;
+			i=i+1;
+		}
+		i=0;
+		
+		while(i<test.length)
+		{
+			Library.printi(test[i].x);
+			Library.println("");
+			i=i+1;	
+		}
+	}
+
+}
