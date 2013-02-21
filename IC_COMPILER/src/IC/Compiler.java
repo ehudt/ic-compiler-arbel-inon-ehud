@@ -133,8 +133,8 @@ public class Compiler
     		programRoot.accept(typeChecker);
     		ReturnStatementVisitor returnChecker = new ReturnStatementVisitor();
     		programRoot.accept(returnChecker);
-    		VariableInitializeVisitor varInitCheck = new VariableInitializeVisitor();
-    		programRoot.accept(varInitCheck);
+    		//VariableInitializeVisitor varInitCheck = new VariableInitializeVisitor();
+    		//programRoot.accept(varInitCheck);
     		
     		if(printSymTab){
     			PrettyPrinter symTabPrint = new PrettyPrinter(srcPath);

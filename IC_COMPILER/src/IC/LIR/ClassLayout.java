@@ -19,6 +19,7 @@ public class ClassLayout {
 	private Integer methodOffset = 0;
 	private Map<Method, Integer> methodOffsetMap = new LinkedHashMap<Method, Integer>();
 	private Map<String, Method> methodPointerMap = new LinkedHashMap<String, Method>();
+	private Map<Method, String> methodImplementingClass = new LinkedHashMap<Method, String>();
 	
 	private Integer fieldOffset = 1; // field 0 of class instance is DVPTR
 	private Map<Field, Integer> fieldOffsetMap = new LinkedHashMap<Field, Integer>();
@@ -36,6 +37,8 @@ public class ClassLayout {
 							inheritance was enforced in semantic analysis phase */	
 			}
 			ClassLayout classLayout = NewClassLayout(parentClass);
+			/* set the class layout to the inheriting class */
+			classLayout.setClassDecl(classDecl);
 			/* add son's field and methods */
 			for (Method method : classDecl.getMethods()) {
 				if (classLayout.hasMethod(method)) {
@@ -48,7 +51,6 @@ public class ClassLayout {
 			for (Field field : classDecl.getFields()) {
 				classLayout.insertField(field);
 			}
-			classLayout.setClassDecl(classDecl);
 			return classLayout;
 		}
 	}
@@ -59,6 +61,7 @@ public class ClassLayout {
 		setClassDecl(classDecl);
 		
 		for (Method method : classDecl.getMethods()) {
+			methodImplementingClass.put(method, classDecl.getName());
 			insertMethod(method);
 		}
 		
@@ -82,12 +85,16 @@ public class ClassLayout {
 		vector.append("[");
 		for (Method method : methodList) {
 			vector.append("_");
-			vector.append(classDecl.getName());
+			vector.append(methodImplementingClass.get(method));
 			vector.append("_");
 			vector.append(method.getName());
 			vector.append(",");
 		}
-		vector.setCharAt(vector.length() - 1, ']');
+		if (vector.length() > 1) {
+			vector.setCharAt(vector.length() - 1, ']');
+		} else {
+			vector.append("]");
+		}
 		return vector.toString();
 	}
 	
@@ -102,6 +109,7 @@ public class ClassLayout {
 	private void insertMethod(Method method) {
 		methodOffsetMap.put(method, methodOffset++);
 		methodPointerMap.put(method.getName(), method);
+		methodImplementingClass.put(method, classDecl.getName());
 	}
 
 	private void insertField(Field field) {
@@ -129,6 +137,7 @@ public class ClassLayout {
 		Integer methodOffset = methodOffsetMap.remove(methodPointerMap.remove(method.getName()));
 		methodOffsetMap.put(method, methodOffset);
 		methodPointerMap.put(method.getName(), method);
+		methodImplementingClass.put(method, classDecl.getName());
 	}
 	
 	public ICClass getClassDecl() {

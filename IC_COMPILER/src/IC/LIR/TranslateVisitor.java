@@ -195,6 +195,9 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 			methodBody.append(statementCode.getLirCode());
 		}
 		
+		if (method.getType().getName().equals("void")) {
+			methodBody.append("Return 9999\n");
+		}
 		typeVisitor.setInVirtualMethodContext(false);
 		inVirtualMethodContext = false;
 		return new LirBlock(methodBody, targetReg);
@@ -207,7 +210,9 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 		for (Statement s : method.getStatements()){
 			lirCode.append(s.accept(this, targetReg).getLirCode());
 		}
-		
+		if (!method.getName().equals("main") && method.getType().getName().equals("void")) {
+			lirCode.append("Return 9999\n");
+		}
 		return new LirBlock(lirCode, targetReg);
 	}
 
