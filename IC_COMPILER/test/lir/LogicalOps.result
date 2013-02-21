@@ -1,0 +1,6 @@
+5=5 V
+5!=5 X
+5>4 V
+4<5 V
+close cirucut And:false
+close cirucut or:true
