@@ -175,6 +175,7 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 			LirBlock methodCode = method.accept(this, targetReg);
 			classBody.append(methodCode.getLirCode());
 			if (method.getName().equals("main")) classBody.append("Library __exit(0),Rdummy\n");
+			classBody.append("\n");
 		}
 		return new LirBlock(classBody, targetReg);
 	}
@@ -282,13 +283,13 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 		{
 			LirBlock ret= returnStatement.getValue().accept(this,targetReg);
 			lirCode.append(ret.getLirCode());
-			lirCode.append("\n");
+			//lirCode.append("\n");
 			lirCode.append("Return R"+targetReg);
 			lirCode.append("\n");
 		}
 		else
 		{
-			lirCode.append("Return 9999");
+			lirCode.append("Return 9999 # return from void method");
 			lirCode.append("\n");
 		}
 		
