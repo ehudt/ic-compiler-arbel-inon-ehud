@@ -59,16 +59,16 @@ import IC.LIR.ClassLayout;
 
 public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 	
-	private Map<String, String> stringLiterals = new LinkedHashMap<String, String>();
-	private Map<String,ClassLayout> classLayouts = new LinkedHashMap<String, ClassLayout>();
-	private int labelCount = 1;
-	private int currentLoopLabel = -1;
-	private boolean inLvalueContext = false;
-	private boolean inVirtualMethodContext = false;
+	protected Map<String, String> stringLiterals = new LinkedHashMap<String, String>();
+	protected Map<String,ClassLayout> classLayouts = new LinkedHashMap<String, ClassLayout>();
+	protected int labelCount = 1;
+	protected int currentLoopLabel = -1;
+	protected boolean inLvalueContext = false;
+	protected boolean inVirtualMethodContext = false;
 	
-	private TypeCheckVisitor typeVisitor = new TypeCheckVisitor();
+	protected TypeCheckVisitor typeVisitor = new TypeCheckVisitor();
 	
-	private int getNextLabelNum() {
+	protected int getNextLabelNum() {
 		return labelCount++;
 	}
 	static final String runTimeErrorStrings = 
@@ -536,7 +536,7 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 		return new LirBlock(argCode, targetReg);
 	}
 	
-	private List<Formal> getMethodParameters(String className, String methodName) {
+	protected List<Formal> getMethodParameters(String className, String methodName) {
 		ICClass icClass = null;
 		try {
 			icClass = TypeTable.getUserTypeByName(className);
