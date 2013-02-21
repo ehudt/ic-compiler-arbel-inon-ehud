@@ -83,18 +83,17 @@ public class ClassLayout {
 		});
 		
 		vector.append("[");
-		for (Method method : methodList) {
+		for (int i = 0; i < methodList.size(); ++i) {
+			Method method = methodList.get(i);
 			vector.append("_");
 			vector.append(methodImplementingClass.get(method));
 			vector.append("_");
 			vector.append(method.getName());
-			vector.append(",");
+			if (i < methodList.size() - 1) {
+				vector.append(",");
+			}
 		}
-		if (vector.length() > 1) {
-			vector.setCharAt(vector.length() - 1, ']');
-		} else {
-			vector.append("]");
-		}
+		vector.append("]");
 		return vector.toString();
 	}
 	
