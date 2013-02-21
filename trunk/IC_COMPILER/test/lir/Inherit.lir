@@ -8,7 +8,7 @@ str_div_zero: "Runtime Error: Division by zero!"
 str_arr_access: "Runtime Error: Array index out of bounds!"
 
 _DV_Point: [_Point_getX,_Point_getY,_Point_setX,_Point_setY,_Point_printPoint]
-_DV_PolarPoint: [_PolarPoint_getX,_PolarPoint_getY,_PolarPoint_setX,_PolarPoint_setY,_PolarPoint_printPoint]
+_DV_PolarPoint: [_Point_getX,_Point_getY,_Point_setX,_Point_setY,_Point_printPoint]
 _DV_Main: [_Main_main]
 
 __checkZero:
@@ -67,12 +67,14 @@ Move this,R2
 StaticCall __checkNullRef(o=R2),Rdummy # check object null ref in VariableLocation
 Move 1,R3
 MoveField R1,R2.R3
+Return 9999
 _Point_setY:
 Move y1,R1
 Move this,R2
 StaticCall __checkNullRef(o=R2),Rdummy # check object null ref in VariableLocation
 Move 2,R3
 MoveField R1,R2.R3
+Return 9999
 _Point_printPoint:
 Move str1,R2
 Library __print(R2),R1
@@ -88,6 +90,7 @@ Move str3,R2
 Library __print(R2),R1
 Move str4,R2
 Library __println(R2),R1
+Return 9999
 _ic_main:
 _Main_main:
 Library __allocateObject(16),R1
