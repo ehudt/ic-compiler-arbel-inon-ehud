@@ -16,6 +16,7 @@ public abstract class ASTNode {
 	private int line;
 	int column = -1;
 	private int regWeight = 0; // Sethi-Ullman weight
+	private boolean optimizable = false;
 	
 	private SymbolTable enclosingScope;
 
@@ -74,6 +75,14 @@ public abstract class ASTNode {
 
 	public void setRegWeight(int regWeight) {
 		this.regWeight = regWeight;
+	}
+
+	public boolean isOptimizable() {
+		return optimizable;
+	}
+
+	public void setOptimizable(boolean optimizable) {
+		this.optimizable = optimizable;
 	}
 
 
