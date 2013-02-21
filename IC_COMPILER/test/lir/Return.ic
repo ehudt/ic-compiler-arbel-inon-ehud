@@ -1,0 +1,11 @@
+class Main {
+	static void main(string[] args) {
+		int x=1;
+		Library.printi(test(5+x));
+	}
+	
+	static int test(int x)
+	{
+		return x+8;
+	}
+}
