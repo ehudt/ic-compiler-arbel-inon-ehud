@@ -15,6 +15,7 @@ public abstract class ASTNode {
 
 	private int line;
 	int column = -1;
+	private int regWeight = 0; // Sethi-Ullman weight
 	
 	private SymbolTable enclosingScope;
 
@@ -65,6 +66,14 @@ public abstract class ASTNode {
 	
 	public int getColumn() {
 		return column;
+	}
+
+	public int getRegWeight() {
+		return regWeight;
+	}
+
+	public void setRegWeight(int regWeight) {
+		this.regWeight = regWeight;
 	}
 
 
