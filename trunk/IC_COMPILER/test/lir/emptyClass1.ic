@@ -1,0 +1,16 @@
+class B{
+	string foo(){
+		return "arbel";
+	}
+}
+
+class A extends B{}
+
+class C{
+		static void main(string[] args) {
+
+			B b = new A();
+			Library.println(b.foo());
+
+}
+}
