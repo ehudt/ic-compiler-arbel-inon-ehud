@@ -1,0 +1,11 @@
+class A {
+	static int foo(){
+		return 7;
+	}
+
+ 	static void main(string[] args) {
+		Library.printi(foo());
+		return;
+		Library.println("end");
+	}
+}
