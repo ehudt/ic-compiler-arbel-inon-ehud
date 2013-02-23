@@ -1,0 +1,21 @@
+class B{
+	void foo(string s){
+		Library.println(s);
+	}
+}
+class A {
+ 	static void main(string[] args) {
+ 		string x;
+ 		string y;
+ 		string z;
+ 		x = "arbel";
+ 		y = "Arina";
+ 		z = x+y;
+ 		B b = new B();
+ 		b.foo(z);
+
+
+
+
+	}
+}
