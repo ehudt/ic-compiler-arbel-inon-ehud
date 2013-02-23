@@ -123,6 +123,10 @@ public class OptimizedTranslateVisitor extends TranslateVisitor {
 		lirCode.append(opString);
 		lirCode.append("\n");
 		
+		if (reversedOrder) {
+			lirCode.append("Move R" + firstTargetReg + ",R" + secondTargetReg + "\n");
+		}
+		
 		return new LirBlock(lirCode, targetReg);
 	}
 
