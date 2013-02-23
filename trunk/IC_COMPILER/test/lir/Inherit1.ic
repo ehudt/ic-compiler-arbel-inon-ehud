@@ -1,0 +1,24 @@
+class B{
+	int foo(){
+		return 5;
+	}
+}
+
+class C extends B{
+	int foo(){
+	return 9;
+	}
+}
+
+class A {
+ 	static void main(string[] args) {
+		B b = new B();
+		B c = new C();
+		C d = new C();
+		Library.printi(b.foo());
+		Library.printi(c.foo());
+		Library.printi(d.foo());
+
+
+	}
+}
