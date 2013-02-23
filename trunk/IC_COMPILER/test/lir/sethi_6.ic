@@ -1,0 +1,13 @@
+class A {
+	static void main(string[] args) {
+		int[] arr = new int[10];
+		int i = 0;
+		while(i < 10) {
+			arr[i] = i;
+			i = i + 1;
+		}
+		int x = arr[0] + (arr[0+1] + (arr[1+1] + (arr[2+1] + (arr[3+1] + (arr[2+3] + (arr[4+(1+1)] + arr[3+(2+2)]))))));
+		Library.printi(x);
+		return;
+	}
+}
