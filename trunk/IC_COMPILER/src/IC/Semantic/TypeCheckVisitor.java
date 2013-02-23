@@ -524,6 +524,13 @@ public class TypeCheckVisitor implements Visitor {
 	
 		if ((op1Type == null) || (op2Type == null)) return null;
 		
+		if ((op1Type != TypeTable.getType("null")) || (op2Type != TypeTable.getType("null"))){
+			if (op2Type == TypeTable.getType("null"))
+					op2Type = TypeTable.getType("string");
+			
+			if (op1Type == TypeTable.getType("null"))
+				op1Type = TypeTable.getType("string");}
+				
 		if (op1Type != op2Type)
 			typeError(binaryOp.getLine(), "Illegal " + binaryOp.getOperator().getOperatorString() + 
 					" operation. Both operands must be of the same type " + 
