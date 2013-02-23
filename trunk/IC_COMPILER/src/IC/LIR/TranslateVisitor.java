@@ -279,19 +279,22 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 	public LirBlock visit(Return returnStatement, Integer targetReg) {
 		StringBuilder lirCode = new StringBuilder();
 		
-		if(returnStatement.hasValue())
-		{
-			LirBlock ret= returnStatement.getValue().accept(this,targetReg);
-			lirCode.append(ret.getLirCode());
-			//lirCode.append("\n");
-			lirCode.append("Return R"+targetReg);
-			lirCode.append("\n");
-		}
-		else
-		{
-			lirCode.append("Return 9999 # return from void method");
-			lirCode.append("\n");
-		}
+		if (returnStatement.getEnclosingScope().getCurrentMethodName().equals("main")){
+			lirCode.append("Library __exit(0),Rdummy\n");
+		} else	
+			if(returnStatement.hasValue())
+			{
+				LirBlock ret= returnStatement.getValue().accept(this,targetReg);
+				lirCode.append(ret.getLirCode());
+				//lirCode.append("\n");
+				lirCode.append("Return R"+targetReg);
+				lirCode.append("\n");
+			}
+			else
+			{
+				lirCode.append("Return 9999 # return from void method");
+				lirCode.append("\n");
+			}
 		
 		return new LirBlock(lirCode, targetReg);
 	}
