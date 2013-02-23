@@ -1,6 +1,7 @@
 package IC.LIR;
 
 public enum OptLirBlockFlag {
+		DEFAULT(""),
 		LITERAL("Move "),
 		REGISTER("Move "),
 		VARIABLE("Move "),
