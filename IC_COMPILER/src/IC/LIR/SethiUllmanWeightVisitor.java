@@ -3,7 +3,6 @@ package IC.LIR;
 import IC.BinaryOps;
 import IC.AST.ArrayLocation;
 import IC.AST.Assignment;
-import IC.AST.BinaryOp;
 import IC.AST.Break;
 import IC.AST.CallStatement;
 import IC.AST.Continue;
@@ -50,7 +49,7 @@ import IC.SymbolTable.SymbolTable;
 
 /**
  * 
- * The default weight is 0.
+ * The default weight is 0 and the default isOptimise is false.
  * 
  * @author arbel
  *
@@ -174,6 +173,12 @@ public class SethiUllmanWeightVisitor implements Visitor {
 		return null;
 	}
 
+
+	/**
+	 * 
+	 * recursively calculate the weight and optimization of a local variable node
+	 * 
+	 */
 	@Override
 	public Object visit(LocalVariable localVariable) {
 		localVariable.getType().accept(this);
@@ -186,6 +191,12 @@ public class SethiUllmanWeightVisitor implements Visitor {
 		return null;
 	}
 
+
+	/**
+	 * 
+	 * recursively calculate the weight and optimization of a variable Location node
+	 * 
+	 */
 	@Override
 	public Object visit(VariableLocation location) {
 		if (location.isExternal()){
@@ -202,6 +213,12 @@ public class SethiUllmanWeightVisitor implements Visitor {
 		return null;
 	}
 
+
+	/**
+	 * 
+	 * recursively calculate the weight and optimization of an array location node
+	 * 
+	 */
 	@Override
 	public Object visit(ArrayLocation location) {
 		location.getArray().accept(this);
@@ -221,7 +238,9 @@ public class SethiUllmanWeightVisitor implements Visitor {
 	@Override
 	public Object visit(StaticCall call) {
 		/**
+		 * 
 		 * Method is never optimizable since it can change the state
+		 * 
 		 */
 		call.setOptimizable(false);
 		for(Expression arg : call.getArguments()){
@@ -233,7 +252,9 @@ public class SethiUllmanWeightVisitor implements Visitor {
 	@Override
 	public Object visit(VirtualCall call) {
 		/**
+		 * 
 		 * Method is never optimizable since it can change the state
+		 * 
 		 */
 		call.setOptimizable(false);
 		if(call.getLocation() != null){
@@ -247,6 +268,12 @@ public class SethiUllmanWeightVisitor implements Visitor {
 		return null;
 	}
 
+
+	/**
+	 * 
+	 * this expression has weight 1 and is always optimizable.
+	 * 
+	 */
 	@Override
 	public Object visit(This thisExpression) {
 		thisExpression.setRegWeight(1);
@@ -254,6 +281,11 @@ public class SethiUllmanWeightVisitor implements Visitor {
 		return null;
 	}
 
+	/**
+	 * 
+	 * recursively calculate the weight and optimization of a new class node
+	 * 
+	 */
 	@Override
 	public Object visit(NewClass newClass) {
 		newClass.setOptimizable(true);
@@ -261,6 +293,11 @@ public class SethiUllmanWeightVisitor implements Visitor {
 		return null;
 	}
 
+	/**
+	 * 
+	 * recursively calculate the weight and optimization of a new array node
+	 * 
+	 */
 	@Override
 	public Object visit(NewArray newArray) {
 		newArray.getSize().accept(this);
@@ -269,6 +306,12 @@ public class SethiUllmanWeightVisitor implements Visitor {
 		return null;
 	}
 
+	/**
+	 * 
+	 * recursively calculate the weight and optimization of an array length node
+	 * 
+	 */
+	
 	@Override
 	public Object visit(Length length) {
 		length.getArray().accept(this);
@@ -277,6 +320,12 @@ public class SethiUllmanWeightVisitor implements Visitor {
 		return null;
 	}
 
+	/**
+	 * 
+	 * recursively calculate the weight and optimization of a math binary op
+	 * 
+	 */
+	
 	@Override
 	public Object visit(MathBinaryOp binaryOp) {
 		binaryOp.getFirstOperand().accept(this);
@@ -288,6 +337,13 @@ public class SethiUllmanWeightVisitor implements Visitor {
 		return null;
 	}
 
+	/**
+	 * 
+	 * recursively calculate the weight and optimization of a logical binary op.
+	 * Notice that Or and And are not optimizable.
+	 * 
+	 */
+	
 	@Override
 	public Object visit(LogicalBinaryOp binaryOp) {
 		binaryOp.getFirstOperand().accept(this);
@@ -307,6 +363,12 @@ public class SethiUllmanWeightVisitor implements Visitor {
 		
 	}
 
+	/**
+	 * 
+	 * recursively calculate the weight and optimization of a math unary op
+	 * 
+	 */
+	
 	@Override
 	public Object visit(MathUnaryOp unaryOp) {
 		unaryOp.getOperand().accept(this);
@@ -315,6 +377,11 @@ public class SethiUllmanWeightVisitor implements Visitor {
 		return null;
 	}
 
+	/**
+	 * 
+	 * recursively calculate the weight and optimization of a logical unary op
+	 * 
+	 */
 	@Override
 	public Object visit(LogicalUnaryOp unaryOp) {
 		unaryOp.getOperand().accept(this);
@@ -323,12 +390,22 @@ public class SethiUllmanWeightVisitor implements Visitor {
 		return null;
 	}
 
+
+	/**
+	 * 
+	 * A literal has weight 0 and is always optimizable.
+	 * 
+	 */
 	@Override
 	public Object visit(Literal literal) {
 		literal.setOptimizable(true);
 		return null;
 	}
 
+	/**
+	 * recursively calculate the weight of an expression block
+	 * 
+	 */
 	@Override
 	public Object visit(ExpressionBlock expressionBlock) {
 		expressionBlock.getExpression().accept(this);
@@ -391,7 +468,8 @@ public class SethiUllmanWeightVisitor implements Visitor {
 	}
 
 	/** 
-	 * Calculates the register weight for the expression tree 
+	 * Calculates the register weight for the expression tree: if right!=left return max(right,left)
+	 * else return right+1.
 	 * 
 	 **/
 	public int sethiHelper(int right, int left){
