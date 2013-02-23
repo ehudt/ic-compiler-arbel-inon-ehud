@@ -1,0 +1,14 @@
+class Main {
+	static void main(string[] args) {
+		string s1 = "";
+		string s2 = "a";
+		string s3;
+		s3 = null + "ehud";
+		string s4 = "ab";
+		string s5 = "lkjfsdlkjlkejosiufodiulkajsdlkajsdlkjfsa;lkj;sdklfj;lkjfdsal;kjfdslkjfdslkjfdslkjfdfsd";
+		string s6 = null;
+		string s7 = "ehud tamir";
+		string s8 = "%$#^*%)#^(#$)%*#^%^(*($*%($%*#$(%*";
+		Library.println(s3);
+	}
+}	
