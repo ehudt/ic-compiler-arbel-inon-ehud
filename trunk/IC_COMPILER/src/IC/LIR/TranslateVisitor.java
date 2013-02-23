@@ -57,6 +57,11 @@ import IC.SymbolTable.SymbolTable;
 import IC.Types.TypeTable;
 import IC.LIR.ClassLayout;
 
+/**
+ * The LIR translation visitor. It traverses the AST and produces LIR code for the entire program at the end.
+ * @author ehud
+ *
+ */
 public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 	
 	protected Map<String, String> stringLiterals = new LinkedHashMap<String, String>();
@@ -197,6 +202,7 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 			methodBody.append(statementCode.getLirCode());
 		}
 		
+		// Add a return statement at the end of methods which don't have to contain one.
 		if (method.getType().getName().equals("void")) {
 			methodBody.append("Return 9999\n");
 		}
@@ -212,6 +218,7 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 		for (Statement s : method.getStatements()){
 			lirCode.append(s.accept(this, targetReg).getLirCode());
 		}
+		//Add a return statement at the end of methods which don't have to contain one.
 		if (!method.getName().equals("main") && method.getType().getName().equals("void")) {
 			lirCode.append("Return 9999\n");
 		}
@@ -278,23 +285,23 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 	@Override
 	public LirBlock visit(Return returnStatement, Integer targetReg) {
 		StringBuilder lirCode = new StringBuilder();
-		
+		// Special case - return within the method main has to be translated to an exit(0) command
 		if (returnStatement.getEnclosingScope().getCurrentMethodName().equals("main")){
 			lirCode.append("Library __exit(0),Rdummy\n");
-		} else	
-			if(returnStatement.hasValue())
-			{
-				LirBlock ret= returnStatement.getValue().accept(this,targetReg);
-				lirCode.append(ret.getLirCode());
-				//lirCode.append("\n");
-				lirCode.append("Return R"+targetReg);
-				lirCode.append("\n");
-			}
-			else
-			{
-				lirCode.append("Return 9999 # return from void method");
-				lirCode.append("\n");
-			}
+		} 
+		else if(returnStatement.hasValue())
+		{
+			LirBlock ret= returnStatement.getValue().accept(this,targetReg);
+			lirCode.append(ret.getLirCode());
+			//lirCode.append("\n");
+			lirCode.append("Return R"+targetReg);
+			lirCode.append("\n");
+		}
+		else
+		{
+			lirCode.append("Return 9999 # return from void method");
+			lirCode.append("\n");
+		}
 		
 		return new LirBlock(lirCode, targetReg);
 	}

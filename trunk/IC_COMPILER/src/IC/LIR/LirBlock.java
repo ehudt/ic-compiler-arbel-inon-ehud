@@ -1,5 +1,13 @@
 package IC.LIR;
 
+/**
+ * A class representing a block of LIR code corresponding to 
+ * a subtree of the AST. Each code block contains, apart from the 
+ * actual LIR instructions, the target register of the calculation
+ * and the type of value.
+ * @author ehud
+ *
+ */
 public class LirBlock {
 	private StringBuilder lirCode;
 	private Integer targetRegister;

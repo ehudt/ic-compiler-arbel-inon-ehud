@@ -48,7 +48,9 @@ import IC.SymbolTable.MethodSymbolTable;
 import IC.SymbolTable.SymbolTable;
 
 /**
- * 
+ * Calculate the weight of each AST node (expressions) according to 
+ * Sethi-Ullman algorithm and determine whether it is optimizable, 
+ * i.e. contains no expressions that may contain side-effects.
  * The default weight is 0 and the default isOptimise is false.
  * 
  * @author arbel

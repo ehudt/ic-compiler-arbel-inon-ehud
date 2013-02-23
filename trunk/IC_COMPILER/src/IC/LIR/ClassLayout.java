@@ -13,6 +13,13 @@ import IC.AST.*;
 import IC.AST.ICClass;
 import IC.Types.TypeTable;
 
+/**
+ * Represents an IC class' structure (field offsets and DV)
+ * This class calculates the offsets and DV of each IC class
+ * according to its superclass.
+ * @author ehud
+ *
+ */
 public class ClassLayout {
 	private ICClass classDecl;
 	
@@ -25,6 +32,10 @@ public class ClassLayout {
 	private Map<Field, Integer> fieldOffsetMap = new LinkedHashMap<Field, Integer>();
 	private Map<String, Field> fieldPointerMap = new LinkedHashMap<String, Field>();
 	
+	/**
+	 * A factory for class layouts. This is needed because each class layout
+	 * is dependent of its parent's class layout.
+	 */
 	public static ClassLayout NewClassLayout(ICClass classDecl) {
 		if (classDecl == null) return new ClassLayout();
 		if (!classDecl.hasSuperClass()) {
@@ -69,7 +80,11 @@ public class ClassLayout {
 			insertField(field);
 		}
 	}
-	
+	/**
+	 * Get the LIR representation of the DV of the class represented
+	 * by this instance of ClassLayout
+	 * @return Disptach vector string representation in LIR
+	 */
 	public String getDispatchVector() {
 		StringBuilder vector = new StringBuilder("_DV_" + classDecl.getName() + ": ");
 		
@@ -96,11 +111,18 @@ public class ClassLayout {
 		vector.append("]");
 		return vector.toString();
 	}
-	
+	/**
+	 * Get a class' required allocation size in bytes
+	 * @return IC class allocation size
+	 */
 	public int getObjectAllocSize() {
 		return 4 * fieldOffset;
 	}
-	
+	/**
+	 * 
+	 * @param name
+	 * @return method object by name
+	 */
 	public Method getMethod(String name) {
 		return methodPointerMap.get(name);
 	}
@@ -124,10 +146,20 @@ public class ClassLayout {
 		return methodPointerMap.containsKey(methodName);
 	}
 	
+	/**
+	 * Get the offset of a method by name
+	 * @param methodName
+	 * @return method offset in DV
+	 */
 	public Integer getMethodOffset(String methodName) {
 		return methodOffsetMap.get(methodPointerMap.get(methodName));
 	}
 	
+	/**
+	 * Get a field's offset in the class layout
+	 * @param fieldName
+	 * @return field offset in class layout
+	 */
 	public Integer getFieldOffset(String fieldName) {
 		return fieldOffsetMap.get(fieldPointerMap.get(fieldName));
 	}
@@ -139,6 +171,10 @@ public class ClassLayout {
 		methodImplementingClass.put(method, classDecl.getName());
 	}
 	
+	/**
+	 * Get ICClass object from ClassLayout instance
+	 * @return
+	 */
 	public ICClass getClassDecl() {
 		return classDecl;
 	}

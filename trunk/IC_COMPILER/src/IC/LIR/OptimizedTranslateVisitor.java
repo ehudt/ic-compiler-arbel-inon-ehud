@@ -56,7 +56,6 @@ public class OptimizedTranslateVisitor extends TranslateVisitor {
 
 	@Override
 	public LirBlock visit(MathBinaryOp binaryOp, Integer targetReg) {
-		// TODO
 		String opString = "";
 		StringBuilder lirCode = new StringBuilder("");
 		
@@ -64,6 +63,7 @@ public class OptimizedTranslateVisitor extends TranslateVisitor {
 		Expression secondOperandNode = binaryOp.getSecondOperand();
 		boolean reversedOrder = false;
 		
+		// If this node is optimizable, then we reverse the order of translation (and execution)
 		if (binaryOp.isOptimizable()) {
 			int firstWeight = firstOperandNode.getRegWeight(), secondWeight = secondOperandNode.getRegWeight();
 			if (secondWeight > firstWeight) {
@@ -82,7 +82,9 @@ public class OptimizedTranslateVisitor extends TranslateVisitor {
 		LirBlock rightOperand = secondOperandNode.accept(this,secondTargetReg);
 		lirCode.append(rightOperand.getLirCode());
 		
+		
 		if (reversedOrder) {
+			// reverse the target registers for the translation
 			Integer tmp = firstTargetReg;
 			firstTargetReg = secondTargetReg;
 			secondTargetReg = tmp;
@@ -126,6 +128,8 @@ public class OptimizedTranslateVisitor extends TranslateVisitor {
 		lirCode.append("\n");
 		
 		if (reversedOrder) {
+			/* put the result of the calculation in the first register, as expected by 
+			 * other parts of the code */ 
 			lirCode.append("Move R" + firstTargetReg + ",R" + secondTargetReg + "\n");
 		}
 		
@@ -134,7 +138,6 @@ public class OptimizedTranslateVisitor extends TranslateVisitor {
 
 	@Override
 	public LirBlock visit(LogicalBinaryOp binaryOp, Integer targetReg) {
-		// TODO
 		String jumpString = "";
 		StringBuilder lirCode = new StringBuilder("");
 		int lblnum=getNextLabelNum();
@@ -143,6 +146,7 @@ public class OptimizedTranslateVisitor extends TranslateVisitor {
 		Expression secondOperandNode = binaryOp.getSecondOperand();
 		boolean reversedOrder = false;
 		
+		// If this node is optimizable, then we reverse the order of translation (and execution)
 		if (binaryOp.isOptimizable()) {
 			int firstWeight = firstOperandNode.getRegWeight(), secondWeight = secondOperandNode.getRegWeight();
 			if (secondWeight > firstWeight) {
@@ -181,6 +185,7 @@ public class OptimizedTranslateVisitor extends TranslateVisitor {
 			//lirCode.append("\n");
 			
 			if (reversedOrder) {
+				// reverse the target registers for the translation
 				Integer tmp = firstTargetReg;
 				firstTargetReg = secondTargetReg;
 				secondTargetReg = tmp;
@@ -196,6 +201,7 @@ public class OptimizedTranslateVisitor extends TranslateVisitor {
 			//lirCode.append("\n");
 			
 			if (reversedOrder) {
+				// reverse the target registers for the translation
 				Integer tmp = firstTargetReg;
 				firstTargetReg = secondTargetReg;
 				secondTargetReg = tmp;
@@ -236,6 +242,11 @@ public class OptimizedTranslateVisitor extends TranslateVisitor {
 		}
 		
 		lirCode.append("_endlbl"+lblnum+":\n");
+		if (reversedOrder) {
+			/* put the result of the calculation in the first register, as expected by 
+			 * other parts of the code */ 
+			lirCode.append("Move R" + firstTargetReg + ",R" + secondTargetReg + "\n");
+		}
 		return new LirBlock(lirCode, targetReg);
 	}
 }
