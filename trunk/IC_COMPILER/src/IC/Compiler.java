@@ -8,6 +8,8 @@ import java_cup.runtime.Symbol;
 
 import IC.AST.*;
 import IC.LIR.LirBlock;
+import IC.LIR.OptimizedTranslateVisitor;
+import IC.LIR.SethiUllmanWeightVisitor;
 import IC.LIR.TranslateVisitor;
 import IC.Parser.*;
 import IC.Semantic.ReturnStatementVisitor;
@@ -143,7 +145,10 @@ public class Compiler
     			System.out.println(TypeTable.toTypeTableString());
     		}
     		
-    		TranslateVisitor makeLir = new TranslateVisitor();
+    		SethiUllmanWeightVisitor regWeightCalculate = new SethiUllmanWeightVisitor();
+    		programRoot.accept(regWeightCalculate);
+    		
+    		TranslateVisitor makeLir = new OptimizedTranslateVisitor();
     		LirBlock programLir = programRoot.accept(makeLir, 1);
     		if (printLir) {
     			String lirPath = srcPath.substring(0, srcPath.length() - 2) + "lir";
