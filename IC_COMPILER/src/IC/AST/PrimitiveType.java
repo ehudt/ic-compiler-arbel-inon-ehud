@@ -3,6 +3,7 @@ package IC.AST;
 import IC.DataTypes;
 import IC.LIR.LirBlock;
 import IC.LIR.PropagatingVisitor;
+import IC.Types.TypeTable;
 
 /**
  * Primitive data type AST node.
@@ -62,7 +63,7 @@ public class PrimitiveType extends Type {
 	 */
 	@Override
 	public boolean subTypeOf(Type otherType) {
-		if (this.type == DataTypes.NULL && (otherType instanceof UserType || otherType.getDimension() > 0)) {
+		if (this.type == DataTypes.NULL && (otherType instanceof UserType || otherType.getDimension() > 0 || otherType == TypeTable.getType("string"))) {
 			return true;
 		}
 		
