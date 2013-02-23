@@ -30,4 +30,27 @@ public class LirBlock {
 	public void setValueType(LirValueType valueType) {
 		this.valueType = valueType;
 	}
+	
+	/*private OptLirBlockFlag lirBlockFlag = OptLirBlockFlag.DEFAULT;
+	
+	public LirBlock(StringBuilder lirCode, Integer targetReg,OptLirBlockFlag olb){
+		this(lirCode, targetReg);
+		this.lirBlockFlag=olb;
+	}
+	
+	public LirBlock(StringBuilder lirCode, Integer targetReg, LirValueType valueType,OptLirBlockFlag olb) {
+		this(lirCode, targetReg, valueType);
+		this.lirBlockFlag=olb;
+	}
+	
+	public OptLirBlockFlag getLirBlockFlag()
+	{
+		return this.lirBlockFlag;
+	}
+	
+	public void setLirBlockFlag(OptLirBlockFlag olb)
+	{
+		this.lirBlockFlag=olb;
+	}*/
+
 }
