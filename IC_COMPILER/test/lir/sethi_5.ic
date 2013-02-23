@@ -1,0 +1,7 @@
+class A {
+	static void main(string[] args) {
+		boolean b = true == (true == (false == (true == (true == true))));
+		Library.printb(b);
+		return;
+	}
+}
