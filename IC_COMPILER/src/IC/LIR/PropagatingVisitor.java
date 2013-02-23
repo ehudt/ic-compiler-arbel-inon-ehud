@@ -42,7 +42,13 @@ import IC.SymbolTable.ClassSymbolTable;
 import IC.SymbolTable.GlobalSymbolTable;
 import IC.SymbolTable.MethodSymbolTable;
 import IC.SymbolTable.SymbolTable;
-
+/**
+ * Interface for traversing an AST with a context value attached to each call
+ * @author ehud
+ *
+ * @param <ReturnType>
+ * @param <ContextType>
+ */
 public interface PropagatingVisitor<ReturnType, ContextType> {
 	public ReturnType visit(Program program, ContextType context);
 
