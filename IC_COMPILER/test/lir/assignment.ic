@@ -1,0 +1,21 @@
+class A {
+	string f,g;
+	static void main(string[] args) {
+		int x;
+		int y;
+		int z;
+		A a = new A();
+		a.f = "ehud's test";
+		x = 5;
+		y = x - 6;
+		z = 55 * y;
+		boolean[] arr = new boolean[5];
+		arr[3] = true;
+		Library.println(Library.itos(x));
+		Library.println(Library.itos(y));
+		Library.println(Library.itos(z));
+		Library.printb(arr[3]);
+		Library.println("");
+		Library.println(a.f);
+	}
+}

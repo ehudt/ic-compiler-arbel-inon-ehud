@@ -1,0 +1,28 @@
+class A {
+	string s;
+	void foo(int x) {
+		s = "!";
+		if (x < 0) 
+			Library.println("Negative" + s);
+		else if (x < 10)
+			Library.println("Between 0 and 10" + s);
+		else if (x < 100)
+			if (x < 50)
+				Library.println("Between 11 and 50" + s);
+			else
+				Library.println("Between 51 and 100" + s);
+		else Library.println("Greater than 100" + s);
+		
+	}
+}
+
+class MainClass {
+	static void main(string[] args) {
+		A wtf__ = new A();
+		wtf__.foo(101);
+		wtf__.foo(-1112211);
+		wtf__.foo(5);
+		wtf__.foo(60);
+		wtf__.foo(25);
+	}
+}

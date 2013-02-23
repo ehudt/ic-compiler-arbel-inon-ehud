@@ -1,0 +1,9 @@
+class A {
+	static void foo() {
+		return;
+	}
+	static void main(string[] args) {
+		foo();
+		Library.println("ehud");
+	}
+}

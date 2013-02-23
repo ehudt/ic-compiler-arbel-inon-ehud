@@ -1,0 +1,37 @@
+class A {
+	int foo() {
+		return 5;
+	}
+	int wtf() {
+		return 15;
+	}
+}
+
+class B extends A {
+	int foo() {
+		return 6;
+	}
+	string bar() {
+		return "test-test";
+	}
+}
+
+class C extends B {}
+class D extends C {}
+class E extends D {}
+class F extends E {}
+class G extends E {}
+
+class MainClass {
+	static void main(string[] args) {
+		A a = new A();
+		Library.printi(a.foo());
+		a = new B();
+		Library.printi(a.foo());
+		B b = new B();
+		Library.println(b.bar());
+		Library.print(Library.itos((new F()).wtf()) + "<div>");
+		C g = new G();
+		Library.printi(g.wtf() + 5);
+	}
+}
