@@ -1,0 +1,14 @@
+
+class A {
+  static void main(string[] args) {
+    string x;
+    x = null;
+    string y;
+    y = "arbel";
+    y = null + y;
+    x = y+null;
+    Library.println(y);
+    
+  }
+  
+}
