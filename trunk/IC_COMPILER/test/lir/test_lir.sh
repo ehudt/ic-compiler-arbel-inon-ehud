@@ -3,8 +3,10 @@
 for FILE in "$@"
 do
 	NAME=`echo "$FILE" | cut -d'.' -f1`
-	java -cp /home/ehud/IC_COMPILER/classes:$CLASSPATH IC.Compiler "$NAME.ic" -print-lir
+	rm -f $NAME.lir
+	java -cp /home/ehud/IC_COMPILER/classes:$CLASSPATH IC.Compiler "$NAME.ic" -print-lir >/dev/null
 	RESULT=`java -cp /home/ehud/microLir/build:$CLASSPATH microLIR.Main "$NAME.lir"`
+	fromdos $NAME.result
 	EXPECTED=`cat "$NAME.result"`
 	if [ "$RESULT" != "$EXPECTED" ]
 	then

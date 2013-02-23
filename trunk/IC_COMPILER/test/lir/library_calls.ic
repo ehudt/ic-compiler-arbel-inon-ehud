@@ -1,0 +1,7 @@
+class LibStuff {
+	static void main(string[] args) {
+		Library.println(Library.itos(15));
+		Library.println("Enter 0 and press RETURN:");
+		Library.println(Library.itos(48));
+	}
+}

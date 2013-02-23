@@ -1,0 +1,10 @@
+class A {
+	static void nothing() {}
+	static void trap() {
+		Library.println("It's a trap!");
+	}
+	static void main(string[] args) {
+		nothing();
+	}
+}
+
