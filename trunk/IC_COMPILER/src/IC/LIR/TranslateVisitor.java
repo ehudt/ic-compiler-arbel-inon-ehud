@@ -621,8 +621,11 @@ public class TranslateVisitor implements PropagatingVisitor<LirBlock, Integer>{
 				}
 				else
 				{
+					
 					//Concatenation of 2 strings
-					opString="Library __stringCat(R"+firstTargetReg+",R"+secondTargetReg+"),R"+firstTargetReg;
+					opString=("StaticCall __checkNullRef(o=R" + firstTargetReg + "),Rdummy # check string null ref in string concat\n");
+					opString+=("StaticCall __checkNullRef(o=R" + secondTargetReg + "),Rdummy # check string null ref in string concat\n");
+					opString+="Library __stringCat(R"+firstTargetReg+",R"+secondTargetReg+"),R"+firstTargetReg;
 				}
 				break;
 			case MINUS:
